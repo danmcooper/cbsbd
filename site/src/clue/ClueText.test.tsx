@@ -9,6 +9,16 @@ const person = (name: string, profession: string): Person => ({
 });
 const people = [person('banda', 'coder'), person('mira', 'chef'), person('ozan', 'pilot')];
 
+// Mirrors today's real 4x5 puzzle grid (names from cluesbysam.com 2026-07-07).
+const names20 = ['banda', 'celia', 'dana', 'eli', 'ghani', 'hazel', 'ivan', 'jerry', 'kay', 'logan',
+  'max', 'nala', 'penny', 'quita', 'terry', 'umar', 'vince', 'wanda', 'xia', 'zane'];
+const grid = names20.map((n) => person(n, 'coder'));
+
+const renderClue = (clue: string, opts: { people?: Person[]; width?: number; selfIndex?: number } = {}) =>
+  render(
+    <ClueText clue={clue} people={opts.people ?? grid} width={opts.width ?? 4} selfIndex={opts.selfIndex} />,
+  ).container.textContent;
+
 describe('ClueText', () => {
   it('renders names capitalized and highlighted', () => {
     const { container } = render(
@@ -20,32 +30,75 @@ describe('ClueText', () => {
     expect(names[0].textContent).toBe('Mira');
   });
 
-  it('renders self-references as me/my', () => {
-    const { container } = render(
-      <ClueText clue="No innocents neighbor #NAME:1, says #NAMES:1 friend" people={people} width={3} selfIndex={1} />,
-    );
-    expect(container.textContent).toBe('No innocents neighbor me, says my friend');
+  it('gives names ending in s a bare-apostrophe possessive', () => {
+    const chris = [person('chris', 'chef'), person('mira', 'chef')];
+    expect(renderClue('#NAMES:0 hat', { people: chris, width: 2 })).toBe("Chris' hat");
   });
 
-  it('renders professions and columns', () => {
-    const { container } = render(
-      <ClueText clue="The #PROF:coder in column #C:0, two #PROFS:chef" people={people} width={3} />,
+  it('renders self-references with the right grammar (me/my/I/I am/and I)', () => {
+    expect(renderClue('No innocents neighbor #NAME:1, says #NAMES:1 friend', { selfIndex: 1 })).toBe(
+      'No innocents neighbor me, says my friend',
     );
-    expect(container.textContent).toBe('The coder in column A, two chefs');
+    expect(renderClue('#NAME:1 is guilty', { selfIndex: 1 })).toBe('I am guilty');
+    expect(renderClue('#NAME:1 has a hat', { selfIndex: 1 })).toBe('I have a hat');
+    expect(renderClue('#NAME:1 sleeps', { selfIndex: 1 })).toBe('I sleeps');
+    expect(renderClue('#NAME:0 and #NAME:1 are cousins', { selfIndex: 1 })).toBe('Banda and I are cousins');
+    expect(renderClue('#NAME:1 and #NAME:0 are cousins', { selfIndex: 1 })).toBe('Banda and I are cousins');
+  });
+
+  it('renders professions and columns, pluralizing witch specially', () => {
+    const { container } = render(
+      <ClueText clue="The #PROF:coder in column #C:0, two #PROFS:witch" people={people} width={3} />,
+    );
+    expect(container.textContent).toBe('The coder in column A, two witches');
     expect(container.querySelector('.clue-prof')?.textContent).toBe('coder');
   });
 
-  it('renders between-pairs as inclusive grid-coordinate ranges', () => {
-    // width 4: index 0 = A1, index 4 = A2, index 7 = D2, index 11 = D3
-    const wide = [...Array(12)].map((_, i) => person(`p${i}`, 'coder'));
-    const { container } = render(
-      <ClueText clue="There is only one innocent #BETWEEN:pair(7,11)" people={wide} width={4} />,
-    );
-    expect(container.textContent).toBe('There is only one innocent in D2–D3');
-    const { container: c2 } = render(
-      <ClueText clue="no innocents #BETWEEN:pair(0,4) here" people={wide} width={4} />,
-    );
-    expect(c2.textContent).toBe('no innocents in A1–A2 here');
+  describe('#BETWEEN positional paraphrasing (ported from the real renderer)', () => {
+    it('column segment touching the top edge: above <card below it>', () => {
+      // pair(0,4) = A1..A2; card below is Kay (A3, index 8)
+      expect(renderClue('There are no innocents #BETWEEN:pair(0,4) who neighbor #NAME:9', { selfIndex: 9 }))
+        .toBe('There are no innocents above Kay who neighbor me');
+      expect(renderClue('no innocents #BETWEEN:pair(0,4)', { selfIndex: 8 })).toBe('No innocents above me');
+    });
+
+    it('column segment touching the bottom edge: below <card above it>', () => {
+      // pair(12,16) = A4..A5; card above is Kay (A3, index 8)
+      expect(renderClue('one criminal #BETWEEN:pair(12,16)')).toBe('One criminal below Kay');
+    });
+
+    it('mid-column segment: in between <bounding cards>', () => {
+      // pair(7,11) = D2..D3; bounded by Eli (D1, 3) and Umar (D4, 15)
+      expect(renderClue('There is only one innocent #BETWEEN:pair(7,11)'))
+        .toBe('There is only one innocent in between Eli and Umar');
+      // self as a bounding card renders as me, placed last
+      expect(renderClue('one innocent #BETWEEN:pair(7,11)', { selfIndex: 15 }))
+        .toBe('One innocent in between Eli and me');
+    });
+
+    it('row segment touching the right edge: to the right of <card left of it>', () => {
+      // pair(9,11) = B3..D3; card to the left is Kay (A3, 8)
+      expect(renderClue('There are exactly 2 innocents #BETWEEN:pair(9,11)'))
+        .toBe('There are exactly 2 innocents to the right of Kay');
+    });
+
+    it('row segment touching the left edge: to the left of <card right of it>', () => {
+      // pair(4,6) = A2..C2; card to the right is Jerry (D2, 7)
+      expect(renderClue('no criminals #BETWEEN:pair(4,6)')).toBe('No criminals to the left of Jerry');
+    });
+
+    it('full rows and full columns', () => {
+      expect(renderClue('All innocents #BETWEEN:pair(0,3) are connected'))
+        .toBe('All innocents in row 1 are connected');
+      expect(renderClue('Both criminals #BETWEEN:pair(12,15) are connected'))
+        .toBe('Both criminals in row 4 are connected');
+      expect(renderClue('one criminal #BETWEEN:pair(1,17)')).toBe('One criminal in column B');
+    });
+  });
+
+  it('rewrites "exactly 0" as "no" and capitalizes the clue', () => {
+    expect(renderClue('there are exactly 0 criminals #BETWEEN:pair(0,3)'))
+      .toBe('There are no criminals in row 1');
   });
 
   it('renders unknown tokens and out-of-range indices as plain text', () => {
