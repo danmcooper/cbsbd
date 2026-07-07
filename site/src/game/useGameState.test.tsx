@@ -1,0 +1,44 @@
+// @vitest-environment jsdom
+import { act, renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, it } from 'vitest';
+import type { Puzzle } from '../../../shared/puzzle';
+import { loadProgress, saveProgress } from './storage';
+import { useGameState } from './useGameState';
+
+const puzzle: Puzzle = {
+  formatVersion: 1,
+  id: 'a6f09e2713b2',
+  date: '2026-07-07',
+  title: 'T',
+  difficulty: 'Easy',
+  width: 2,
+  height: 2,
+  initialReveals: [0],
+  source: 'cluesbysam.com',
+  people: [
+    { name: 'banda', profession: 'coder', gender: 'male', criminal: false, clue: null, origHint: null, paths: [] },
+    { name: 'mira', profession: 'chef', gender: 'female', criminal: true, clue: null, origHint: null, paths: [[0]] },
+    { name: 'ozan', profession: 'pilot', gender: 'male', criminal: false, clue: null, origHint: null, paths: [[0, 1]] },
+    { name: 'lena', profession: 'nurse', gender: 'female', criminal: true, clue: null, origHint: null, paths: [[0, 2]] },
+  ],
+};
+
+beforeEach(() => localStorage.clear());
+
+describe('useGameState', () => {
+  it('starts fresh and persists after each action', () => {
+    const { result } = renderHook(() => useGameState(puzzle));
+    expect(result.current.state.flipped).toEqual([0]);
+    act(() => result.current.dispatch({ type: 'guess', index: 1, guess: 'criminal', now: 1000 }));
+    expect(result.current.state.flipped).toEqual([0, 1]);
+    expect(loadProgress(puzzle.id)).toMatchObject({ flipped: [0, 1], mistakes: 0 });
+  });
+
+  it('restores saved progress on mount', () => {
+    saveProgress(puzzle.id, { flipped: [0, 1], mistakes: 2, elapsedMs: 30_000, completed: false });
+    const { result } = renderHook(() => useGameState(puzzle));
+    expect(result.current.state.flipped).toEqual([0, 1]);
+    expect(result.current.state.mistakes).toBe(2);
+    expect(result.current.state.elapsedMs).toBe(30_000);
+  });
+});

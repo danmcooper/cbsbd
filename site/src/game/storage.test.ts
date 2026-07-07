@@ -1,0 +1,29 @@
+// @vitest-environment jsdom
+import { beforeEach, describe, expect, it } from 'vitest';
+import { loadProgress, saveProgress } from './storage';
+
+const saved = { flipped: [0, 2], mistakes: 1, elapsedMs: 12_000, completed: false };
+
+beforeEach(() => localStorage.clear());
+
+describe('storage', () => {
+  it('round-trips progress keyed by puzzle id', () => {
+    saveProgress('a6f09e2713b2', saved);
+    expect(loadProgress('a6f09e2713b2')).toEqual(saved);
+    expect(localStorage.getItem('cbs:progress:a6f09e2713b2')).toBeTruthy();
+    expect(loadProgress('ffffffffffff')).toBeNull();
+  });
+
+  it('resets only the corrupt entry', () => {
+    saveProgress('a6f09e2713b2', saved);
+    localStorage.setItem('cbs:progress:ffffffffffff', '{not json');
+    expect(loadProgress('ffffffffffff')).toBeNull();
+    expect(localStorage.getItem('cbs:progress:ffffffffffff')).toBeNull();
+    expect(loadProgress('a6f09e2713b2')).toEqual(saved);
+  });
+
+  it('treats structurally wrong entries as corrupt', () => {
+    localStorage.setItem('cbs:progress:a6f09e2713b2', '{"flipped":"nope"}');
+    expect(loadProgress('a6f09e2713b2')).toBeNull();
+  });
+});
