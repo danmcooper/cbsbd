@@ -104,6 +104,7 @@ One file per puzzle at `puzzles/<date>.json`:
   "difficulty": "Medium",
   "width": 4,
   "height": 5,
+  "initialReveals": [9],
   "source": "cluesbysam.com",
   "people": [
     {
@@ -120,6 +121,8 @@ One file per puzzle at `puzzles/<date>.json`:
 ```
 
 - `people` is in grid order: A1, B1, C1, D1, A2, … (row-major), length = width×height.
+- `initialReveals` lists indices flipped at game start (from the bundle's
+  `initial_reveals`). Such cards typically have `paths: []` (never guessable).
 - `clue`, `origHint`, `paths` are nullable — not every card carries a clue.
 - `clue` keeps raw markup tokens (`#BETWEEN:pair(7,11)` etc.); rendering is the
   UI's job. Unknown tokens render as plain text.
@@ -185,15 +188,31 @@ Hash routing, no router library: `#/` archive, `#/play/<date>` game.
   features (tags, hints, settings) land in the reducer + small UI additions
   without restructuring.
 
-### No-guessing enforcement (known risk)
+### No-guessing enforcement (semantics confirmed)
 
-Enforcement is driven by the embedded `paths` data. Its exact semantics are
-not yet reverse-engineered (it appears to be precomputed deducibility
-orderings). Implementation step one is confirming how the original bundle
-consumes it. **Fallback if semantics resist recovery:** ship without
-hard-blocking — wrong flips are still recorded as mistakes and surfaced, and
-enforcement is added in a later iteration. The reducer isolates this decision
-behind a single `isDeducible(state, index)` function.
+Reverse-engineered from the live bundle, which validates a guess `j` on card
+`L` as:
+
+```js
+G=(j,L)=> Cy(ut.cards[L].criminal)==j
+       && ut.cards[L].paths.some(ne=>ne.every(ae=>o.flippedCards.includes(ae)))
+```
+
+So `paths` is a list of **alternative prerequisite sets**: card `L` is
+deducible iff some path is entirely contained in the flipped set (order
+irrelevant). A guess succeeds only if the trait is correct AND the card is
+deducible; any failed guess — including a factually correct guess on a
+non-deducible card — counts as a mistake and does not flip the card. The UI
+must show the same generic rejection for both failure reasons so it never
+leaks which one occurred. `flippedCards` starts as `initial_reveals`.
+Cards with `paths: []` can never be guessed (they start revealed);
+`paths: null` (possible future imports) is treated as always deducible.
+The reducer isolates this behind `isDeducible(puzzle, flipped, index)`.
+
+Clue token types observed (renderer handles these, unknown tokens fall back
+to raw text): `#NAME:n`, `#NAMES:n`, `#PROF:word`, `#PROFS:word`, `#C:n`
+(column letter), `#BETWEEN:pair(a,b)`. Cards may also carry flavor-only
+clues (no `orig_hint`, no tokens).
 
 ## Error handling
 
