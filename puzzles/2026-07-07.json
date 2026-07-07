@@ -1,0 +1,423 @@
+{
+  "formatVersion": 1,
+  "id": "a6f09e2713b2",
+  "date": "2026-07-07",
+  "title": "The criminals have a new hobby",
+  "difficulty": "Medium",
+  "width": 4,
+  "height": 5,
+  "initialReveals": [
+    9
+  ],
+  "source": "cluesbysam.com",
+  "people": [
+    {
+      "name": "banda",
+      "profession": "coder",
+      "gender": "male",
+      "criminal": false,
+      "clue": "There is only one innocent #BETWEEN:pair(7,11)",
+      "origHint": "number_of_traits_in_unit(unit(between,pair(7,11)),innocent,1)",
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18,
+          10,
+          8,
+          19,
+          1,
+          16
+        ]
+      ]
+    },
+    {
+      "name": "celia",
+      "profession": "teacher",
+      "gender": "female",
+      "criminal": false,
+      "clue": "There's an odd number of innocents neighboring #NAME:17",
+      "origHint": "odd_number_of_traits_in_unit(unit(neighbor,17),innocent)",
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18,
+          10,
+          8,
+          19
+        ]
+      ]
+    },
+    {
+      "name": "dana",
+      "profession": "coder",
+      "gender": "female",
+      "criminal": false,
+      "clue": "Again I have a feeling something's been stolen...",
+      "origHint": null,
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18,
+          10,
+          8,
+          19
+        ]
+      ]
+    },
+    {
+      "name": "eli",
+      "profession": "doctor",
+      "gender": "male",
+      "criminal": true,
+      "clue": "It always has a point, but never argues",
+      "origHint": null,
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18,
+          10,
+          8,
+          19,
+          1,
+          16,
+          0,
+          7
+        ]
+      ]
+    },
+    {
+      "name": "ghani",
+      "profession": "coder",
+      "gender": "male",
+      "criminal": true,
+      "clue": "#NAME:17 is one of 11 innocents on the edges",
+      "origHint": "is_one_of_n_traits_in_unit(unit(edge,void),17,innocent,11)",
+      "paths": [
+        [
+          9
+        ]
+      ]
+    },
+    {
+      "name": "hazel",
+      "profession": "cop",
+      "gender": "female",
+      "criminal": true,
+      "clue": "It leaves a trail that can change lives",
+      "origHint": null,
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18,
+          10,
+          8,
+          19,
+          1,
+          16,
+          0,
+          7
+        ]
+      ]
+    },
+    {
+      "name": "ivan",
+      "profession": "cop",
+      "gender": "male",
+      "criminal": true,
+      "clue": "Indeed, what did we steal?",
+      "origHint": null,
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18,
+          10,
+          8,
+          19,
+          1,
+          16,
+          0,
+          7
+        ]
+      ]
+    },
+    {
+      "name": "jerry",
+      "profession": "cop",
+      "gender": "male",
+      "criminal": false,
+      "clue": "There is only one criminal in column #C:1",
+      "origHint": "number_of_traits_in_unit(unit(col,1),criminal,1)",
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18,
+          10,
+          8,
+          19,
+          1,
+          16,
+          0
+        ]
+      ]
+    },
+    {
+      "name": "kay",
+      "profession": "teacher",
+      "gender": "female",
+      "criminal": false,
+      "clue": "2 #PROFS:painter have an innocent directly to the right of them",
+      "origHint": "n_professions_have_trait_in_dir(painter,innocent,1,0,2)",
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18,
+          10
+        ]
+      ]
+    },
+    {
+      "name": "logan",
+      "profession": "sleuth",
+      "gender": "male",
+      "criminal": false,
+      "clue": "There are no innocents #BETWEEN:pair(0,4) who neighbor #NAME:9",
+      "origHint": "units_share_n_traits(unit(between,pair(0,4)),unit(neighbor,9),innocent,0)",
+      "paths": []
+    },
+    {
+      "name": "max",
+      "profession": "cook",
+      "gender": "female",
+      "criminal": false,
+      "clue": "Only one row has exactly 2 criminals",
+      "origHint": "only_one_unit_has_exactly_n_traits(row,criminal,2)",
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18
+        ]
+      ]
+    },
+    {
+      "name": "nala",
+      "profession": "guard",
+      "gender": "female",
+      "criminal": true,
+      "clue": "Only one #PROF:cook has a criminal directly to the right of them",
+      "origHint": "n_in_unit_have_trait_in_dir(unit(profession,cook),criminal,1,0,1)",
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15
+        ]
+      ]
+    },
+    {
+      "name": "penny",
+      "profession": "guard",
+      "gender": "female",
+      "criminal": false,
+      "clue": "Will you give it back, or do we have to guess what it is?",
+      "origHint": null,
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18,
+          10,
+          8,
+          19,
+          1,
+          16,
+          0,
+          7
+        ]
+      ]
+    },
+    {
+      "name": "quita",
+      "profession": "doctor",
+      "gender": "female",
+      "criminal": true,
+      "clue": "Both criminals #BETWEEN:pair(12,15) are connected",
+      "origHint": "both_traits_are_neighbors_in_unit(unit(between,pair(12,15)),criminal)",
+      "paths": [
+        [
+          9,
+          4,
+          17
+        ]
+      ]
+    },
+    {
+      "name": "terry",
+      "profession": "teacher",
+      "gender": "male",
+      "criminal": true,
+      "clue": "It can be a fountain, but you can't drink from it",
+      "origHint": null,
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18,
+          10,
+          8,
+          19,
+          1,
+          16,
+          0,
+          7
+        ]
+      ]
+    },
+    {
+      "name": "umar",
+      "profession": "sleuth",
+      "gender": "male",
+      "criminal": false,
+      "clue": "There is only one innocent #BETWEEN:pair(11,15)",
+      "origHint": "number_of_traits_in_unit(unit(between,pair(11,15)),innocent,1)",
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13
+        ]
+      ]
+    },
+    {
+      "name": "vince",
+      "profession": "painter",
+      "gender": "male",
+      "criminal": false,
+      "clue": "There are as many innocent #PROFS:coder as there are innocent #PROFS:cook",
+      "origHint": "equal_number_of_traits_in_units(unit(profession,coder),unit(profession,cook),innocent)",
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18,
+          10,
+          8,
+          19,
+          1
+        ]
+      ]
+    },
+    {
+      "name": "wanda",
+      "profession": "cook",
+      "gender": "female",
+      "criminal": false,
+      "clue": "Only 1 of the 3 criminals neighboring #NAME:8 is #NAMES:14 neighbor",
+      "origHint": "unit_shares_n_out_of_n_traits_with_unit(unit(neighbor,8),unit(neighbor,14),criminal,1,3)",
+      "paths": [
+        [
+          9,
+          4
+        ]
+      ]
+    },
+    {
+      "name": "xia",
+      "profession": "painter",
+      "gender": "female",
+      "criminal": false,
+      "clue": "There are exactly 2 innocents #BETWEEN:pair(9,11)",
+      "origHint": "number_of_traits_in_unit(unit(between,pair(9,11)),innocent,2)",
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11
+        ]
+      ]
+    },
+    {
+      "name": "zane",
+      "profession": "painter",
+      "gender": "male",
+      "criminal": false,
+      "clue": "All innocents #BETWEEN:pair(0,3) are connected",
+      "origHint": "all_traits_are_neighbors_in_unit(unit(between,pair(0,3)),innocent)",
+      "paths": [
+        [
+          9,
+          4,
+          17,
+          13,
+          15,
+          11,
+          18,
+          10,
+          8
+        ]
+      ]
+    }
+  ]
+}
