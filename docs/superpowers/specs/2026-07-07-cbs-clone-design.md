@@ -156,7 +156,7 @@ Manual imports: archived pages are expected to embed their original date; the
 
 ## Workflows
 
-- **scrape-daily.yml** — cron at three spread-out UTC times (source rollover
+- **scrape-daily.yml** — cron at 00:40, 06:40, and 12:40 UTC (source rollover
   timezone unknown; idempotent runs make exact timing irrelevant). Checkout →
   run extractor → commit & push if changed → call deploy.
 - **import-puzzle.yml** — `workflow_dispatch` inputs `url_or_id` (required),
