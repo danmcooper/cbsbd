@@ -40,9 +40,9 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
         onSelect={setSelected}
       />
       {state.rejectedIndex !== null && <p className="rejection">{REJECTION_COPY}</p>}
-      {shownClue && (
+      {shownClue && shownClueIndex !== null && (
         <p className="clue-panel">
-          <ClueText clue={shownClue} people={puzzle.people} />
+          <ClueText clue={shownClue} people={puzzle.people} width={puzzle.width} selfIndex={shownClueIndex} />
         </p>
       )}
       {state.completed && (

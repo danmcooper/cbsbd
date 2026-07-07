@@ -1,4 +1,5 @@
 import type { Puzzle } from '../../../shared/puzzle';
+import { gridLabel } from '../clue/ClueText';
 import type { GameState, Guess } from '../game/reducer';
 import Card from './Card';
 
@@ -17,6 +18,7 @@ export default function Grid({ puzzle, state, selectedIndex, onGuess, onSelect }
         <Card
           key={i}
           person={person}
+          label={gridLabel(i, puzzle.width)}
           flipped={state.flipped.includes(i)}
           rejected={state.rejectedIndex === i}
           selected={selectedIndex === i}

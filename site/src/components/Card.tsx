@@ -5,6 +5,7 @@ import type { Guess } from '../game/reducer';
 
 interface CardProps {
   person: Person;
+  label: string;
   flipped: boolean;
   rejected: boolean;
   selected: boolean;
@@ -12,7 +13,7 @@ interface CardProps {
   onSelect: () => void;
 }
 
-export default function Card({ person, flipped, rejected, selected, onGuess, onSelect }: CardProps) {
+export default function Card({ person, label, flipped, rejected, selected, onGuess, onSelect }: CardProps) {
   const [choosing, setChoosing] = useState(false);
 
   const classes = [
@@ -28,6 +29,7 @@ export default function Card({ person, flipped, rejected, selected, onGuess, onS
   if (flipped) {
     return (
       <div role="group" className={classes} onClick={onSelect}>
+        <div className="card-pos">{label}</div>
         <div className="card-verdict">{person.criminal ? 'CRIMINAL' : 'INNOCENT'}</div>
         <div className="card-face">{faceFor(person.profession, person.gender)}</div>
         <div className="card-name">{person.name}</div>
@@ -38,6 +40,7 @@ export default function Card({ person, flipped, rejected, selected, onGuess, onS
 
   return (
     <div role="group" className={classes} onClick={() => setChoosing(true)}>
+      <div className="card-pos">{label}</div>
       <div className="card-face">{faceFor(person.profession, person.gender)}</div>
       <div className="card-name">{person.name}</div>
       <div className="card-prof">{person.profession}</div>

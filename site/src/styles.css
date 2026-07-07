@@ -28,6 +28,13 @@ body {
   user-select: none;
   position: relative;
 }
+.card-pos {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.4rem;
+  font-size: 0.7rem;
+  opacity: 0.55;
+}
 .card-face { font-size: 2rem; }
 .card-name { font-weight: 600; text-transform: capitalize; }
 .card-prof { font-size: 0.8rem; opacity: 0.7; }

@@ -49,7 +49,8 @@ describe('Game', () => {
     await user.click(screen.getByRole('button', { name: 'Criminal' }));
     expect(screen.getAllByRole('group')[1].className).toContain('flipped');
     // ClueText splits the clue across highlight spans; assert the panel's combined text.
-    expect(document.querySelector('.clue-panel')?.textContent).toBe('Clue of Mira');
+    // The clue is shown on mira's own card, so #NAME:1 self-renders as "me".
+    expect(document.querySelector('.clue-panel')?.textContent).toBe('Clue of me');
   });
 
   it('shows the same generic rejection for wrong trait and non-deducible guesses', async () => {
