@@ -55,3 +55,26 @@ body {
   25% { transform: translateX(-4px); }
   75% { transform: translateX(4px); }
 }
+
+.archive {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+.archive ul {
+  list-style: none;
+  padding: 0;
+}
+.archive li a {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 0.375rem;
+}
+.archive li a:hover { background: #8881; }
+.arch-title { flex: 1; }
+.arch-status.status-done { color: #1a7f37; }
+.arch-status.status-in-progress { color: #b58900; }
+.arch-status.status-unplayed { opacity: 0.6; }

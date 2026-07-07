@@ -1,9 +1,12 @@
 // @vitest-environment jsdom
 import { render, screen } from '@testing-library/react';
-import { expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 import App from './App';
 
-it('renders the app shell', () => {
+afterEach(() => vi.unstubAllGlobals());
+
+it('renders the archive shell', async () => {
+  vi.stubGlobal('fetch', vi.fn(async () => new Response('[]', { status: 200 })));
   render(<App />);
-  expect(screen.getByRole('heading')).toBeTruthy();
+  expect(await screen.findByRole('heading', { name: /puzzle archive/i })).toBeTruthy();
 });

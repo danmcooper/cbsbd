@@ -14,7 +14,7 @@ afterEach(() => vi.unstubAllGlobals());
 
 describe('useFetch', () => {
   it('resolves BASE_URL-relative JSON', async () => {
-    const fetchMock = vi.fn(async () => new Response('{"ok":true}', { status: 200 }));
+    const fetchMock = vi.fn(async (_url: string | URL | Request) => new Response('{"ok":true}', { status: 200 }));
     vi.stubGlobal('fetch', fetchMock);
     render(<Probe />);
     expect(await screen.findByText('data: true')).toBeTruthy();
