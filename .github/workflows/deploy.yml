@@ -1,0 +1,45 @@
+name: Deploy to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_call: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main # workflow_call: build the commit the caller just pushed
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Assemble Pages artifact (blank root + app and puzzles under UUID)
+        run: |
+          UUID=$(node -p "JSON.parse(require('fs').readFileSync('config/site.json','utf8')).uuid")
+          mkdir -p artifact
+          printf '<!doctype html><html><head><meta name="robots" content="noindex"><title></title></head><body></body></html>' > artifact/index.html
+          cp -r site/dist "artifact/$UUID"
+          mkdir -p "artifact/$UUID/puzzles"
+          if ls puzzles/*.json >/dev/null 2>&1; then cp puzzles/*.json "artifact/$UUID/puzzles/"; fi
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: artifact
+      - id: deployment
+        uses: actions/deploy-pages@v4

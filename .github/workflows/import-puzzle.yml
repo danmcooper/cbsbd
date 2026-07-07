@@ -1,0 +1,59 @@
+name: Import puzzle
+
+on:
+  workflow_dispatch:
+    inputs:
+      url_or_id:
+        description: Puzzle URL or 12-hex puzzleId
+        required: true
+        type: string
+      date_override:
+        description: 'Override date (YYYY-MM-DD), for archive pages missing one'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scrape
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run extract -- "$URL_OR_ID"
+        env:
+          URL_OR_ID: ${{ inputs.url_or_id }}
+          DATE_OVERRIDE: ${{ inputs.date_override }}
+      - id: commit
+        name: Commit and push if the import produced changes
+        run: |
+          if [ -n "$(git status --porcelain puzzles)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
+            git add puzzles
+            git commit -m "Import puzzle (${{ inputs.url_or_id }})"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy:
+    needs: import
+    if: needs.import.outputs.changed == 'true'
+    uses: ./.github/workflows/deploy.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
