@@ -1,3 +1,4 @@
+# Manually imports a specific puzzle by URL or puzzleId via the Actions UI.
 name: Import puzzle
 
 on:

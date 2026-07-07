@@ -1,3 +1,4 @@
+# Scrapes today's puzzle from cluesbysam.com and deploys the site if new.
 name: Scrape daily puzzle
 
 on:
