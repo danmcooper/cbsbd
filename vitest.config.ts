@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   test: {
+    globals: true, // lets @testing-library/react auto-cleanup between tests
     environment: 'node',
     include: [
       'shared/**/*.test.ts',

@@ -1,3 +1,8 @@
+import { useRoute } from './router';
+import Archive from './screens/Archive';
+import Game from './screens/Game';
+
 export default function App() {
-  return <h1>Puzzle Archive</h1>;
+  const route = useRoute();
+  return route.screen === 'play' ? <Game key={route.date} date={route.date} /> : <Archive />;
 }
