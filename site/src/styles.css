@@ -5,3 +5,53 @@
 body {
   margin: 0;
 }
+
+.game {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+.grid {
+  display: grid;
+  gap: 0.5rem;
+}
+.card {
+  aspect-ratio: 3 / 4;
+  border: 1px solid #8886;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+.card-face { font-size: 2rem; }
+.card-name { font-weight: 600; text-transform: capitalize; }
+.card-prof { font-size: 0.8rem; opacity: 0.7; }
+.card.criminal { background: #b3202033; border-color: #b32020; }
+.card.innocent { background: #1a7f3733; border-color: #1a7f37; }
+.card.selected { outline: 2px solid #4a90d9; }
+.card.rejected { animation: shake 0.3s; }
+.card-verdict { font-size: 0.7rem; letter-spacing: 0.1em; }
+.card-choice {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: canvas;
+  border-radius: 0.5rem;
+}
+.clue-name, .clue-prof { font-weight: 700; }
+.rejection { color: #b32020; font-weight: 600; }
+.completed { font-weight: 700; }
+@keyframes shake {
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
