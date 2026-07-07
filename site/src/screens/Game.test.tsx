@@ -34,23 +34,24 @@ async function renderGame() {
 }
 
 describe('Game', () => {
-  it('loads the puzzle and renders the grid with initial reveals flipped', async () => {
+  it('loads the puzzle and renders the grid with initial reveals flipped, clue on the card', async () => {
     await renderGame();
     const cards = screen.getAllByRole('group');
     expect(cards).toHaveLength(4);
     expect(cards[0].className).toContain('flipped');
+    expect(cards[0].textContent).toContain('Start here');
     expect(cards[1].className).not.toContain('flipped');
   });
 
-  it('flips a deducible card on a correct guess and shows its clue', async () => {
+  it('flips a deducible card on a correct guess and shows its clue on the card', async () => {
     const user = userEvent.setup();
     await renderGame();
     await user.click(screen.getByText('mira'));
     await user.click(screen.getByRole('button', { name: 'Criminal' }));
-    expect(screen.getAllByRole('group')[1].className).toContain('flipped');
-    // ClueText splits the clue across highlight spans; assert the panel's combined text.
+    const card = screen.getAllByRole('group')[1];
+    expect(card.className).toContain('flipped');
     // The clue is shown on mira's own card, so #NAME:1 self-renders as "me".
-    expect(document.querySelector('.clue-panel')?.textContent).toBe('Clue of me');
+    expect(card.textContent).toContain('Clue of me');
   });
 
   it('shows the same generic rejection for wrong trait and non-deducible guesses', async () => {

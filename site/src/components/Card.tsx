@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { Person } from '../../../shared/puzzle';
 import { faceFor } from '../faces';
 import type { Guess } from '../game/reducer';
@@ -8,12 +8,12 @@ interface CardProps {
   label: string;
   flipped: boolean;
   rejected: boolean;
-  selected: boolean;
+  /** Rendered clue shown on the card once it is flipped. */
+  clueNode?: ReactNode;
   onGuess: (guess: Guess) => void;
-  onSelect: () => void;
 }
 
-export default function Card({ person, label, flipped, rejected, selected, onGuess, onSelect }: CardProps) {
+export default function Card({ person, label, flipped, rejected, clueNode, onGuess }: CardProps) {
   const [choosing, setChoosing] = useState(false);
 
   const classes = [
@@ -21,19 +21,18 @@ export default function Card({ person, label, flipped, rejected, selected, onGue
     flipped ? 'flipped' : '',
     flipped ? (person.criminal ? 'criminal' : 'innocent') : '',
     rejected ? 'rejected' : '',
-    selected ? 'selected' : '',
   ]
     .filter(Boolean)
     .join(' ');
 
   if (flipped) {
     return (
-      <div role="group" className={classes} onClick={onSelect}>
+      <div role="group" className={classes}>
         <div className="card-pos">{label}</div>
-        <div className="card-verdict">{person.criminal ? 'CRIMINAL' : 'INNOCENT'}</div>
         <div className="card-face">{faceFor(person.profession, person.gender)}</div>
         <div className="card-name">{person.name}</div>
         <div className="card-prof">{person.profession}</div>
+        {clueNode && <div className="card-clue">{clueNode}</div>}
       </div>
     );
   }

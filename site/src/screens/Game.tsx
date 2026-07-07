@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import type { Puzzle } from '../../../shared/puzzle';
 import { validatePuzzle } from '../../../shared/puzzle';
-import ClueText from '../clue/ClueText';
 import Grid from '../components/Grid';
 import type { Guess } from '../game/reducer';
 import { useGameState } from '../game/useGameState';
@@ -16,9 +14,6 @@ function formatTime(ms: number): string {
 
 function Board({ puzzle }: { puzzle: Puzzle }) {
   const { state, dispatch } = useGameState(puzzle);
-  const [selected, setSelected] = useState<number | null>(null);
-  const shownClueIndex = selected ?? state.flipped[state.flipped.length - 1] ?? null;
-  const shownClue = shownClueIndex !== null ? puzzle.people[shownClueIndex].clue : null;
 
   return (
     <main className="game">
@@ -32,19 +27,11 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
       <Grid
         puzzle={puzzle}
         state={state}
-        selectedIndex={shownClueIndex}
         onGuess={(index, guess: Guess) => {
-          setSelected(null);
           dispatch({ type: 'guess', index, guess, now: Date.now() });
         }}
-        onSelect={setSelected}
       />
       {state.rejectedIndex !== null && <p className="rejection">{REJECTION_COPY}</p>}
-      {shownClue && shownClueIndex !== null && (
-        <p className="clue-panel">
-          <ClueText clue={shownClue} people={puzzle.people} width={puzzle.width} selfIndex={shownClueIndex} />
-        </p>
-      )}
       {state.completed && (
         <p className="completed">
           Solved! {state.mistakes} mistakes · {formatTime(state.elapsedMs)}

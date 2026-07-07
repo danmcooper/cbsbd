@@ -16,7 +16,8 @@ body {
   gap: 0.5rem;
 }
 .card {
-  aspect-ratio: 3 / 4;
+  min-height: 9rem;
+  padding: 0.5rem 0.35rem;
   border: 1px solid #8886;
   border-radius: 0.5rem;
   display: flex;
@@ -27,6 +28,13 @@ body {
   cursor: pointer;
   user-select: none;
   position: relative;
+  text-align: center;
+}
+.card.flipped { cursor: default; }
+.card-clue {
+  font-size: 0.75rem;
+  line-height: 1.3;
+  margin-top: 0.3rem;
 }
 .card-pos {
   position: absolute;
@@ -40,9 +48,7 @@ body {
 .card-prof { font-size: 0.8rem; opacity: 0.7; }
 .card.criminal { background: #b3202033; border-color: #b32020; }
 .card.innocent { background: #1a7f3733; border-color: #1a7f37; }
-.card.selected { outline: 2px solid #4a90d9; }
 .card.rejected { animation: shake 0.3s; }
-.card-verdict { font-size: 0.7rem; letter-spacing: 0.1em; }
 .card-choice {
   position: absolute;
   inset: 0;
