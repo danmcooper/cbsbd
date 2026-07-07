@@ -1,15 +1,15 @@
 import type { Puzzle } from '../../../shared/puzzle';
 import ClueText, { gridLabel } from '../clue/ClueText';
-import type { GameState, Guess } from '../game/reducer';
+import type { GameState } from '../game/reducer';
 import Card from './Card';
 
 interface GridProps {
   puzzle: Puzzle;
   state: GameState;
-  onGuess: (index: number, guess: Guess) => void;
+  onOpen: (index: number) => void;
 }
 
-export default function Grid({ puzzle, state, onGuess }: GridProps) {
+export default function Grid({ puzzle, state, onOpen }: GridProps) {
   return (
     <div className="grid" style={{ gridTemplateColumns: `repeat(${puzzle.width}, 1fr)` }}>
       {puzzle.people.map((person, i) => (
@@ -24,7 +24,7 @@ export default function Grid({ puzzle, state, onGuess }: GridProps) {
               <ClueText clue={person.clue} people={puzzle.people} width={puzzle.width} selfIndex={i} />
             ) : undefined
           }
-          onGuess={(guess) => onGuess(i, guess)}
+          onOpen={() => onOpen(i)}
         />
       ))}
     </div>

@@ -49,18 +49,45 @@ body {
 .card.criminal { background: #b3202033; border-color: #b32020; }
 .card.innocent { background: #1a7f3733; border-color: #1a7f37; }
 .card.rejected { animation: shake 0.3s; }
-.card-choice {
-  position: absolute;
+.overlay {
+  position: fixed;
   inset: 0;
+  background: #000a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.modal {
+  background: canvas;
+  border: 1px solid #8886;
+  border-radius: 0.75rem;
+  padding: 1.5rem 2rem;
+  min-width: min(20rem, 85vw);
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
+  align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem;
-  background: canvas;
-  border-radius: 0.5rem;
+  text-align: center;
 }
+.modal-face { font-size: 3.5rem; }
+.modal-name { font-size: 1.4rem; font-weight: 700; text-transform: capitalize; }
+.modal-prof { opacity: 0.8; }
+.modal-choices {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+.modal button {
+  font-size: 1rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 0.5rem;
+  background: transparent;
+  cursor: pointer;
+}
+.btn-innocent { border: 1px solid #1a7f37; color: #4bb543; font-weight: 600; }
+.btn-criminal { border: 1px solid #b32020; color: #e06c6c; font-weight: 600; }
+.btn-close { border: 1px solid #8888; color: inherit; margin-top: 0.5rem; }
 .clue-name, .clue-prof { font-weight: 700; }
 .rejection { color: #b32020; font-weight: 600; }
 .completed { font-weight: 700; }

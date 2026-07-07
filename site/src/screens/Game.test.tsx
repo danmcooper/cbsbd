@@ -43,11 +43,25 @@ describe('Game', () => {
     expect(cards[1].className).not.toContain('flipped');
   });
 
+  it('opens a guess modal with the suspect and a Close button that just dismisses', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    await user.click(screen.getByText('ozan'));
+    const modal = screen.getByRole('dialog');
+    expect(modal.textContent).toContain('ozan');
+    expect(modal.textContent).toContain('pilot');
+    await user.click(screen.getByRole('button', { name: 'Close' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByText(/mistakes: 0/i)).toBeTruthy();
+    expect(screen.getAllByRole('group')[2].className).not.toContain('flipped');
+  });
+
   it('flips a deducible card on a correct guess and shows its clue on the card', async () => {
     const user = userEvent.setup();
     await renderGame();
     await user.click(screen.getByText('mira'));
     await user.click(screen.getByRole('button', { name: 'Criminal' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
     const card = screen.getAllByRole('group')[1];
     expect(card.className).toContain('flipped');
     // The clue is shown on mira's own card, so #NAME:1 self-renders as "me".
