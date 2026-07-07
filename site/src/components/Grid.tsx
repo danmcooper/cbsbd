@@ -11,7 +11,7 @@ interface GridProps {
 
 export default function Grid({ puzzle, state, onOpen }: GridProps) {
   return (
-    <div className="grid" style={{ gridTemplateColumns: `repeat(${puzzle.width}, 1fr)` }}>
+    <div className="grid" style={{ gridTemplateColumns: `repeat(${puzzle.width}, auto)` }}>
       {puzzle.people.map((person, i) => (
         <Card
           key={i}
