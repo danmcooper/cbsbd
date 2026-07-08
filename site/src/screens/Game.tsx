@@ -165,6 +165,7 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
   }, [state.completed]);
   const elapsed = liveElapsedMs(state, now);
   const minutes = elapsed >= 60_000 ? Math.round(elapsed / 60_000) : null;
+  const [showSeconds, setShowSeconds] = useState(false);
 
   return (
     <main className="game">
@@ -178,7 +179,14 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
         <h1>{puzzle.title}</h1>
         <p className="meta">
           {puzzle.date} · {puzzle.difficulty} · mistakes: {state.mistakes}
-          {!state.completed && minutes !== null && ` · ${minutes} min`}
+          {!state.completed && minutes !== null && (
+            <>
+              {' · '}
+              <span className="timer" onClick={() => setShowSeconds((s) => !s)}>
+                {showSeconds ? formatTime(elapsed) : `${minutes} min`}
+              </span>
+            </>
+          )}
         </p>
         {state.rejectedIndex !== null && (
           <p className="rejection">{REJECTION_COPY}</p>

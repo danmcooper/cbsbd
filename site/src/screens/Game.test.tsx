@@ -190,3 +190,20 @@ describe('start popup', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 });
+
+describe('timer display', () => {
+  it('tapping the minutes toggles full seconds and back', async () => {
+    localStorage.setItem(
+      'cbs:progress:a6f09e2713b2',
+      JSON.stringify({ flipped: [0, 1], mistakes: 1, elapsedMs: 125_000, completed: false }),
+    );
+    const user = userEvent.setup();
+    render(<Game date="2026-07-07" />);
+    await screen.findByText('A tiny test mystery');
+    const timer = screen.getByText('2 min');
+    await user.click(timer);
+    expect(timer.textContent).toBe('02:05');
+    await user.click(timer);
+    expect(timer.textContent).toBe('2 min');
+  });
+});
