@@ -209,7 +209,7 @@ a {
   content: "";
   position: absolute;
   inset: 0;
-  clip-path: polygon(calc(100% - 20px) 100%, 100% calc(100% - 20px), 100% 100%);
+  clip-path: polygon(calc(100% - 22px) 100%, 100% calc(100% - 22px), 100% 100%);
 }
 .mark.mark-yellow::before {
   background: #ffff54;
