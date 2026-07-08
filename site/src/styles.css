@@ -152,6 +152,7 @@ a {
   overflow: hidden;
   text-align: center;
   --band: var(--background-highlight);
+  --tag-neutral: #3b3943;
   transition: transform 0.05s linear;
   font-family: "Chalkboard SE", "Comic Sans MS", "Comic Sans", sans-serif;
 }
@@ -182,7 +183,8 @@ a {
   position: absolute;
   inset: 0;
   clip-path: polygon(calc(100% - 22px) 0, 100% 0, 100% 22px);
-  background: #3b3943;
+  /* Untagged shade follows the card state (gray/green/red on the real site). */
+  background: var(--tag-neutral);
 }
 .tag.tag-yellow::before {
   background: #ffff54;
@@ -292,12 +294,14 @@ a {
   background: var(--background-innocent);
   border-color: var(--border-innocent);
   --band: var(--background-highlight-innocent);
+  --tag-neutral: #395446;
   color: #fff;
 }
 .card.criminal {
   background: var(--background-criminal);
   border-color: var(--border-criminal);
   --band: var(--background-highlight-criminal);
+  --tag-neutral: #5c303e;
   color: #fff;
 }
 .card.rejected {
@@ -344,7 +348,7 @@ a {
 }
 .card-clue {
   font-size: 11px;
-  line-height: 1.1;
+  line-height: 0.9;
   opacity: 0.87;
   padding: 0 2px;
   margin: auto 0;
