@@ -4,6 +4,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {
   ExtractError,
+  extractFaces,
   extractMetadata,
   extractPeopleArray,
   findBundleUrl,
@@ -46,7 +47,7 @@ export async function runExtract(
 
   const meta = extractMetadata(bundleText);
   if (opts.dateOverride) meta.date = opts.dateOverride;
-  const puzzle = normalizePuzzle(meta, extractPeopleArray(bundleText));
+  const puzzle = normalizePuzzle(meta, extractPeopleArray(bundleText), extractFaces(bundleText));
 
   const file = path.join(puzzlesDir, `${puzzle.date}.json`);
   if (existsSync(file)) {

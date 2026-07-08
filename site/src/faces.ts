@@ -1,3 +1,5 @@
+import type { Person } from '../../shared/puzzle';
+
 // Profession -> [male, female] emoji, ported verbatim from the live bundle.
 const FACES: Record<string, [string, string]> = {
   police: ['👮‍♂️', '👮‍♀️'],
@@ -73,10 +75,17 @@ const FACES: Record<string, [string, string]> = {
   dog: ['🐶', '🐶'],
   mouse: ['🐭', '🐭'],
   pig: ['🐷', '🐷'],
+  cat: ['🐈', '🐈'],
+  horse: ['🐴', '🐴'],
 };
 
-export function faceFor(profession: string, gender: string): string {
-  const entry = FACES[profession];
+/**
+ * Newer puzzle files carry the emoji scraped from the source bundle, so new
+ * professions render without code changes; the table covers older files.
+ */
+export function faceFor(person: Pick<Person, 'profession' | 'gender' | 'face'>): string {
+  if (person.face) return person.face;
+  const entry = FACES[person.profession];
   if (!entry) return '😬'; // the real renderer's unknown-profession fallback
-  return entry[gender === 'female' ? 1 : 0];
+  return entry[person.gender === 'female' ? 1 : 0];
 }

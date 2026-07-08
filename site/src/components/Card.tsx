@@ -100,7 +100,7 @@ export default function Card({
         />
         <div className="card-pos">{label}</div>
         {justFlipped && <div className="speech-bubble">Correct!</div>}
-        <div className="card-face">{faceFor(person.profession, person.gender)}</div>
+        <div className="card-face">{faceFor(person)}</div>
         <div className={nameReferenced ? "card-name referenced" : "card-name"}>{person.name}</div>
         <div className={profReferenced ? "card-prof referenced" : "card-prof"}>
           {person.profession}

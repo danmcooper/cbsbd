@@ -6,6 +6,8 @@ export interface Person {
   clue: string | null;
   origHint: string | null;
   paths: number[][] | null;
+  /** Emoji from the source bundle's face map; absent in older puzzle files. */
+  face?: string | null;
 }
 
 export interface Puzzle {
@@ -55,6 +57,9 @@ export function validatePuzzle(data: unknown): Puzzle {
     if (typeof q.criminal !== 'boolean') fail(`${where}.criminal must be a boolean`);
     if (q.clue !== null && typeof q.clue !== 'string') fail(`${where}.clue must be a string or null`);
     if (q.origHint !== null && typeof q.origHint !== 'string') fail(`${where}.origHint must be a string or null`);
+    if (q.face !== undefined && q.face !== null && typeof q.face !== 'string') {
+      fail(`${where}.face must be a string, null, or absent`);
+    }
     if (q.paths !== null) {
       const ok =
         Array.isArray(q.paths) &&

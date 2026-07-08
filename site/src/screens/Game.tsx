@@ -157,9 +157,7 @@ function GuessModal({
         className="modal"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="modal-face">
-          {faceFor(person.profession, person.gender)}
-        </div>
+        <div className="modal-face">{faceFor(person)}</div>
         <div className="modal-name">{person.name}</div>
         <div className="modal-prof">{person.profession}</div>
         <div className="modal-choices">

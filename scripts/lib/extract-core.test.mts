@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   ExtractError,
+  extractFaces,
   extractMetadata,
   extractPeopleArray,
   findBundleUrl,
@@ -85,6 +86,20 @@ describe('extractMetadata', () => {
   });
 });
 
+describe('extractFaces', () => {
+  it('collects every profession -> emoji pair assigned to the map variable', () => {
+    const faces = extractFaces(bundle);
+    expect(faces.police).toEqual(['👮‍♂️', '👮‍♀️']);
+    expect(faces.coder).toEqual(['👨‍💻', '👩‍💻']);
+    expect(faces.chef).toEqual(['👨‍🍳', '👩‍🍳']);
+    expect(faces.nurse).toBeUndefined();
+  });
+
+  it('throws faces-parse when the police anchor is missing', () => {
+    expect(() => extractFaces('var x=1;')).toThrow(/\[faces-parse\]/);
+  });
+});
+
 describe('normalizePuzzle', () => {
   it('produces a valid Puzzle from the fixture bundle', () => {
     const puzzle = normalizePuzzle(extractMetadata(bundle), extractPeopleArray(bundle));
@@ -97,6 +112,13 @@ describe('normalizePuzzle', () => {
     expect(puzzle.people[0].origHint).toBe('number_of_traits_in_unit(unit(row,0),criminal,1)');
     expect(puzzle.people[1].clue).toBe('The #PROF:chef sits beside #NAME:0');
     expect(puzzle.people[2].paths).toEqual([[0, 1], [3]]);
+  });
+
+  it('fills each person face from the map by gender, null when unmapped', () => {
+    const puzzle = normalizePuzzle(extractMetadata(bundle), extractPeopleArray(bundle), extractFaces(bundle));
+    expect(puzzle.people[0].face).toBe('👨‍💻'); // banda: male coder
+    expect(puzzle.people[1].face).toBe('👩‍🍳'); // mira: female chef
+    expect(puzzle.people[3].face).toBeNull(); // lena: nurse, not in the map
   });
 
   it('treats missing paths as null and rejects invalid results as validation errors', () => {

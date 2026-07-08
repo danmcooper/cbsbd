@@ -6,6 +6,7 @@ export type ExtractStage =
   | 'bundle-discovery'
   | 'bundle-fetch'
   | 'array-parse'
+  | 'faces-parse'
   | 'metadata-parse'
   | 'validation'
   | 'conflict';
@@ -67,6 +68,28 @@ export function extractPeopleArray(bundle: string): unknown[] {
   return value;
 }
 
+/**
+ * The bundle assigns the profession -> [male, female] emoji map one entry at a
+ * time (`q={};q.police=[…];q.cop=[…];…`). Anchor on the police entry to learn
+ * the minified variable name, then collect every two-string array assigned to
+ * it. New professions on the source site flow through without code changes.
+ */
+export function extractFaces(bundle: string): Record<string, [string, string]> {
+  const anchor = bundle.match(/([\w$]+)\.police=\[/);
+  if (!anchor) throw new ExtractError('faces-parse', 'face map (VAR.police=[…]) not found in bundle');
+  const ident = anchor[1].replace(/\$/g, '\\$');
+  const entry = new RegExp(`(?:^|[;,{}])${ident}\\.([\\w$]+)=\\[("[^"]*"),("[^"]*")\\]`, 'g');
+  const faces: Record<string, [string, string]> = {};
+  for (const m of bundle.matchAll(entry)) {
+    try {
+      faces[m[1]] = [JSON.parse(m[2]) as string, JSON.parse(m[3]) as string];
+    } catch {
+      throw new ExtractError('faces-parse', `unparseable face entry for "${m[1]}"`);
+    }
+  }
+  return faces;
+}
+
 export interface BundleMetadata {
   width: number;
   height: number;
@@ -120,9 +143,14 @@ export function extractMetadata(bundle: string): BundleMetadata {
   };
 }
 
-export function normalizePuzzle(meta: BundleMetadata, rawPeople: unknown[]): Puzzle {
+export function normalizePuzzle(
+  meta: BundleMetadata,
+  rawPeople: unknown[],
+  faces: Record<string, [string, string]> = {},
+): Puzzle {
   const people = rawPeople.map((raw) => {
     const r = raw as Record<string, unknown>;
+    const pair = faces[r.profession as string];
     return {
       name: r.name,
       profession: r.profession,
@@ -131,6 +159,7 @@ export function normalizePuzzle(meta: BundleMetadata, rawPeople: unknown[]): Puz
       clue: typeof r.hint === 'string' && r.hint !== '' ? r.hint : null,
       origHint: typeof r.orig_hint === 'string' && r.orig_hint !== '' ? r.orig_hint : null,
       paths: Array.isArray(r.paths) ? r.paths : null,
+      face: pair ? pair[r.gender === 'female' ? 1 : 0] : null,
     };
   });
   const candidate = {
