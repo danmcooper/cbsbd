@@ -166,6 +166,26 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
   const elapsed = liveElapsedMs(state, now);
   const minutes = Math.floor(elapsed / 60_000);
   const [showSeconds, setShowSeconds] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
+
+  const togglePause = () => {
+    if (paused) {
+      dispatch({ type: "start", now: Date.now() });
+      setPaused(false);
+    } else {
+      dispatch({ type: "pause", now: Date.now() });
+      setPaused(true);
+    }
+  };
+
+  const confirmReset = () => {
+    dispatch({ type: "reset" });
+    setResetOpen(false);
+    setPaused(false);
+    setShowSeconds(false);
+    setStartOpen(true);
+  };
 
   return (
     <main className="game">
@@ -177,16 +197,18 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
           onCycleTag={(index) => dispatch({ type: "cycleTag", index })}
           onToggleClue={(index) => dispatch({ type: "toggleConsumed", index })}
         />
-        <p className="meta">
-          {puzzle.date} · {puzzle.difficulty} · mistakes: {state.mistakes}
-          {!state.completed && (
-            <>
-              {' · '}
-              <span className="timer" onClick={() => setShowSeconds((s) => !s)}>
-                {showSeconds ? formatTime(elapsed) : `${minutes} min`}
-              </span>
-            </>
-          )}
+        <div className="button-row">
+          <button onClick={togglePause}>{paused ? 'Unpause' : 'Pause'}</button>
+          <button onClick={() => setResetOpen(true)}>Reset</button>
+          <button>💡Show hint</button>
+        </div>
+        <p className="date-line">
+          <span>
+            {formatDateOrdinal(puzzle.date)} ({puzzle.difficulty})
+          </span>
+          <span className="timer" onClick={() => setShowSeconds((s) => !s)}>
+            {showSeconds ? formatTime(elapsed) : `${minutes} Minute${minutes === 1 ? '' : 's'}`}
+          </span>
         </p>
         <h1>{puzzle.title}</h1>
         {state.rejectedIndex !== null && (
@@ -207,6 +229,27 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
           <a href="#/">← Archive</a>
         </p>
       </div>
+      {paused && <div className="pause-overlay" />}
+      {resetOpen && (
+        <div className="overlay" onClick={() => setResetOpen(false)}>
+          <div
+            role="dialog"
+            aria-label="reset"
+            className="modal reset-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="reset-question">Reset this puzzle?</p>
+            <div className="modal-choices">
+              <button className="btn-criminal" onClick={confirmReset}>
+                Reset
+              </button>
+              <button className="btn-close" onClick={() => setResetOpen(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {resultsOpen && (
         <ResultsModal
           puzzle={puzzle}

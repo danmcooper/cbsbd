@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Game from './Game';
@@ -56,7 +56,6 @@ describe('Game', () => {
     expect(modal.textContent).toContain('pilot');
     await user.click(screen.getByRole('button', { name: 'Close' }));
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(screen.getByText(/mistakes: 0/i)).toBeTruthy();
     expect(screen.getAllByRole('group')[2].className).not.toContain('flipped');
   });
 
@@ -81,7 +80,6 @@ describe('Game', () => {
     await user.click(screen.getByText('lena'));
     await user.click(screen.getByRole('button', { name: 'Criminal' })); // correct but not deducible
     expect(screen.getByText("That doesn't fit yet.")).toBeTruthy();
-    expect(screen.getByText(/mistakes: 2/i)).toBeTruthy();
   });
 
   it('shows completion with mistakes count', async () => {
@@ -200,11 +198,11 @@ describe('timer display', () => {
     const user = userEvent.setup();
     render(<Game date="2026-07-07" />);
     await screen.findByText('A tiny test mystery');
-    const timer = screen.getByText('2 min');
+    const timer = screen.getByText('2 Minutes');
     await user.click(timer);
     expect(timer.textContent).toBe('02:05');
     await user.click(timer);
-    expect(timer.textContent).toBe('2 min');
+    expect(timer.textContent).toBe('2 Minutes');
   });
 });
 
@@ -212,11 +210,11 @@ describe('timer under a minute', () => {
   it('shows 0 min from the start so seconds are reachable', async () => {
     const user = userEvent.setup();
     await renderGame();
-    const timer = screen.getByText('0 min');
+    const timer = screen.getByText('0 Minutes');
     await user.click(timer);
     expect(timer.textContent).toMatch(/^00:0\d$/);
     await user.click(timer);
-    expect(timer.textContent).toBe('0 min');
+    expect(timer.textContent).toBe('0 Minutes');
   });
 });
 
@@ -235,5 +233,44 @@ describe('consumed clues', () => {
     await user.click(screen.getByText('Clue of me'));
     expect(card.className).not.toContain('consumed');
     expect(card.querySelector('.card-name')?.className).toContain('referenced');
+  });
+});
+
+describe('control bar', () => {
+  it('shows the date line with date left and time right', async () => {
+    await renderGame();
+    const line = document.querySelector('.date-line');
+    expect(line?.textContent).toBe('Jul 7th 2026 (Easy)0 Minutes');
+    expect(screen.getByRole('button', { name: /show hint/i })).toBeTruthy();
+  });
+
+  it('Pause dims the board, freezes play, and toggles to Unpause', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    await user.click(screen.getByRole('button', { name: 'Pause' }));
+    expect(document.querySelector('.pause-overlay')).toBeTruthy();
+    const unpause = screen.getByRole('button', { name: 'Unpause' });
+    await user.click(unpause);
+    expect(document.querySelector('.pause-overlay')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Pause' })).toBeTruthy();
+  });
+
+  it('Reset asks for confirmation; Cancel keeps progress, Reset wipes it', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    await user.click(screen.getByText('mira'));
+    await user.click(screen.getByRole('button', { name: 'Criminal' }));
+    expect(screen.getAllByRole('group')[1].className).toContain('flipped');
+
+    await user.click(screen.getByRole('button', { name: 'Reset' }));
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(screen.getAllByRole('group')[1].className).toContain('flipped');
+
+    await user.click(screen.getByRole('button', { name: 'Reset' }));
+    const confirm = screen.getByRole('dialog');
+    await user.click(within(confirm).getByRole('button', { name: 'Reset' }));
+    expect(screen.getAllByRole('group')[1].className).not.toContain('flipped');
+    // Back to a fresh puzzle: the start popup returns.
+    expect(screen.getByRole('button', { name: 'Start' })).toBeTruthy();
   });
 });

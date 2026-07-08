@@ -21,6 +21,8 @@ export interface GameState {
 
 export type GameAction =
   | { type: 'start'; now: number }
+  | { type: 'pause'; now: number }
+  | { type: 'reset' }
   | { type: 'guess'; index: number; guess: Guess; now: number }
   | { type: 'clearRejection' }
   | { type: 'cycleTag'; index: number }
@@ -68,6 +70,11 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
   switch (action.type) {
     case 'start':
       return state.lastActionAt === null ? { ...state, lastActionAt: action.now } : state;
+    case 'pause':
+      // Fold accrued time in, then stop the clock until the next start.
+      return state.lastActionAt === null ? state : { ...tick(state, action.now), lastActionAt: null };
+    case 'reset':
+      return initialGameState(puzzle);
     case 'guess': {
       if (state.completed || state.flipped.includes(action.index)) return state;
       const person = puzzle.people[action.index];

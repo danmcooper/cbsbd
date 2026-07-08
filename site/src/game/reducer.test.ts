@@ -201,3 +201,23 @@ describe('consumed clues', () => {
     expect(restored.consumed).toEqual([2]);
   });
 });
+
+describe('pause and reset', () => {
+  it('pause folds elapsed time and freezes the clock; start resumes', () => {
+    let s = gameReducer(puzzle, initialGameState(puzzle), { type: 'start', now: 10_000 });
+    s = gameReducer(puzzle, s, { type: 'pause', now: 25_000 });
+    expect(s.elapsedMs).toBe(15_000);
+    expect(s.lastActionAt).toBeNull();
+    expect(liveElapsedMs(s, 500_000)).toBe(15_000); // frozen while paused
+    s = gameReducer(puzzle, s, { type: 'start', now: 100_000 });
+    expect(liveElapsedMs(s, 110_000)).toBe(25_000);
+  });
+
+  it('reset returns to the initial state', () => {
+    let s = gameReducer(puzzle, initialGameState(puzzle), { type: 'start', now: 1_000 });
+    s = guess(s, 1, 'innocent', 2_000);
+    s = gameReducer(puzzle, s, { type: 'cycleTag', index: 2 });
+    s = gameReducer(puzzle, s, { type: 'reset' });
+    expect(s).toEqual(initialGameState(puzzle));
+  });
+});
