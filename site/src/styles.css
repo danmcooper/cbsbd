@@ -118,6 +118,7 @@ a {
   text-align: center;
   --band: var(--background-highlight);
   transition: transform 0.05s linear;
+  font-family: 'Chalkboard SE', 'Comic Sans MS', 'Comic Sans', sans-serif;
 }
 @media (hover: hover) {
   .card:not(.flipped):hover {
