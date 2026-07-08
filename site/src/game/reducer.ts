@@ -47,6 +47,12 @@ export function initialGameState(puzzle: Puzzle): GameState {
   };
 }
 
+/** Elapsed time as of `now`, using the same capped-idle rule the reducer applies. */
+export function liveElapsedMs(state: GameState, now: number): number {
+  if (state.completed || state.lastActionAt === null) return state.elapsedMs;
+  return state.elapsedMs + Math.max(0, Math.min(now - state.lastActionAt, MAX_TICK_MS));
+}
+
 function tick(state: GameState, now: number): GameState {
   const delta = state.lastActionAt === null ? 0 : Math.min(now - state.lastActionAt, MAX_TICK_MS);
   return { ...state, elapsedMs: state.elapsedMs + Math.max(delta, 0), lastActionAt: now };

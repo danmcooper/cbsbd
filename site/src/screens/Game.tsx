@@ -3,7 +3,7 @@ import type { Puzzle } from '../../../shared/puzzle';
 import { validatePuzzle } from '../../../shared/puzzle';
 import Grid from '../components/Grid';
 import { faceFor } from '../faces';
-import type { GameState, Guess } from '../game/reducer';
+import { liveElapsedMs, type GameState, type Guess } from '../game/reducer';
 import { useGameState } from '../game/useGameState';
 import { useFetch } from '../useFetch';
 
@@ -127,6 +127,16 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
     if (state.completed && !completedAtMount.current) setResultsOpen(true);
   }, [state.completed]);
 
+  // Unobtrusive header timer: whole minutes only, appearing at the 1-minute mark.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (state.completed) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [state.completed]);
+  const elapsed = liveElapsedMs(state, now);
+  const minutes = elapsed >= 60_000 ? Math.round(elapsed / 60_000) : null;
+
   return (
     <main className="game">
       <header>
@@ -134,6 +144,7 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
         <h1>{puzzle.title}</h1>
         <p className="meta">
           {puzzle.date} · {puzzle.difficulty} · mistakes: {state.mistakes}
+          {!state.completed && minutes !== null && ` · ${minutes} min`}
         </p>
       </header>
       <Grid

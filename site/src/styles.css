@@ -23,7 +23,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: 'Chalkboard SE', 'Comic Sans MS', 'Comic Sans', sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
@@ -240,15 +240,18 @@ a {
   color: var(--criminal);
 }
 .btn-close {
-  border-color: var(--criminal);
-  color: var(--criminal);
-  margin-top: 10px;
-  min-width: 80px;
+  border: 1px solid #7f818c;
+  color: var(--text);
+  font-weight: 500;
+  margin-top: 12px;
+  min-width: 110px;
 }
 .btn-copy {
-  border-color: var(--innocent);
+  border: 1px solid var(--innocent);
   color: var(--innocent);
-  margin-top: 8px;
+  margin-top: 10px;
+  width: 230px;
+  max-width: 80%;
 }
 .btn-results {
   font-size: 0.8em;

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Puzzle } from '../../../shared/puzzle';
 import { isDeducible } from './deduce';
-import { gameReducer, initialGameState, type GameState } from './reducer';
+import { gameReducer, initialGameState, liveElapsedMs, type GameState } from './reducer';
 
 // 2x2 fixture matching the extractor fixture: 0=banda(innocent, revealed),
 // 1=mira(criminal, needs [0]), 2=ozan(innocent, needs [0,1] or [3]), 3=lena(criminal, needs [0,2])
@@ -149,5 +149,24 @@ describe('per-card wrong answers', () => {
       type: 'restore', flipped: [0], mistakes: 2, elapsedMs: 0, wrong: [2],
     });
     expect(restored.wrong).toEqual([2]);
+  });
+});
+
+describe('liveElapsedMs', () => {
+  it('adds the capped time since the last action while playing', () => {
+    let s = initialGameState(puzzle);
+    expect(liveElapsedMs(s, 5_000)).toBe(0); // clock starts at first action
+    s = guess(s, 1, 'criminal', 10_000);
+    expect(liveElapsedMs(s, 25_000)).toBe(15_000);
+    expect(liveElapsedMs(s, 500_000)).toBe(60_000); // idle gap capped
+  });
+
+  it('freezes at the recorded time once completed', () => {
+    let s = initialGameState(puzzle);
+    s = guess(s, 1, 'criminal', 10_000);
+    s = guess(s, 2, 'innocent', 40_000);
+    s = guess(s, 3, 'criminal', 70_000);
+    expect(s.completed).toBe(true);
+    expect(liveElapsedMs(s, 999_000)).toBe(s.elapsedMs);
   });
 });
