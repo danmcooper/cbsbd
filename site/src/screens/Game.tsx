@@ -186,10 +186,16 @@ function GuessModal({
   );
 }
 
+// The real site lets the final flip, Correct! bubble, and board settle play
+// out before the results popup and post-solve controls appear.
+const RESULTS_DELAY_MS = 2700;
+
 function Board({ puzzle }: { puzzle: Puzzle }) {
   const { state, dispatch } = useGameState(puzzle);
   const [guessing, setGuessing] = useState<number | null>(null);
   const [resultsOpen, setResultsOpen] = useState(false);
+  // Post-solve UI (banner, Results button); immediate for already-solved puzzles.
+  const [postComplete, setPostComplete] = useState(state.completed);
   // A puzzle is "new" when localStorage holds no guesses and no elapsed time.
   const [startOpen, setStartOpen] = useState(
     () =>
@@ -201,7 +207,13 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
   const completedAtMount = useRef(state.completed);
 
   useEffect(() => {
-    if (state.completed && !completedAtMount.current) setResultsOpen(true);
+    if (state.completed && !completedAtMount.current) {
+      const t = setTimeout(() => {
+        setResultsOpen(true);
+        setPostComplete(true);
+      }, RESULTS_DELAY_MS);
+      return () => clearTimeout(t);
+    }
   }, [state.completed]);
 
   // A started puzzle resumes its clock immediately after a page refresh.
@@ -273,6 +285,8 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
     setResetOpen(false);
     setPaused(false);
     setStartOpen(true);
+    setPostComplete(false);
+    completedAtMount.current = false; // re-solving after a reset animates again
   };
 
   return (
@@ -317,7 +331,7 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
             </span>
           </p>
         </div>
-        {state.completed && (
+        {postComplete && (
           <p className="completed">
             Solved! {state.mistakes} mistakes · {formatTime(state.elapsedMs)}{" "}
             <button

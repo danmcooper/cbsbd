@@ -155,13 +155,16 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
         };
       }
       const flipped = [...timed.flipped, action.index];
+      const completed = flipped.length === puzzle.people.length;
       return {
         ...timed,
         flipped,
         rejectedIndex: null,
         rejectedGuess: null,
         blocked: {}, // a new reveal is new evidence; blocked verdicts open back up
-        completed: flipped.length === puzzle.people.length,
+        completed,
+        // The real site's undim-all default: every clue undims at completion.
+        consumed: completed ? [] : timed.consumed,
         // A pending hint taints exactly this flip, then everything resets.
         hinted: timed.pendingHint
           ? { ...timed.hinted, [action.index]: timed.pendingHint }

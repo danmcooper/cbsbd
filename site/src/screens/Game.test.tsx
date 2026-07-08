@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Game from './Game';
@@ -26,15 +26,27 @@ beforeEach(() => {
   localStorage.clear();
   vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify(puzzle), { status: 200 })));
 });
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.useRealTimers();
+});
 
-async function renderGame() {
+async function renderGame(user: ReturnType<typeof userEvent.setup> = userEvent.setup()) {
   render(<Game date="2026-07-07" />);
   await screen.findAllByRole('group');
   // Fresh puzzles open with the start popup; click through it.
   const start = screen.queryByRole('button', { name: 'Start' });
-  if (start) await userEvent.click(start);
+  if (start) await user.click(start);
 }
+
+// The results popup opens 2.7s after the final flip (like the real site), so
+// completion tests run on fake timers and jump past the delay explicitly.
+// shouldAdvanceTime keeps testing-library's own polling alive.
+function fakeTimersUser() {
+  vi.useFakeTimers({ shouldAdvanceTime: true });
+  return userEvent.setup({ advanceTimers: (ms) => vi.advanceTimersByTime(ms) });
+}
+const finishDelay = () => act(() => void vi.advanceTimersByTime(2700));
 
 describe('Game', () => {
   it('loads the puzzle and renders the grid with initial reveals flipped, clue on the card', async () => {
@@ -104,14 +116,19 @@ describe('Game', () => {
     await user.click(screen.getByRole('button', { name: 'Close' }));
   });
 
-  it('shows completion with mistakes count', async () => {
-    const user = userEvent.setup();
-    await renderGame();
+  it('delays the results popup 2.7s while the board settles, like the real site', async () => {
+    const user = fakeTimersUser();
+    await renderGame(user);
+    expect(document.querySelector('.grid')?.className).not.toContain('completed');
     for (const [name, verdict] of [['mira', 'Criminal'], ['ozan', 'Innocent'], ['lena', 'Criminal']] as const) {
       await user.click(screen.getByText(name));
       await user.click(screen.getByRole('button', { name: verdict }));
     }
-    // Completion auto-opens the results dialog; the banner sits behind it.
+    // Right after the final flip: settle animation runs, no popup or banner yet.
+    expect(document.querySelector('.grid')?.className).toContain('completed');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.queryByText(/solved!/i)).toBeNull();
+    finishDelay();
     expect(screen.getByRole('dialog')).toBeTruthy();
     await user.click(screen.getByRole('button', { name: 'Close' }));
     expect(screen.getByText(/solved!/i)).toBeTruthy();
@@ -143,8 +160,8 @@ describe('corner tags', () => {
 
 describe('results popup', () => {
   async function solveWithOneWrong() {
-    const user = userEvent.setup();
-    await renderGame();
+    const user = fakeTimersUser();
+    await renderGame(user);
     await user.click(screen.getByText('mira'));
     await user.click(screen.getByRole('button', { name: 'Criminal' }));
     await user.click(screen.getByText('ozan'));
@@ -154,6 +171,7 @@ describe('results popup', () => {
     await user.click(screen.getByRole('button', { name: 'Innocent' }));
     await user.click(screen.getByText('lena'));
     await user.click(screen.getByRole('button', { name: 'Criminal' }));
+    finishDelay();
     return user;
   }
 
@@ -358,10 +376,11 @@ describe('hint button', () => {
   }
 
   it('a first-level hint shows a yellow circle for that card in the results', async () => {
-    const user = userEvent.setup();
-    await renderGame();
+    const user = fakeTimersUser();
+    await renderGame(user);
     await user.click(screen.getByRole('button', { name: /show hint/i }));
     await solveRest(user);
+    finishDelay();
     const cells = screen.getByRole('dialog').querySelectorAll('.share-cell');
     expect(cells[1].className).toContain('share-hint'); // mira flipped under a hint
     expect(cells[2].className).toContain('share-green');
@@ -371,14 +390,15 @@ describe('hint button', () => {
   });
 
   it('a second-level hint shows an orange circle, beating a wrong answer', async () => {
-    const user = userEvent.setup();
-    await renderGame();
+    const user = fakeTimersUser();
+    await renderGame(user);
     await user.click(screen.getByRole('button', { name: /show hint/i }));
     await user.click(screen.getByRole('button', { name: /show more/i }));
     await user.click(screen.getByText('mira'));
     await user.click(screen.getByRole('button', { name: 'Innocent' })); // wrong first
     await user.click(screen.getByRole('button', { name: 'Continue' }));
     await solveRest(user);
+    finishDelay();
     const cells = screen.getByRole('dialog').querySelectorAll('.share-cell');
     expect(cells[1].className).toContain('share-second-hint');
     const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);

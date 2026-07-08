@@ -41,7 +41,10 @@ export default function Grid({
   });
 
   return (
-    <div className="grid" style={{ gridTemplateColumns: `repeat(${puzzle.width}, auto)` }}>
+    <div
+      className={state.completed ? "grid completed" : "grid"}
+      style={{ gridTemplateColumns: `repeat(${puzzle.width}, auto)` }}
+    >
       {puzzle.people.map((person, i) => (
         <Card
           key={i}

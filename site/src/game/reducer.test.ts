@@ -203,6 +203,17 @@ describe('start action', () => {
 });
 
 describe('consumed clues', () => {
+  it('undims every clue when the puzzle completes (real site undim-all default)', () => {
+    let s = initialGameState(puzzle);
+    s = gameReducer(puzzle, s, { type: 'toggleConsumed', index: 0 });
+    s = guess(s, 1, 'criminal');
+    expect(s.consumed).toEqual([0]); // mid-game flips keep the dimming
+    s = guess(s, 2, 'innocent');
+    s = guess(s, 3, 'criminal');
+    expect(s.completed).toBe(true);
+    expect(s.consumed).toEqual([]);
+  });
+
   it('toggleConsumed toggles per card and survives restore', () => {
     let s = initialGameState(puzzle);
     s = gameReducer(puzzle, s, { type: 'toggleConsumed', index: 1 });

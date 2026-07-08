@@ -379,6 +379,13 @@ a {
     transform: translateY(0) scale(1);
   }
 }
+/* Completion: the board settles with the real site's gentle scale-down while
+   the results popup waits out its 2.7s delay. */
+.grid.completed {
+  transform: scale(0.98);
+  transition: all 0.7s ease-in-out;
+  transition-delay: 0.25s;
+}
 /* Active hint: solid outline on the clue card(s); once the player asks for
    more, a dotted outline marks the cards that clue pins down. */
 .card.hint-clue {
