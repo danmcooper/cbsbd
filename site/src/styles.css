@@ -379,6 +379,16 @@ a {
     transform: translateY(0) scale(1);
   }
 }
+/* Active hint: solid outline on the clue card(s); once the player asks for
+   more, a dotted outline marks the cards that clue pins down. */
+.card.hint-clue {
+  outline: 2px solid white;
+  z-index: 1;
+}
+.card.hint-card {
+  outline: 2px dotted white;
+  z-index: 1;
+}
 /* Wrong-guess popup: real site's "Not enough evidence!" modal. */
 .evidence-modal {
   padding: 0 0 20px;
@@ -575,7 +585,12 @@ a {
 .share-cell.share-yellow {
   background-color: #ffee00;
 }
-.share-cell.share-orange {
+/* Hinted flips are circles: yellow for a plain hint, orange for its reveal level. */
+.share-cell.share-hint {
+  background-color: #ffee00;
+  border-radius: 100%;
+}
+.share-cell.share-second-hint {
   background-color: #f89315;
   border-radius: 100%;
 }

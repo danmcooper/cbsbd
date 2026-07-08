@@ -72,6 +72,23 @@ describe('validatePuzzle', () => {
     expect(() => validatePuzzle(p)).toThrow(/paths/);
   });
 
+  it('accepts a valid hints array and absent hints', () => {
+    const p = puzzle({
+      hints: [
+        { flipped: [0], clues: [0], reveals: [1] },
+        { flipped: [0, 1], clues: [1], reveals: [2, 3] },
+      ],
+    });
+    expect(validatePuzzle(p)).toBe(p);
+    expect(validatePuzzle(puzzle())).toBeTruthy();
+  });
+
+  it('rejects malformed hints', () => {
+    expect(() => validatePuzzle(puzzle({ hints: 'nope' }))).toThrow(/hints/);
+    expect(() => validatePuzzle(puzzle({ hints: [{ flipped: [0], clues: [0] }] }))).toThrow(/hints/);
+    expect(() => validatePuzzle(puzzle({ hints: [{ flipped: [0], clues: [99], reveals: [1] }] }))).toThrow(/hints/);
+  });
+
   it('rejects bad person fields', () => {
     expect(() => validatePuzzle(puzzle({ people: [person({ name: '' }), person(), person(), person()] }))).toThrow(/name/);
     expect(() => validatePuzzle(puzzle({ people: [person({ criminal: 'yes' }), person(), person(), person()] }))).toThrow(/criminal/);

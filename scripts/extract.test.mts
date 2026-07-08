@@ -78,6 +78,26 @@ describe('runExtract', () => {
     ).rejects.toThrow(/dateOverride/);
   });
 
+  it('imports an archive page: levelData config, hints, and faces from the main bundle', async () => {
+    const archiveHtml = readFileSync(new URL('./lib/fixtures/archive-page.html', import.meta.url), 'utf8');
+    const dir = await tmpPuzzles();
+    // fakeFetch responses carry no res.url, so relative resolution falls back
+    // to the request URL (the real site 301s to .../s/play/?puzzleId=...).
+    const result = await runExtract('b7f09e2713c3', {
+      fetchImpl: fakeFetch({
+        'https://cluesbysam.com/s/play?puzzleId=b7f09e2713c3': archiveHtml,
+        'https://cluesbysam.com/s/assets/main-abc123.js': bundle,
+      }),
+      puzzlesDir: dir,
+    });
+    expect(result.status).toBe('written');
+    const puzzle = JSON.parse(await readFile(path.join(dir, '2026-07-06.json'), 'utf8'));
+    expect(puzzle.id).toBe('b7f09e2713c3');
+    expect(puzzle.title).toBe('A tiny archive mystery');
+    expect(puzzle.hints).toHaveLength(3);
+    expect(puzzle.people[0].face).toBe('👨‍💻'); // faces still come from the bundle
+  });
+
   it('reports fetch failures with their stage', async () => {
     const dir = await tmpPuzzles();
     await expect(

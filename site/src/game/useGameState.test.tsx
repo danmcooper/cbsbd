@@ -41,4 +41,17 @@ describe('useGameState', () => {
     expect(result.current.state.mistakes).toBe(2);
     expect(result.current.state.elapsedMs).toBe(30_000);
   });
+
+  it('persists and restores hint bookkeeping', () => {
+    const hinted: Puzzle = { ...puzzle, hints: [{ flipped: [0], clues: [0], reveals: [1] }] };
+    const first = renderHook(() => useGameState(hinted));
+    act(() => first.result.current.dispatch({ type: 'hint', now: 1000 }));
+    act(() =>
+      first.result.current.dispatch({ type: 'guess', index: 1, guess: 'criminal', now: 2000 }),
+    );
+    expect(loadProgress(puzzle.id)).toMatchObject({ hinted: { 1: 'hint' }, pendingHint: null });
+    first.unmount();
+    const second = renderHook(() => useGameState(hinted));
+    expect(second.result.current.state.hinted).toEqual({ 1: 'hint' });
+  });
 });

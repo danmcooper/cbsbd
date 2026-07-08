@@ -22,6 +22,10 @@ interface CardProps {
   profReferenced: boolean;
   /** The color picker for this card's mark is open. */
   pickerOpen: boolean;
+  /** The active hint points at this card's clue (solid outline). */
+  hintClue: boolean;
+  /** The active hint's reveal level marks this card as deducible (dotted outline). */
+  hintCard: boolean;
   /** Rendered clue shown on the card once it is flipped. */
   clueNode?: ReactNode;
   /** Opens the guess modal for this card. */
@@ -48,6 +52,8 @@ export default function Card({
   nameReferenced,
   profReferenced,
   pickerOpen,
+  hintClue,
+  hintCard,
   clueNode,
   onOpen,
   onCycleTag,
@@ -73,6 +79,8 @@ export default function Card({
     flipped ? (person.criminal ? "criminal" : "innocent") : "",
     rejected ? "rejected" : "",
     consumed ? "consumed" : "",
+    hintClue ? "hint-clue" : "",
+    hintCard ? "hint-card" : "",
   ]
     .filter(Boolean)
     .join(" ");

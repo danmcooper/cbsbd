@@ -28,8 +28,10 @@ export function useGameState(puzzle: Puzzle): {
       marks: state.marks,
       wrong: state.wrong,
       consumed: state.consumed,
+      hinted: state.hinted,
+      pendingHint: state.pendingHint,
     });
-  }, [puzzle.id, state.flipped, state.mistakes, state.elapsedMs, state.completed, state.tags, state.marks, state.wrong, state.consumed]);
+  }, [puzzle.id, state.flipped, state.mistakes, state.elapsedMs, state.completed, state.tags, state.marks, state.wrong, state.consumed, state.hinted, state.pendingHint]);
 
   return { state, dispatch };
 }

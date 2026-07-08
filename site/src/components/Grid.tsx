@@ -54,6 +54,12 @@ export default function Grid({
           consumed={state.consumed.includes(i)}
           justFlipped={justFlipped === i}
           pickerOpen={pickerIndex === i}
+          hintClue={state.hint?.clues.includes(i) ?? false}
+          hintCard={
+            state.hintRevealed &&
+            !state.flipped.includes(i) &&
+            (state.hint?.reveals.includes(i) ?? false)
+          }
           nameReferenced={nameRefs.has(i)}
           profReferenced={profRefs.has(i)}
           clueNode={

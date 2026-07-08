@@ -23,20 +23,22 @@ function formatDateOrdinal(date: string): string {
   return `${d.toLocaleString("en-US", { month: "short" })} ${day}${suffix} ${d.getFullYear()}`;
 }
 
-// Results grid: green = clean solve, yellow = had a bad answer.
-// (Orange = used a clue on the real site; we have no hint feature yet.)
-type CellColor = "green" | "yellow" | "orange";
+// Results grid: green = clean solve, yellow square = had a bad answer,
+// yellow circle = flipped with a hint, orange circle = with the hint's
+// reveal level. Hints outrank bad answers, like on the real site.
+type CellColor = "green" | "yellow" | "hint" | "second-hint";
 
 function cellColors(puzzle: Puzzle, state: GameState): CellColor[] {
   return puzzle.people.map((_, i) =>
-    state.wrong.includes(i) ? "yellow" : "green",
+    state.hinted[i] ?? (state.wrong.includes(i) ? "yellow" : "green"),
   );
 }
 
 const CELL_EMOJI: Record<CellColor, string> = {
   green: "🟩",
   yellow: "🟨",
-  orange: "🟠",
+  hint: "🟡",
+  "second-hint": "🟠",
 };
 
 function ResultsModal({
@@ -294,7 +296,17 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
           <div className="button-row">
             <button onClick={togglePause}>{paused ? 'Unpause' : 'Pause'}</button>
             <button onClick={() => setResetOpen(true)}>Reset</button>
-            <button>💡Show hint</button>
+            <button
+              disabled={!puzzle.hints || state.completed}
+              onClick={() => dispatch({ type: "hint", now: Date.now() })}
+            >
+              💡
+              {state.hint && state.hintRevealed
+                ? "Hide hint"
+                : state.hint
+                  ? "Show more"
+                  : "Show hint"}
+            </button>
           </div>
           <p className="date-line">
             <span>

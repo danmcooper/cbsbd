@@ -10,6 +10,14 @@ export interface Person {
   face?: string | null;
 }
 
+/** One precomputed deduction step: with `flipped` on the table, the clues on
+ * `clues` cards suffice to deduce the `reveals` cards. */
+export interface HintStep {
+  flipped: number[];
+  clues: number[];
+  reveals: number[];
+}
+
 export interface Puzzle {
   formatVersion: 1;
   id: string;
@@ -21,6 +29,8 @@ export interface Puzzle {
   initialReveals: number[];
   source: string;
   people: Person[];
+  /** Absent in older puzzle files and when the source puzzle has no hints. */
+  hints?: HintStep[];
 }
 
 export class PuzzleValidationError extends Error {}
@@ -46,6 +56,20 @@ export function validatePuzzle(data: unknown): Puzzle {
   const inRange = (n: unknown) => Number.isInteger(n) && (n as number) >= 0 && (n as number) < count;
   if (!Array.isArray(p.initialReveals) || !p.initialReveals.every(inRange)) {
     fail('initialReveals must be an array of in-range card indices');
+  }
+  if (p.hints !== undefined) {
+    const indexArrayOk = (v: unknown) => Array.isArray(v) && v.every(inRange);
+    const ok =
+      Array.isArray(p.hints) &&
+      p.hints.every(
+        (raw) =>
+          typeof raw === 'object' &&
+          raw !== null &&
+          indexArrayOk((raw as Record<string, unknown>).flipped) &&
+          indexArrayOk((raw as Record<string, unknown>).clues) &&
+          indexArrayOk((raw as Record<string, unknown>).reveals),
+      );
+    if (!ok) fail('hints must be absent or an array of {flipped, clues, reveals} in-range index arrays');
   }
   p.people.forEach((raw, i) => {
     const where = `people[${i}]`;

@@ -297,6 +297,96 @@ describe('control bar', () => {
   });
 });
 
+describe('hint button', () => {
+  // Same puzzle with the precomputed hint ladder attached.
+  const hintedPuzzle = {
+    ...puzzle,
+    hints: [
+      { flipped: [0], clues: [0], reveals: [1] },
+      { flipped: [0, 1], clues: [1], reveals: [2] },
+      { flipped: [0, 1, 2], clues: [2], reveals: [3] },
+    ],
+  };
+
+  beforeEach(() => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response(JSON.stringify(hintedPuzzle), { status: 200 })),
+    );
+  });
+
+  it('is disabled when the puzzle has no hints', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify(puzzle), { status: 200 })));
+    await renderGame();
+    expect(screen.getByRole('button', { name: /show hint/i })).toHaveProperty('disabled', true);
+  });
+
+  it('cycles show hint -> show more -> hide hint, outlining clue then deducible cards', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    const cards = screen.getAllByRole('group');
+
+    await user.click(screen.getByRole('button', { name: /show hint/i }));
+    expect(cards[0].className).toContain('hint-clue'); // banda's clue is the hint
+    expect(cards[1].className).not.toContain('hint-card'); // not revealed yet
+
+    await user.click(screen.getByRole('button', { name: /show more/i }));
+    expect(cards[0].className).toContain('hint-clue');
+    expect(cards[1].className).toContain('hint-card'); // mira is deducible from it
+
+    await user.click(screen.getByRole('button', { name: /hide hint/i }));
+    expect(cards[0].className).not.toContain('hint-clue');
+    expect(cards[1].className).not.toContain('hint-card');
+    expect(screen.getByRole('button', { name: /show hint/i })).toBeTruthy();
+  });
+
+  it('clears the outlines when the hinted card flips', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    await user.click(screen.getByRole('button', { name: /show hint/i }));
+    await user.click(screen.getByText('mira'));
+    await user.click(screen.getByRole('button', { name: 'Criminal' }));
+    expect(screen.getAllByRole('group')[0].className).not.toContain('hint-clue');
+    expect(screen.getByRole('button', { name: /show hint/i })).toBeTruthy();
+  });
+
+  async function solveRest(user: ReturnType<typeof userEvent.setup>) {
+    for (const [name, verdict] of [['mira', 'Criminal'], ['ozan', 'Innocent'], ['lena', 'Criminal']] as const) {
+      await user.click(screen.getByText(name));
+      await user.click(screen.getByRole('button', { name: verdict }));
+    }
+  }
+
+  it('a first-level hint shows a yellow circle for that card in the results', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    await user.click(screen.getByRole('button', { name: /show hint/i }));
+    await solveRest(user);
+    const cells = screen.getByRole('dialog').querySelectorAll('.share-cell');
+    expect(cells[1].className).toContain('share-hint'); // mira flipped under a hint
+    expect(cells[2].className).toContain('share-green');
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    await user.click(screen.getByRole('button', { name: /copy text/i }));
+    expect(String(writeText.mock.calls[0]?.[0])).toContain('🟩🟡\n🟩🟩');
+  });
+
+  it('a second-level hint shows an orange circle, beating a wrong answer', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    await user.click(screen.getByRole('button', { name: /show hint/i }));
+    await user.click(screen.getByRole('button', { name: /show more/i }));
+    await user.click(screen.getByText('mira'));
+    await user.click(screen.getByRole('button', { name: 'Innocent' })); // wrong first
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    await solveRest(user);
+    const cells = screen.getByRole('dialog').querySelectorAll('.share-cell');
+    expect(cells[1].className).toContain('share-second-hint');
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    await user.click(screen.getByRole('button', { name: /copy text/i }));
+    expect(String(writeText.mock.calls[0]?.[0])).toContain('🟩🟠\n🟩🟩');
+  });
+});
+
 describe('timer resume', () => {
   it('resumes ticking after a refresh of a started puzzle', async () => {
     localStorage.setItem(

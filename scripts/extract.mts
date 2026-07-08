@@ -5,6 +5,8 @@ import { pathToFileURL } from 'node:url';
 import {
   ExtractError,
   extractFaces,
+  extractHints,
+  extractLevelData,
   extractMetadata,
   extractPeopleArray,
   findBundleUrl,
@@ -40,14 +42,24 @@ export async function runExtract(
   if (!pageRes.ok) throw new ExtractError('page-fetch', `${pageUrl} -> HTTP ${pageRes.status}`);
   const html = await pageRes.text();
 
-  const bundleUrl = findBundleUrl(html, pageUrl);
+  // Archive URLs 301 to a trailing-slash path; resolve assets against where
+  // the fetch actually landed (fetch stubs without res.url keep the request URL).
+  const bundleUrl = findBundleUrl(html, pageRes.url || pageUrl);
   const bundleRes = await fetchImpl(bundleUrl);
   if (!bundleRes.ok) throw new ExtractError('bundle-fetch', `${bundleUrl} -> HTTP ${bundleRes.status}`);
   const bundleText = await bundleRes.text();
 
-  const meta = extractMetadata(bundleText);
+  // Daily pages inline the puzzle in the bundle; archive pages embed it as
+  // window.levelData JSON in the HTML (the bundle still supplies the faces).
+  const level = extractLevelData(html);
+  const meta = level ? level.meta : extractMetadata(bundleText);
   if (opts.dateOverride) meta.date = opts.dateOverride;
-  const puzzle = normalizePuzzle(meta, extractPeopleArray(bundleText), extractFaces(bundleText));
+  const puzzle = normalizePuzzle(
+    meta,
+    level ? level.cards : extractPeopleArray(bundleText),
+    extractFaces(bundleText),
+    level ? level.hints : extractHints(bundleText),
+  );
 
   const file = path.join(puzzlesDir, `${puzzle.date}.json`);
   if (existsSync(file)) {

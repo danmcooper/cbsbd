@@ -1,4 +1,4 @@
-import type { Tag } from './reducer';
+import type { HintLevel, Tag } from './reducer';
 
 export interface SavedProgress {
   flipped: number[];
@@ -9,6 +9,8 @@ export interface SavedProgress {
   marks?: Record<number, Tag>;
   wrong?: number[];
   consumed?: number[];
+  hinted?: Record<number, HintLevel>;
+  pendingHint?: HintLevel | null;
 }
 
 const key = (puzzleId: string) => `cbs:progress:${puzzleId}`;
@@ -26,7 +28,19 @@ function isSavedProgress(v: unknown): v is SavedProgress {
   const intArrayOk = (v: unknown) =>
     v === undefined || (Array.isArray(v) && v.every((n) => Number.isInteger(n)));
   const wrongOk = intArrayOk(p.wrong) && intArrayOk(p.consumed);
+  const validLevels = ['hint', 'second-hint'];
+  const hintedOk =
+    p.hinted === undefined ||
+    (typeof p.hinted === 'object' &&
+      p.hinted !== null &&
+      Object.values(p.hinted).every((l) => validLevels.includes(l as string)));
+  const pendingOk =
+    p.pendingHint === undefined ||
+    p.pendingHint === null ||
+    validLevels.includes(p.pendingHint as string);
   return (
+    hintedOk &&
+    pendingOk &&
     Array.isArray(p.flipped) &&
     p.flipped.every((n) => Number.isInteger(n)) &&
     typeof p.mistakes === 'number' &&

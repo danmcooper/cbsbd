@@ -45,3 +45,26 @@ describe('storage tags', () => {
     expect(loadProgress('a6f09e2713b2')).toBeNull();
   });
 });
+
+describe('storage hints', () => {
+  it('round-trips hinted marks and the pending penalty', () => {
+    saveProgress('a6f09e2713b2', {
+      ...saved,
+      hinted: { 1: 'hint', 3: 'second-hint' },
+      pendingHint: 'second-hint',
+    });
+    const loaded = loadProgress('a6f09e2713b2');
+    expect(loaded?.hinted).toEqual({ 1: 'hint', 3: 'second-hint' });
+    expect(loaded?.pendingHint).toBe('second-hint');
+  });
+
+  it('rejects invalid hint levels but tolerates their absence', () => {
+    localStorage.setItem(
+      'cbs:progress:a6f09e2713b2',
+      JSON.stringify({ ...saved, hinted: { 1: 'mega-hint' } }),
+    );
+    expect(loadProgress('a6f09e2713b2')).toBeNull();
+    localStorage.setItem('cbs:progress:ffffffffffff', JSON.stringify(saved));
+    expect(loadProgress('ffffffffffff')).toMatchObject({ flipped: [0, 2] });
+  });
+});

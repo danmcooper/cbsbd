@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Puzzle } from '../../../shared/puzzle';
 import { isDeducible } from './deduce';
-import { gameReducer, initialGameState, liveElapsedMs, type GameState } from './reducer';
+import { gameReducer, initialGameState, liveElapsedMs, pickHint, type GameState } from './reducer';
 
 // 2x2 fixture matching the extractor fixture: 0=banda(innocent, revealed),
 // 1=mira(criminal, needs [0]), 2=ozan(innocent, needs [0,1] or [3]), 3=lena(criminal, needs [0,2])
@@ -247,6 +247,108 @@ describe('tick action', () => {
     expect(s.elapsedMs).toBe(2_000);
     const done = { ...s, completed: true };
     expect(gameReducer(puzzle, done, { type: 'tick', now: 99_000 })).toBe(done);
+  });
+});
+
+// Same puzzle plus the fixture's precomputed hint ladder.
+const hintPuzzle: Puzzle = {
+  ...puzzle,
+  hints: [
+    { flipped: [0], clues: [0], reveals: [1] },
+    { flipped: [0, 1], clues: [1], reveals: [2] },
+    { flipped: [0, 1, 2], clues: [2], reveals: [3] },
+  ],
+};
+
+const hint = (s: GameState, now = 1000) => gameReducer(hintPuzzle, s, { type: 'hint', now });
+
+describe('pickHint', () => {
+  it('picks the applicable step whose prerequisites are flipped and reveals something new', () => {
+    expect(pickHint(hintPuzzle, [0])).toEqual({ flipped: [0], clues: [0], reveals: [1] });
+    expect(pickHint(hintPuzzle, [0, 1])).toEqual({ flipped: [0, 1], clues: [1], reveals: [2] });
+  });
+
+  it('prefers fewer clues, then fewer reveals, then more prerequisites', () => {
+    const p: Puzzle = {
+      ...puzzle,
+      hints: [
+        { flipped: [0], clues: [0, 1], reveals: [2] },
+        { flipped: [0], clues: [0], reveals: [1, 2] },
+        { flipped: [0], clues: [0], reveals: [1] },
+      ],
+    };
+    expect(pickHint(p, [0])).toEqual({ flipped: [0], clues: [0], reveals: [1] });
+  });
+
+  it('returns null when nothing applies or the puzzle has no hints', () => {
+    expect(pickHint(hintPuzzle, [])).toBeNull(); // no step's prerequisites met
+    expect(pickHint(hintPuzzle, [0, 1, 2, 3])).toBeNull(); // everything already revealed
+    expect(pickHint(puzzle, [0])).toBeNull();
+  });
+});
+
+describe('hint action', () => {
+  it('cycles show hint -> show more -> hide, escalating the pending penalty', () => {
+    let s = hint(initialGameState(hintPuzzle));
+    expect(s.hint).toEqual({ flipped: [0], clues: [0], reveals: [1] });
+    expect(s.hintRevealed).toBe(false);
+    expect(s.pendingHint).toBe('hint');
+    s = hint(s); // "Show more"
+    expect(s.hintRevealed).toBe(true);
+    expect(s.pendingHint).toBe('second-hint');
+    s = hint(s); // "Hide hint": outlines go away, penalty stays
+    expect(s.hint).toBeNull();
+    expect(s.hintRevealed).toBe(false);
+    expect(s.pendingHint).toBe('second-hint');
+  });
+
+  it('records the pending penalty on the next correct flip, then clears hint state', () => {
+    let s = hint(initialGameState(hintPuzzle));
+    s = gameReducer(hintPuzzle, s, { type: 'guess', index: 1, guess: 'criminal', now: 2000 });
+    expect(s.flipped).toContain(1);
+    expect(s.hinted).toEqual({ 1: 'hint' });
+    expect(s.hint).toBeNull();
+    expect(s.pendingHint).toBeNull();
+  });
+
+  it('records second-hint when the reveal level was used', () => {
+    let s = hint(hint(initialGameState(hintPuzzle)));
+    s = gameReducer(hintPuzzle, s, { type: 'guess', index: 1, guess: 'criminal', now: 2000 });
+    expect(s.hinted).toEqual({ 1: 'second-hint' });
+    expect(s.hintRevealed).toBe(false);
+  });
+
+  it('keeps the pending penalty through a wrong guess', () => {
+    let s = hint(initialGameState(hintPuzzle));
+    s = gameReducer(hintPuzzle, s, { type: 'guess', index: 1, guess: 'innocent', now: 2000 });
+    expect(s.pendingHint).toBe('hint');
+    expect(s.hinted).toEqual({});
+    s = gameReducer(hintPuzzle, s, { type: 'guess', index: 1, guess: 'criminal', now: 3000 });
+    expect(s.hinted).toEqual({ 1: 'hint' });
+    expect(s.wrong).toEqual([1]);
+  });
+
+  it('asking for a fresh hint while a penalty is pending escalates to second-hint', () => {
+    let s = hint(hint(hint(initialGameState(hintPuzzle)))); // shown, revealed, hidden
+    s = hint(s); // fresh hint while second-hint pending
+    expect(s.hint).not.toBeNull();
+    expect(s.pendingHint).toBe('second-hint');
+  });
+
+  it('is a no-op when completed or when no hint applies', () => {
+    const done = { ...initialGameState(hintPuzzle), completed: true };
+    expect(hint(done)).toBe(done);
+    const s = initialGameState(puzzle); // no hints in puzzle
+    expect(gameReducer(puzzle, s, { type: 'hint', now: 1000 })).toBe(s);
+  });
+
+  it('restores hinted marks and pending penalty', () => {
+    const restored = gameReducer(hintPuzzle, initialGameState(hintPuzzle), {
+      type: 'restore', flipped: [0, 1], mistakes: 0, elapsedMs: 0,
+      hinted: { 1: 'second-hint' }, pendingHint: 'hint',
+    });
+    expect(restored.hinted).toEqual({ 1: 'second-hint' });
+    expect(restored.pendingHint).toBe('hint');
   });
 });
 

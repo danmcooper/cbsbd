@@ -1,7 +1,11 @@
-import type { Puzzle } from '../../../shared/puzzle';
+import type { HintStep, Puzzle } from '../../../shared/puzzle';
 import { isDeducible } from './deduce';
 
 export type Guess = 'criminal' | 'innocent';
+
+/** First press outlines the clue ('hint'); second press outlines the deducible
+ * cards too ('second-hint'). The level taints the next correct flip. */
+export type HintLevel = 'hint' | 'second-hint';
 
 export type Tag = 'yellow' | 'red' | 'green' | 'orange' | 'magenta' | 'cyan';
 
@@ -26,6 +30,14 @@ export interface GameState {
   wrong: number[];
   /** Cards whose clue the player marked as used (dimmed). */
   consumed: number[];
+  /** Active hint step: its clue cards are outlined on the board. */
+  hint: HintStep | null;
+  /** The second press also outlined the hint's deducible cards. */
+  hintRevealed: boolean;
+  /** Hint level charged to the next correct flip. */
+  pendingHint: HintLevel | null;
+  /** Cards flipped with hint help (for the results grid). */
+  hinted: Record<number, HintLevel>;
 }
 
 export type GameAction =
@@ -34,6 +46,7 @@ export type GameAction =
   | { type: 'tick'; now: number }
   | { type: 'reset' }
   | { type: 'guess'; index: number; guess: Guess; now: number }
+  | { type: 'hint'; now: number }
   | { type: 'clearRejection' }
   | { type: 'cycleTag'; index: number }
   | { type: 'setMark'; index: number; mark: Tag | null }
@@ -47,6 +60,8 @@ export type GameAction =
       marks?: Record<number, Tag>;
       wrong?: number[];
       consumed?: number[];
+      hinted?: Record<number, HintLevel>;
+      pendingHint?: HintLevel | null;
     };
 
 const TAG_CYCLE: (Tag | undefined)[] = [undefined, 'yellow', 'red', 'green'];
@@ -67,7 +82,30 @@ export function initialGameState(puzzle: Puzzle): GameState {
     marks: {},
     wrong: [],
     consumed: [],
+    hint: null,
+    hintRevealed: false,
+    pendingHint: null,
+    hinted: {},
   };
+}
+
+/**
+ * The next hint to offer: the cheapest applicable step (fewest clues, then
+ * fewest reveals, then most prerequisites) whose prerequisite cards are all
+ * flipped and which still reveals something new. Mirrors the source site.
+ */
+export function pickHint(puzzle: Puzzle, flipped: number[]): HintStep | null {
+  const steps = [...(puzzle.hints ?? [])].sort(
+    (a, b) =>
+      a.clues.length - b.clues.length ||
+      a.reveals.length - b.reveals.length ||
+      b.flipped.length - a.flipped.length,
+  );
+  return (
+    steps.find(
+      (s) => s.flipped.every((i) => flipped.includes(i)) && !s.reveals.every((i) => flipped.includes(i)),
+    ) ?? null
+  );
 }
 
 /** Elapsed time as of `now`, using the same capped-idle rule the reducer applies. */
@@ -124,6 +162,32 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
         rejectedGuess: null,
         blocked: {}, // a new reveal is new evidence; blocked verdicts open back up
         completed: flipped.length === puzzle.people.length,
+        // A pending hint taints exactly this flip, then everything resets.
+        hinted: timed.pendingHint
+          ? { ...timed.hinted, [action.index]: timed.pendingHint }
+          : timed.hinted,
+        hint: null,
+        hintRevealed: false,
+        pendingHint: null,
+      };
+    }
+    case 'hint': {
+      if (state.completed) return state;
+      if (state.hint && state.hintRevealed) {
+        // "Hide hint": outlines go away, but the charge already taken stays.
+        return { ...tick(state, action.now), hint: null, hintRevealed: false };
+      }
+      if (state.hint) {
+        // "Show more": also outline the deducible cards.
+        return { ...tick(state, action.now), hintRevealed: true, pendingHint: 'second-hint' };
+      }
+      const step = pickHint(puzzle, state.flipped);
+      if (!step) return state;
+      return {
+        ...tick(state, action.now),
+        hint: step,
+        // A repeat ask with a penalty still pending counts as digging deeper.
+        pendingHint: state.pendingHint ? 'second-hint' : 'hint',
       };
     }
     case 'clearRejection':
@@ -161,6 +225,8 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
         marks: { ...action.marks },
         wrong: [...(action.wrong ?? [])],
         consumed: [...(action.consumed ?? [])],
+        hinted: { ...action.hinted },
+        pendingHint: action.pendingHint ?? null,
       };
   }
 }

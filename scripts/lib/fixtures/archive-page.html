@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Clues by Sam</title>
+  <script>
+    window.puzzleSaveId = "2026-07-06-archive";
+    window.puzzleLogId = "b7f09e2713c3";
+    window.puzzleHelpId = "b7f09e2713c3";
+  </script>
+  <script>
+    window.levelData = {
+  "width": 2,
+  "height": 2,
+  "difficulty": "Easy",
+  "identityClue": "A tiny archive mystery",
+  "cards": [
+    {
+      "criminal": false,
+      "profession": "coder",
+      "name": "banda",
+      "gender": "male",
+      "orig_hint": "number_of_traits_in_unit(unit(row,0),criminal,1)",
+      "paths": [],
+      "hint": ""
+    },
+    {
+      "criminal": true,
+      "profession": "chef",
+      "name": "mira",
+      "gender": "female",
+      "orig_hint": "trait_of(1,criminal)",
+      "paths": [[0]],
+      "hint": "The #PROF:chef sits beside #NAME:0"
+    },
+    {
+      "criminal": false,
+      "profession": "pilot",
+      "name": "ozan",
+      "gender": "male",
+      "orig_hint": null,
+      "paths": [[0, 1], [3]],
+      "hint": "#NAMES:1 neighbour is innocent"
+    },
+    {
+      "criminal": true,
+      "profession": "nurse",
+      "name": "lena",
+      "gender": "female",
+      "orig_hint": null,
+      "paths": [[0, 2]],
+      "hint": "There is one criminal #BETWEEN:pair(0,3)"
+    }
+  ],
+  "initial_reveals": [0],
+  "seed": 123456,
+  "hint_sequence": ["trait_of(1,criminal)"],
+  "synergy": [1, 0],
+  "hints": [
+    { "flipped": [0], "clues": [0], "reveals": [1] },
+    { "flipped": [0, 1], "clues": [1], "reveals": [2] },
+    { "flipped": [0, 1, 2], "clues": [2], "reveals": [3] }
+  ],
+  "supportsHints": true
+};
+  </script>
+  <script type="module" src="assets/main-abc123.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>
