@@ -85,26 +85,38 @@ a {
   overflow: hidden;
   text-align: center;
   --band: var(--background-highlight);
+  transition: transform 0.05s linear;
 }
-/* Corner tag: click to cycle none -> yellow -> red -> green -> none. */
+@media (hover: hover) {
+  .card:not(.flipped):hover {
+    transform: scale(0.98);
+  }
+}
+/* Corner tag: click to cycle none -> yellow -> red -> green -> none.
+   Visible triangle matches the real site (~22px legs); hitbox is larger. */
 .tag {
   position: absolute;
   top: 0;
   left: 0;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   z-index: 2;
   cursor: pointer;
-  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+.tag::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 22px 0, 0 22px);
   background: rgba(255, 255, 255, 0.06);
 }
-.tag.tag-yellow {
+.tag.tag-yellow::before {
   background: #ffee00;
 }
-.tag.tag-red {
+.tag.tag-red::before {
   background: #e03c3c;
 }
-.tag.tag-green {
+.tag.tag-green::before {
   background: #52d017;
 }
 .card.flipped {
