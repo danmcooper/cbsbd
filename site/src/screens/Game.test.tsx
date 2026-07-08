@@ -308,3 +308,26 @@ describe('seconds preference', () => {
     expect(document.querySelector('.timer')?.textContent).toMatch(/^\d{2}:\d{2}$/);
   });
 });
+
+describe('correct-guess animation', () => {
+  it('pops a Correct! speech bubble on the freshly flipped card only', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    expect(document.querySelector('.speech-bubble')).toBeNull(); // none on initial reveals
+    await user.click(screen.getByText('mira'));
+    await user.click(screen.getByRole('button', { name: 'Criminal' }));
+    const cards = screen.getAllByRole('group');
+    expect(cards[1].querySelector('.speech-bubble')?.textContent).toBe('Correct!');
+    expect(cards[0].querySelector('.speech-bubble')).toBeNull();
+  });
+
+  it('does not reappear when revisiting a puzzle', async () => {
+    localStorage.setItem(
+      'cbs:progress:a6f09e2713b2',
+      JSON.stringify({ flipped: [0, 1], mistakes: 0, elapsedMs: 5_000, completed: false }),
+    );
+    render(<Game date="2026-07-07" />);
+    await screen.findAllByRole('group');
+    expect(document.querySelector('.speech-bubble')).toBeNull();
+  });
+});

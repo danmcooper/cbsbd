@@ -6,12 +6,21 @@ import Card from "./Card";
 interface GridProps {
   puzzle: Puzzle;
   state: GameState;
+  /** Card that just flipped from a correct guess (shows the Correct! bubble). */
+  justFlipped: number | null;
   onOpen: (index: number) => void;
   onCycleTag: (index: number) => void;
   onToggleClue: (index: number) => void;
 }
 
-export default function Grid({ puzzle, state, onOpen, onCycleTag, onToggleClue }: GridProps) {
+export default function Grid({
+  puzzle,
+  state,
+  justFlipped,
+  onOpen,
+  onCycleTag,
+  onToggleClue,
+}: GridProps) {
   // Every active (flipped, unconsumed) clue emphasizes its own card's name
   // plus the names/professions it mentions.
   const nameRefs = new Set<number>();
@@ -35,6 +44,7 @@ export default function Grid({ puzzle, state, onOpen, onCycleTag, onToggleClue }
           rejected={state.rejectedIndex === i}
           tag={state.tags[i]}
           consumed={state.consumed.includes(i)}
+          justFlipped={justFlipped === i}
           nameReferenced={nameRefs.has(i)}
           profReferenced={profRefs.has(i)}
           clueNode={

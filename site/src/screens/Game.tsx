@@ -167,6 +167,19 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
     // Mount-time resume only.
   }, []);
 
+  // "Correct!" speech bubble on the card that just flipped (real-site pop-fade).
+  const [justFlipped, setJustFlipped] = useState<number | null>(null);
+  const prevFlippedLen = useRef(state.flipped.length);
+  useEffect(() => {
+    if (state.flipped.length > prevFlippedLen.current) {
+      prevFlippedLen.current = state.flipped.length;
+      setJustFlipped(state.flipped[state.flipped.length - 1]);
+      const t = setTimeout(() => setJustFlipped(null), 1300);
+      return () => clearTimeout(t);
+    }
+    prevFlippedLen.current = state.flipped.length;
+  }, [state.flipped]);
+
   // Once started (and not paused/completed), the clock ticks every second the
   // page is shown; each tick folds elapsed time into state, which persists it.
   useEffect(() => {
@@ -210,6 +223,7 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
         <Grid
           puzzle={puzzle}
           state={state}
+          justFlipped={justFlipped}
           onOpen={setGuessing}
           onCycleTag={(index) => dispatch({ type: "cycleTag", index })}
           onToggleClue={(index) => dispatch({ type: "toggleConsumed", index })}

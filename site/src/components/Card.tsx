@@ -11,6 +11,8 @@ interface CardProps {
   tag?: Tag;
   /** The player marked this card's clue as used. */
   consumed: boolean;
+  /** Just flipped from a correct guess; shows the Correct! bubble. */
+  justFlipped: boolean;
   /** An active (unconsumed) clue mentions this card's name / profession. */
   nameReferenced: boolean;
   profReferenced: boolean;
@@ -31,6 +33,7 @@ export default function Card({
   rejected,
   tag,
   consumed,
+  justFlipped,
   nameReferenced,
   profReferenced,
   clueNode,
@@ -58,6 +61,7 @@ export default function Card({
         }}
       />
       <div className="card-pos">{label}</div>
+      {justFlipped && <div className="speech-bubble">Correct!</div>}
       <div className="card-face">{faceFor(person.profession, person.gender)}</div>
       <div className={nameReferenced ? "card-name referenced" : "card-name"}>{person.name}</div>
       <div className={profReferenced ? "card-prof referenced" : "card-prof"}>

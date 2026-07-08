@@ -475,6 +475,42 @@ a {
   color: var(--text-muted);
 }
 
+/* "Correct!" bubble, verbatim from the real stylesheet (dark theme values). */
+.speech-bubble {
+  position: absolute;
+  top: 23px;
+  left: 50%;
+  transform: translate(-50%);
+  background: #262626;
+  border: 2px solid rgb(172, 172, 172);
+  color: rgb(221, 221, 221);
+  padding: 0.3em 0.6em;
+  border-radius: 1rem;
+  font-weight: 700;
+  box-shadow: 0 0 5px #0003;
+  animation: pop-fade 1.2s ease-out;
+  animation-fill-mode: forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+@keyframes pop-fade {
+  0% {
+    opacity: 0.5;
+    transform: translate(-50%) translateY(0) scale(0.8);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%) translateY(-5px) scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(-50%) translateY(-5px) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%) translateY(-10px) scale(0.9);
+  }
+}
 @keyframes shake {
   25% {
     transform: translateX(-4px);
