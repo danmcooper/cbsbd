@@ -30,14 +30,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - name: Assemble Pages artifact (blank root + app and puzzles under UUID)
+      - name: Assemble Pages artifact (app at the site root, puzzles alongside)
         run: |
-          UUID=$(node -p "JSON.parse(require('fs').readFileSync('config/site.json','utf8')).uuid")
-          mkdir -p artifact
-          printf '<!doctype html><html><head><meta name="robots" content="noindex"><title></title></head><body></body></html>' > artifact/index.html
-          cp -r site/dist "artifact/$UUID"
-          mkdir -p "artifact/$UUID/puzzles"
-          if ls puzzles/*.json >/dev/null 2>&1; then cp puzzles/*.json "artifact/$UUID/puzzles/"; fi
+          cp -r site/dist artifact
+          mkdir -p artifact/puzzles
+          if ls puzzles/*.json >/dev/null 2>&1; then cp puzzles/*.json artifact/puzzles/; fi
       - uses: actions/upload-pages-artifact@v3
         with:
           path: artifact

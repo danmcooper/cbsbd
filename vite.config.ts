@@ -4,7 +4,7 @@ import { readFileSync, existsSync, createReadStream } from 'node:fs';
 import path from 'node:path';
 
 const cfg = JSON.parse(readFileSync(new URL('./config/site.json', import.meta.url), 'utf8'));
-const base = `${cfg.basePrefix}${cfg.uuid}/`;
+const base = cfg.base;
 
 // Dev-only: serve repo-root puzzles/ at <base>puzzles/ (in production the
 // deploy workflow copies puzzles/ into the artifact at the same path).
