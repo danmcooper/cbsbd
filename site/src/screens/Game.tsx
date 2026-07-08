@@ -197,19 +197,21 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
           onCycleTag={(index) => dispatch({ type: "cycleTag", index })}
           onToggleClue={(index) => dispatch({ type: "toggleConsumed", index })}
         />
-        <div className="button-row">
-          <button onClick={togglePause}>{paused ? 'Unpause' : 'Pause'}</button>
-          <button onClick={() => setResetOpen(true)}>Reset</button>
-          <button>💡Show hint</button>
+        <div className="controls">
+          <div className="button-row">
+            <button onClick={togglePause}>{paused ? 'Unpause' : 'Pause'}</button>
+            <button onClick={() => setResetOpen(true)}>Reset</button>
+            <button>💡Show hint</button>
+          </div>
+          <p className="date-line">
+            <span>
+              {formatDateOrdinal(puzzle.date)} ({puzzle.difficulty})
+            </span>
+            <span className="timer" onClick={() => setShowSeconds((s) => !s)}>
+              {showSeconds ? formatTime(elapsed) : `${minutes} Minute${minutes === 1 ? '' : 's'}`}
+            </span>
+          </p>
         </div>
-        <p className="date-line">
-          <span>
-            {formatDateOrdinal(puzzle.date)} ({puzzle.difficulty})
-          </span>
-          <span className="timer" onClick={() => setShowSeconds((s) => !s)}>
-            {showSeconds ? formatTime(elapsed) : `${minutes} Minute${minutes === 1 ? '' : 's'}`}
-          </span>
-        </p>
         <h1>{puzzle.title}</h1>
         {state.rejectedIndex !== null && (
           <p className="rejection">{REJECTION_COPY}</p>
