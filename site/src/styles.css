@@ -79,10 +79,6 @@ a {
   text-align: left;
   margin: 1rem 0 0;
 }
-.game h1 {
-  font-size: 1.3rem;
-  margin: 0.25rem 0 0.5rem;
-}
 /* Shrinks to the button row's width so the date line aligns to its edges. */
 .controls {
   display: inline-flex;

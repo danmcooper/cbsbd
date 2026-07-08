@@ -22,6 +22,7 @@ export interface GameState {
 export type GameAction =
   | { type: 'start'; now: number }
   | { type: 'pause'; now: number }
+  | { type: 'tick'; now: number }
   | { type: 'reset' }
   | { type: 'guess'; index: number; guess: Guess; now: number }
   | { type: 'clearRejection' }
@@ -73,6 +74,10 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
     case 'pause':
       // Fold accrued time in, then stop the clock until the next start.
       return state.lastActionAt === null ? state : { ...tick(state, action.now), lastActionAt: null };
+    case 'tick':
+      // Periodic fold while the page is visible, so elapsed time persists.
+      if (state.lastActionAt === null || state.completed) return state;
+      return tick(state, action.now);
     case 'reset':
       return initialGameState(puzzle);
     case 'guess': {

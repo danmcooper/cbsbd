@@ -221,3 +221,16 @@ describe('pause and reset', () => {
     expect(s).toEqual(initialGameState(puzzle));
   });
 });
+
+describe('tick action', () => {
+  it('accrues time while running, no-op when stopped or completed', () => {
+    let s = initialGameState(puzzle);
+    expect(gameReducer(puzzle, s, { type: 'tick', now: 5_000 })).toBe(s); // not started
+    s = gameReducer(puzzle, s, { type: 'start', now: 10_000 });
+    s = gameReducer(puzzle, s, { type: 'tick', now: 11_000 });
+    s = gameReducer(puzzle, s, { type: 'tick', now: 12_000 });
+    expect(s.elapsedMs).toBe(2_000);
+    const done = { ...s, completed: true };
+    expect(gameReducer(puzzle, done, { type: 'tick', now: 99_000 })).toBe(done);
+  });
+});

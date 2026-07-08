@@ -30,11 +30,10 @@ afterEach(() => vi.unstubAllGlobals());
 
 async function renderGame() {
   render(<Game date="2026-07-07" />);
-  const title = await screen.findByText('A tiny test mystery');
+  await screen.findAllByRole('group');
   // Fresh puzzles open with the start popup; click through it.
   const start = screen.queryByRole('button', { name: 'Start' });
   if (start) await userEvent.click(start);
-  return title;
 }
 
 describe('Game', () => {
@@ -169,8 +168,7 @@ describe('start popup', () => {
   it('welcomes on a fresh puzzle and dismisses on Start', async () => {
     const user = userEvent.setup();
     render(<Game date="2026-07-07" />);
-    await screen.findByText('A tiny test mystery');
-    const dialog = screen.getByRole('dialog');
+    const dialog = await screen.findByRole('dialog');
     expect(dialog.textContent).toContain('Welcome to Clues by Sam!');
     expect(dialog.textContent).toContain('Jul 7th 2026');
     expect(dialog.textContent).toContain('Difficulty: Easy');
@@ -184,7 +182,7 @@ describe('start popup', () => {
       JSON.stringify({ flipped: [0, 1], mistakes: 1, elapsedMs: 5_000, completed: false }),
     );
     render(<Game date="2026-07-07" />);
-    await screen.findByText('A tiny test mystery');
+    await screen.findAllByRole('group');
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 });
@@ -197,7 +195,7 @@ describe('timer display', () => {
     );
     const user = userEvent.setup();
     render(<Game date="2026-07-07" />);
-    await screen.findByText('A tiny test mystery');
+    await screen.findAllByRole('group');
     const timer = screen.getByText('2 Minutes');
     await user.click(timer);
     expect(timer.textContent).toBe('02:05');
@@ -272,5 +270,22 @@ describe('control bar', () => {
     expect(screen.getAllByRole('group')[1].className).not.toContain('flipped');
     // Back to a fresh puzzle: the start popup returns.
     expect(screen.getByRole('button', { name: 'Start' })).toBeTruthy();
+  });
+});
+
+describe('timer resume', () => {
+  it('resumes ticking after a refresh of a started puzzle', async () => {
+    localStorage.setItem(
+      'cbs:progress:a6f09e2713b2',
+      JSON.stringify({ flipped: [0, 1], mistakes: 1, elapsedMs: 125_000, completed: false }),
+    );
+    const user = userEvent.setup();
+    render(<Game date="2026-07-07" />);
+    await screen.findAllByRole('group');
+    const timer = screen.getByText('2 Minutes');
+    await user.click(timer);
+    expect(timer.textContent).toBe('02:05');
+    await new Promise((r) => setTimeout(r, 1200));
+    expect(timer.textContent).toBe('02:06');
   });
 });

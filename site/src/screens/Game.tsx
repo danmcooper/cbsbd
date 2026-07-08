@@ -3,7 +3,7 @@ import type { Puzzle } from "../../../shared/puzzle";
 import { validatePuzzle } from "../../../shared/puzzle";
 import Grid from "../components/Grid";
 import { faceFor } from "../faces";
-import { liveElapsedMs, type GameState, type Guess } from "../game/reducer";
+import type { GameState, Guess } from "../game/reducer";
 import { useGameState } from "../game/useGameState";
 import { useFetch } from "../useFetch";
 
@@ -143,11 +143,12 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
   const { state, dispatch } = useGameState(puzzle);
   const [guessing, setGuessing] = useState<number | null>(null);
   const [resultsOpen, setResultsOpen] = useState(false);
-  // A puzzle is "new" when localStorage holds no guesses yet.
+  // A puzzle is "new" when localStorage holds no guesses and no elapsed time.
   const [startOpen, setStartOpen] = useState(
     () =>
       !state.completed &&
       state.mistakes === 0 &&
+      state.elapsedMs === 0 &&
       state.flipped.length === puzzle.initialReveals.length,
   );
   const completedAtMount = useRef(state.completed);
@@ -156,14 +157,24 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
     if (state.completed && !completedAtMount.current) setResultsOpen(true);
   }, [state.completed]);
 
-  // Unobtrusive header timer: whole minutes only, appearing at the 1-minute mark.
-  const [now, setNow] = useState(() => Date.now());
+  // A started puzzle resumes its clock immediately after a page refresh.
+  useEffect(() => {
+    const begun =
+      state.elapsedMs > 0 ||
+      state.mistakes > 0 ||
+      state.flipped.length > puzzle.initialReveals.length;
+    if (begun && !state.completed) dispatch({ type: "start", now: Date.now() });
+    // Mount-time resume only.
+  }, []);
+
+  // Once started (and not paused/completed), the clock ticks every second the
+  // page is shown; each tick folds elapsed time into state, which persists it.
   useEffect(() => {
     if (state.completed) return;
-    const id = setInterval(() => setNow(Date.now()), 1000);
+    const id = setInterval(() => dispatch({ type: "tick", now: Date.now() }), 1000);
     return () => clearInterval(id);
-  }, [state.completed]);
-  const elapsed = liveElapsedMs(state, now);
+  }, [state.completed, dispatch]);
+  const elapsed = state.elapsedMs;
   const minutes = Math.floor(elapsed / 60_000);
   const [showSeconds, setShowSeconds] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -212,7 +223,6 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
             </span>
           </p>
         </div>
-        <h1>{puzzle.title}</h1>
         {state.rejectedIndex !== null && (
           <p className="rejection">{REJECTION_COPY}</p>
         )}
