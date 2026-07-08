@@ -153,6 +153,12 @@ a {
   transition: transform 0.05s linear;
   font-family: 'Chalkboard SE', 'Comic Sans MS', 'Comic Sans', sans-serif;
 }
+/* No mobile tap-highlight flash on cards (matches the real site). */
+.card,
+.card *,
+.timer {
+  -webkit-tap-highlight-color: transparent;
+}
 @media (hover: hover) {
   .card:not(.flipped):hover {
     transform: scale(0.98);
