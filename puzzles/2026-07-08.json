@@ -1,0 +1,410 @@
+{
+  "formatVersion": 1,
+  "id": "f23f73a4a543",
+  "date": "2026-07-08",
+  "title": "One criminal is less cute than the others",
+  "difficulty": "Tricky",
+  "width": 4,
+  "height": 5,
+  "initialReveals": [
+    18
+  ],
+  "source": "cluesbysam.com",
+  "people": [
+    {
+      "name": "alex",
+      "profession": "cat",
+      "gender": "male",
+      "criminal": true,
+      "clue": "Sorry for dropping that vase...",
+      "origHint": null,
+      "paths": [
+        [
+          18,
+          13,
+          17,
+          5,
+          2,
+          15,
+          9,
+          1,
+          10,
+          8
+        ]
+      ]
+    },
+    {
+      "name": "brian",
+      "profession": "coder",
+      "gender": "male",
+      "criminal": false,
+      "clue": "There is only one innocent #BETWEEN:pair(8,9)",
+      "origHint": "number_of_traits_in_unit(unit(between,pair(8,9)),innocent,1)",
+      "paths": [
+        [
+          18,
+          13,
+          5,
+          2,
+          15,
+          9
+        ]
+      ]
+    },
+    {
+      "name": "chloe",
+      "profession": "mech",
+      "gender": "female",
+      "criminal": true,
+      "clue": "Both criminals #BETWEEN:pair(12,15) are connected",
+      "origHint": "both_traits_are_neighbors_in_unit(unit(between,pair(12,15)),criminal)",
+      "paths": [
+        [
+          18,
+          13,
+          5
+        ]
+      ]
+    },
+    {
+      "name": "debra",
+      "profession": "coder",
+      "gender": "female",
+      "criminal": true,
+      "clue": "There's an odd number of criminals neighboring #NAME:17",
+      "origHint": "odd_number_of_traits_in_unit(unit(neighbor,17),criminal)",
+      "paths": [
+        [
+          18,
+          13,
+          17,
+          5,
+          2,
+          15,
+          9,
+          1,
+          10,
+          8
+        ]
+      ]
+    },
+    {
+      "name": "eve",
+      "profession": "cook",
+      "gender": "female",
+      "criminal": false,
+      "clue": "You're all forgiven! No, wait a second...",
+      "origHint": null,
+      "paths": [
+        [
+          18,
+          13,
+          17,
+          5,
+          2,
+          15,
+          9,
+          1,
+          10,
+          8,
+          3,
+          16,
+          7,
+          19
+        ]
+      ]
+    },
+    {
+      "name": "floyd",
+      "profession": "singer",
+      "gender": "male",
+      "criminal": true,
+      "clue": "Exactly 2 of the 3 criminals #BETWEEN:pair(2,18) are #NAMES:9 neighbors",
+      "origHint": "unit_shares_n_out_of_n_traits_with_unit(unit(between,pair(2,18)),unit(neighbor,9),criminal,2,3)",
+      "paths": [
+        [
+          18,
+          13
+        ]
+      ]
+    },
+    {
+      "name": "gary",
+      "profession": "mech",
+      "gender": "male",
+      "criminal": true,
+      "clue": "Sorry for robbing that bank...",
+      "origHint": null,
+      "paths": [
+        [
+          18,
+          13,
+          17,
+          5,
+          2,
+          15,
+          9,
+          1,
+          10,
+          8,
+          3,
+          16,
+          7,
+          19
+        ]
+      ]
+    },
+    {
+      "name": "isaac",
+      "profession": "coder",
+      "gender": "male",
+      "criminal": true,
+      "clue": "Column #C:1 is the only column with exactly 4 criminals",
+      "origHint": "only_unit_has_exactly_n_traits(unit(col,1),criminal,4)",
+      "paths": [
+        [
+          18,
+          13,
+          17,
+          5,
+          2,
+          15,
+          9,
+          1,
+          10,
+          8,
+          3,
+          16
+        ]
+      ]
+    },
+    {
+      "name": "joyce",
+      "profession": "cop",
+      "gender": "female",
+      "criminal": true,
+      "clue": "There's an equal number of criminals in rows 1 and 3",
+      "origHint": "equal_number_of_traits_in_units(unit(row,1),unit(row,3),criminal)",
+      "paths": [
+        [
+          18,
+          13,
+          5,
+          2,
+          15,
+          9,
+          1
+        ]
+      ]
+    },
+    {
+      "name": "katie",
+      "profession": "singer",
+      "gender": "female",
+      "criminal": false,
+      "clue": "Only one person in a corner has a criminal directly to the right of them",
+      "origHint": "n_in_unit_have_trait_in_dir(unit(corner,void),criminal,1,0,1)",
+      "paths": [
+        [
+          18,
+          13,
+          5,
+          2,
+          15
+        ]
+      ]
+    },
+    {
+      "name": "nicole",
+      "profession": "mech",
+      "gender": "female",
+      "criminal": true,
+      "clue": "There are more criminals in row 3 than row 4",
+      "origHint": "more_traits_in_unit_than_unit(unit(row,3),unit(row,4),criminal)",
+      "paths": [
+        [
+          18,
+          13,
+          17,
+          5,
+          2,
+          15,
+          9,
+          1
+        ]
+      ]
+    },
+    {
+      "name": "ollie",
+      "profession": "dog",
+      "gender": "male",
+      "criminal": true,
+      "clue": "I'm sorry for gnawing on your shoe",
+      "origHint": null,
+      "paths": [
+        [
+          18,
+          13,
+          17,
+          5,
+          2,
+          15,
+          9,
+          1,
+          10
+        ]
+      ]
+    },
+    {
+      "name": "penny",
+      "profession": "snail",
+      "gender": "female",
+      "criminal": true,
+      "clue": "Sorry for blocking the traffic...",
+      "origHint": null,
+      "paths": [
+        [
+          18,
+          13,
+          17,
+          5,
+          2,
+          15,
+          9,
+          1,
+          10,
+          8,
+          3,
+          16,
+          7,
+          19
+        ]
+      ]
+    },
+    {
+      "name": "quita",
+      "profession": "pilot",
+      "gender": "female",
+      "criminal": true,
+      "clue": "#NAME:5 is one of #NAMES:1 4 criminal neighbors",
+      "origHint": "is_one_of_n_traits_in_unit(unit(neighbor,1),5,criminal,4)",
+      "paths": [
+        [
+          18
+        ]
+      ]
+    },
+    {
+      "name": "samira",
+      "profession": "teacher",
+      "gender": "female",
+      "criminal": false,
+      "clue": "Aw, who could be mad at these cuties?",
+      "origHint": null,
+      "paths": [
+        [
+          18,
+          13,
+          17,
+          5,
+          2,
+          15,
+          9,
+          1,
+          10,
+          8,
+          3,
+          16,
+          7,
+          19
+        ]
+      ]
+    },
+    {
+      "name": "tom",
+      "profession": "cook",
+      "gender": "male",
+      "criminal": false,
+      "clue": "There is only one innocent #BETWEEN:pair(5,13)",
+      "origHint": "number_of_traits_in_unit(unit(between,pair(5,13)),innocent,1)",
+      "paths": [
+        [
+          18,
+          13,
+          5,
+          2
+        ]
+      ]
+    },
+    {
+      "name": "umar",
+      "profession": "teacher",
+      "gender": "male",
+      "criminal": true,
+      "clue": "There's an equal number of innocents in rows 1 and 2",
+      "origHint": "equal_number_of_traits_in_units(unit(row,1),unit(row,2),innocent)",
+      "paths": [
+        [
+          18,
+          13,
+          17,
+          5,
+          2,
+          15,
+          9,
+          1,
+          10,
+          8,
+          3
+        ]
+      ]
+    },
+    {
+      "name": "vince",
+      "profession": "pilot",
+      "gender": "male",
+      "criminal": true,
+      "clue": "There's an odd number of criminals neighboring #NAME:5",
+      "origHint": "odd_number_of_traits_in_unit(unit(neighbor,5),criminal)",
+      "paths": [
+        [
+          18
+        ]
+      ]
+    },
+    {
+      "name": "will",
+      "profession": "builder",
+      "gender": "male",
+      "criminal": false,
+      "clue": "There are no innocents #BETWEEN:pair(5,17) who neighbor #NAME:18",
+      "origHint": "units_share_n_traits(unit(between,pair(5,17)),unit(neighbor,18),innocent,0)",
+      "paths": []
+    },
+    {
+      "name": "xia",
+      "profession": "cop",
+      "gender": "female",
+      "criminal": false,
+      "clue": "Only one person in a corner has no criminal neighbors",
+      "origHint": "only_one_person_in_unit_has_exactly_n_trait_neighbors(unit(corner,void),criminal,0)",
+      "paths": [
+        [
+          18,
+          13,
+          17,
+          5,
+          2,
+          15,
+          9,
+          1,
+          10,
+          8,
+          3,
+          16,
+          7
+        ]
+      ]
+    }
+  ]
+}
