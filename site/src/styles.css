@@ -279,7 +279,7 @@ a {
 .card-pos {
   position: absolute;
   top: 2px;
-  left: 4px;
+  left: 2px;
   color: var(--text-muted);
   font-size: 10px;
   line-height: 10px;
@@ -298,7 +298,7 @@ a {
 .card-name {
   background: var(--band);
   width: 100%;
-  /* padding: 0 0 3px; */ /* Deleted by Dan */
+  padding: 0 0 3px;
   font-size: 16px;
   line-height: 16px;
   font-weight: 700;
@@ -313,7 +313,7 @@ a {
   font-size: 11px;
   line-height: 11px;
   opacity: 0.7;
-  margin-top: 3px;
+  /* margin-top: 3px; */
 }
 .card-clue {
   font-size: 11px;
