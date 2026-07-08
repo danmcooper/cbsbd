@@ -152,9 +152,9 @@ describe('results popup', () => {
     await user.click(screen.getByRole('button', { name: /copy text/i }));
     expect(writeText).toHaveBeenCalledTimes(1);
     const copied = String(writeText.mock.calls[0]?.[0]);
-    expect(copied).toContain('Jul 7th 2026 (Easy)');
-    expect(copied).toMatch(/Solved in \d{2}:\d{2}/);
-    expect(copied).toContain('🟩🟩\n🟨🟩');
+    expect(copied).toMatch(
+      /^I solved the daily #CluesBySam, Jul 7th 2026 \(Easy\), in \d{2}:\d{2}\n🟩🟩\n🟨🟩\nhttps:\/\/cluesbysam\.com$/,
+    );
     await user.click(screen.getByRole('button', { name: 'Close' }));
     expect(screen.queryByRole('dialog')).toBeNull();
     // Reopenable via the results button next to the solved banner.

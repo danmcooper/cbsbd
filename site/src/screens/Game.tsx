@@ -52,7 +52,9 @@ function ResultsModal({
 
   const copyText = async () => {
     const grid = rows.map((row) => row.map((c) => CELL_EMOJI[c]).join('')).join('\n');
-    await navigator.clipboard.writeText(`${title}\n${solvedIn}\n${grid}`);
+    await navigator.clipboard.writeText(
+      `I solved the daily #CluesBySam, ${title}, in ${formatTime(state.elapsedMs)}\n${grid}\nhttps://cluesbysam.com`,
+    );
     setCopied(true);
   };
 
