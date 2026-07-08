@@ -333,11 +333,17 @@ describe('correct-guess animation', () => {
 });
 
 describe('mark color picker', () => {
-  it('clicking the bottom-right mark opens the picker; picking a swatch sets that color', async () => {
+  const longPress = async (user: ReturnType<typeof userEvent.setup>, el: HTMLElement) => {
+    await user.pointer({ keys: '[MouseLeft>]', target: el });
+    await new Promise((r) => setTimeout(r, 500));
+    await user.pointer('[/MouseLeft]');
+  };
+
+  it('long-pressing the bottom-right mark opens the picker; picking a swatch sets that color', async () => {
     const user = userEvent.setup();
     await renderGame();
     const mark = document.querySelectorAll('.mark')[1] as HTMLElement;
-    await user.click(mark);
+    await longPress(user, mark);
     const picker = document.querySelector('.tag-picker');
     expect(picker).toBeTruthy();
     expect(picker?.querySelectorAll('.tag-swatch')).toHaveLength(7);
@@ -346,14 +352,17 @@ describe('mark color picker', () => {
     expect(document.querySelector('.tag-picker')).toBeNull();
   });
 
-  it('picking the blank swatch clears the mark', async () => {
+  it('picking the blank swatch clears the mark; a short click opens nothing', async () => {
     const user = userEvent.setup();
     await renderGame();
     const mark = document.querySelectorAll('.mark')[1] as HTMLElement;
-    await user.click(mark);
+    await longPress(user, mark);
     await user.click(screen.getByRole('button', { name: 'clear mark' }));
     expect(mark.className).toBe('mark');
     expect(document.querySelector('.tag-picker')).toBeNull();
+    await user.click(mark);
+    expect(document.querySelector('.tag-picker')).toBeNull();
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   it('the top-right tag cycles on click and never opens the picker', async () => {

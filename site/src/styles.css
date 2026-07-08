@@ -182,19 +182,20 @@ a {
   position: absolute;
   inset: 0;
   clip-path: polygon(calc(100% - 22px) 0, 100% 0, 100% 22px);
-  background: rgba(255, 255, 255, 0.06);
+  background: #3b3943;
 }
 .tag.tag-yellow::before {
-  background: #ffee00;
+  background: #ffff54;
 }
 .tag.tag-red::before {
-  background: #e03c3c;
+  background: #ea3323;
 }
 .tag.tag-green::before {
-  background: #52d017;
+  background: #75fb4d;
 }
 
-/* Bottom-right corner mark: click opens the color picker. */
+/* Bottom-right corner mark: long-press opens the color picker.
+   Invisible until a color is chosen (unlike the top-right tag). */
 .mark {
   position: absolute;
   bottom: 0;
@@ -209,25 +210,24 @@ a {
   position: absolute;
   inset: 0;
   clip-path: polygon(calc(100% - 22px) 100%, 100% calc(100% - 22px), 100% 100%);
-  background: rgba(255, 255, 255, 0.06);
 }
 .mark.mark-yellow::before {
-  background: #ffee00;
+  background: #ffff54;
 }
 .mark.mark-red::before {
-  background: #e03c3c;
+  background: #ea3323;
 }
 .mark.mark-green::before {
-  background: #52d017;
+  background: #75fb4d;
 }
 .mark.mark-orange::before {
-  background: #f89315;
+  background: #ef8e34;
 }
 .mark.mark-magenta::before {
-  background: #e83ce8;
+  background: #ea33f7;
 }
 .mark.mark-cyan::before {
-  background: #67e4f2;
+  background: #75fbfd;
 }
 
 /* Mark color picker (real site's color strip, tap-to-pick). */
@@ -261,25 +261,25 @@ a {
   outline: 2px solid #fff;
 }
 .tag-swatch.swatch-none {
-  background: #33343e;
+  background: #333238;
 }
 .tag-swatch.swatch-yellow {
-  background: #ffee00;
+  background: #ffff54;
 }
 .tag-swatch.swatch-red {
-  background: #e03c3c;
+  background: #ea3323;
 }
 .tag-swatch.swatch-green {
-  background: #52d017;
+  background: #75fb4d;
 }
 .tag-swatch.swatch-orange {
-  background: #f89315;
+  background: #ef8e34;
 }
 .tag-swatch.swatch-magenta {
-  background: #e83ce8;
+  background: #ea33f7;
 }
 .tag-swatch.swatch-cyan {
-  background: #67e4f2;
+  background: #75fbfd;
 }
 .card.flipped {
   cursor: default;

@@ -1,7 +1,9 @@
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import type { Person } from "../../../shared/puzzle";
 import { faceFor } from "../faces";
 import { TAG_COLORS, type Tag } from "../game/reducer";
+
+const LONG_PRESS_MS = 400;
 
 interface CardProps {
   person: Person;
@@ -26,7 +28,7 @@ interface CardProps {
   onOpen: () => void;
   /** Cycles the corner tag: none -> yellow -> red -> green -> none. */
   onCycleTag: () => void;
-  /** Click on the bottom-right corner opens the color picker. */
+  /** Long-press on the bottom-right corner opens the color picker. */
   onOpenPicker: () => void;
   /** Picker selection (null clears the mark). */
   onPickMark: (mark: Tag | null) => void;
@@ -53,6 +55,18 @@ export default function Card({
   onPickMark,
   onToggleClue,
 }: CardProps) {
+  const pressTimer = useRef<number | null>(null);
+
+  const startPress = () => {
+    pressTimer.current = window.setTimeout(onOpenPicker, LONG_PRESS_MS);
+  };
+  const endPress = () => {
+    if (pressTimer.current !== null) {
+      clearTimeout(pressTimer.current);
+      pressTimer.current = null;
+    }
+  };
+
   const classes = [
     "card",
     flipped ? "flipped" : "",
@@ -75,10 +89,14 @@ export default function Card({
         />
         <div
           className={mark ? `mark mark-${mark}` : "mark"}
-          onClick={(e) => {
+          onPointerDown={(e) => {
             e.stopPropagation();
-            onOpenPicker();
+            startPress();
           }}
+          onPointerUp={endPress}
+          onPointerLeave={endPress}
+          onContextMenu={(e) => e.preventDefault()}
+          onClick={(e) => e.stopPropagation()}
         />
         <div className="card-pos">{label}</div>
         {justFlipped && <div className="speech-bubble">Correct!</div>}
