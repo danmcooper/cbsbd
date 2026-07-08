@@ -164,7 +164,7 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
     return () => clearInterval(id);
   }, [state.completed]);
   const elapsed = liveElapsedMs(state, now);
-  const minutes = elapsed >= 60_000 ? Math.round(elapsed / 60_000) : null;
+  const minutes = Math.floor(elapsed / 60_000);
   const [showSeconds, setShowSeconds] = useState(false);
 
   return (
@@ -179,7 +179,7 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
         <h1>{puzzle.title}</h1>
         <p className="meta">
           {puzzle.date} · {puzzle.difficulty} · mistakes: {state.mistakes}
-          {!state.completed && minutes !== null && (
+          {!state.completed && (
             <>
               {' · '}
               <span className="timer" onClick={() => setShowSeconds((s) => !s)}>

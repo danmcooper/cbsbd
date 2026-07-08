@@ -207,3 +207,15 @@ describe('timer display', () => {
     expect(timer.textContent).toBe('2 min');
   });
 });
+
+describe('timer under a minute', () => {
+  it('shows 0 min from the start so seconds are reachable', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    const timer = screen.getByText('0 min');
+    await user.click(timer);
+    expect(timer.textContent).toMatch(/^00:0\d$/);
+    await user.click(timer);
+    expect(timer.textContent).toBe('0 min');
+  });
+});
