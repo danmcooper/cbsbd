@@ -206,6 +206,23 @@ describe('results popup', () => {
   });
 });
 
+describe('revisiting a completed puzzle', () => {
+  it('shows the results popup immediately on load, without the completion delay', async () => {
+    localStorage.setItem(
+      'cbs:progress:a6f09e2713b2',
+      JSON.stringify({ flipped: [0, 1, 2, 3], mistakes: 1, elapsedMs: 65_000, completed: true }),
+    );
+    render(<Game date="2026-07-07" />);
+    await screen.findAllByRole('group');
+    const dialog = screen.getByRole('dialog');
+    expect(dialog.querySelectorAll('.share-cell')).toHaveLength(4);
+    expect(dialog.textContent).toMatch(/Solved in 01:05/);
+    // Close leaves the solved banner in place.
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+    expect(screen.getByText(/solved!/i)).toBeTruthy();
+  });
+});
+
 describe('start popup', () => {
   it('welcomes on a fresh puzzle and dismisses on Start', async () => {
     const user = userEvent.setup();

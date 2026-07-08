@@ -193,7 +193,9 @@ const RESULTS_DELAY_MS = 2700;
 function Board({ puzzle }: { puzzle: Puzzle }) {
   const { state, dispatch } = useGameState(puzzle);
   const [guessing, setGuessing] = useState<number | null>(null);
-  const [resultsOpen, setResultsOpen] = useState(false);
+  // A puzzle that loads already solved shows its results right away; the
+  // 2.7s completion delay only applies to a live solve.
+  const [resultsOpen, setResultsOpen] = useState(state.completed);
   // Post-solve UI (banner, Results button); immediate for already-solved puzzles.
   const [postComplete, setPostComplete] = useState(state.completed);
   // A puzzle is "new" when localStorage holds no guesses and no elapsed time.
