@@ -167,6 +167,17 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
     // Mount-time resume only.
   }, []);
 
+  // Long-press tag color picker; any click outside it closes it.
+  const [pickerIndex, setPickerIndex] = useState<number | null>(null);
+  useEffect(() => {
+    if (pickerIndex === null) return;
+    const close = (e: PointerEvent) => {
+      if (!(e.target as Element | null)?.closest(".tag-picker")) setPickerIndex(null);
+    };
+    window.addEventListener("pointerdown", close);
+    return () => window.removeEventListener("pointerdown", close);
+  }, [pickerIndex]);
+
   // "Correct!" speech bubble on the card that just flipped (real-site pop-fade).
   const [justFlipped, setJustFlipped] = useState<number | null>(null);
   const prevFlippedLen = useRef(state.flipped.length);
@@ -224,8 +235,14 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
           puzzle={puzzle}
           state={state}
           justFlipped={justFlipped}
+          pickerIndex={pickerIndex}
           onOpen={setGuessing}
           onCycleTag={(index) => dispatch({ type: "cycleTag", index })}
+          onOpenPicker={setPickerIndex}
+          onPickTag={(index, tag) => {
+            dispatch({ type: "setTag", index, tag });
+            setPickerIndex(null);
+          }}
           onToggleClue={(index) => dispatch({ type: "toggleConsumed", index })}
         />
         <div className="controls">

@@ -15,11 +15,12 @@ const key = (puzzleId: string) => `cbs:progress:${puzzleId}`;
 function isSavedProgress(v: unknown): v is SavedProgress {
   if (typeof v !== 'object' || v === null) return false;
   const p = v as Record<string, unknown>;
+  const validTags = ['yellow', 'red', 'green', 'orange', 'magenta', 'cyan'];
   const tagsOk =
     p.tags === undefined ||
     (typeof p.tags === 'object' &&
       p.tags !== null &&
-      Object.values(p.tags).every((t) => t === 'yellow' || t === 'red' || t === 'green'));
+      Object.values(p.tags).every((t) => validTags.includes(t as string)));
   const intArrayOk = (v: unknown) =>
     v === undefined || (Array.isArray(v) && v.every((n) => Number.isInteger(n)));
   const wrongOk = intArrayOk(p.wrong) && intArrayOk(p.consumed);

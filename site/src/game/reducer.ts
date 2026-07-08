@@ -3,7 +3,10 @@ import { isDeducible } from './deduce';
 
 export type Guess = 'criminal' | 'innocent';
 
-export type Tag = 'yellow' | 'red' | 'green';
+export type Tag = 'yellow' | 'red' | 'green' | 'orange' | 'magenta' | 'cyan';
+
+/** Picker order, matching the real site's color strip (null = no tag). */
+export const TAG_COLORS: (Tag | null)[] = [null, 'yellow', 'red', 'green', 'orange', 'magenta', 'cyan'];
 
 export interface GameState {
   flipped: number[];
@@ -27,6 +30,7 @@ export type GameAction =
   | { type: 'guess'; index: number; guess: Guess; now: number }
   | { type: 'clearRejection' }
   | { type: 'cycleTag'; index: number }
+  | { type: 'setTag'; index: number; tag: Tag | null }
   | { type: 'toggleConsumed'; index: number }
   | {
       type: 'restore';
@@ -106,6 +110,12 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
       const tags = { ...state.tags };
       if (next === undefined) delete tags[action.index];
       else tags[action.index] = next;
+      return { ...state, tags };
+    }
+    case 'setTag': {
+      const tags = { ...state.tags };
+      if (action.tag === null) delete tags[action.index];
+      else tags[action.index] = action.tag;
       return { ...state, tags };
     }
     case 'toggleConsumed':

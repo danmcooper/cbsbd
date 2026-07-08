@@ -234,3 +234,15 @@ describe('tick action', () => {
     expect(gameReducer(puzzle, done, { type: 'tick', now: 99_000 })).toBe(done);
   });
 });
+
+describe('setTag', () => {
+  it('sets any picker color directly and null clears', () => {
+    let s = initialGameState(puzzle);
+    s = gameReducer(puzzle, s, { type: 'setTag', index: 2, tag: 'magenta' });
+    expect(s.tags).toEqual({ 2: 'magenta' });
+    s = gameReducer(puzzle, s, { type: 'setTag', index: 2, tag: 'cyan' });
+    expect(s.tags).toEqual({ 2: 'cyan' });
+    s = gameReducer(puzzle, s, { type: 'setTag', index: 2, tag: null });
+    expect(s.tags).toEqual({});
+  });
+});

@@ -331,3 +331,34 @@ describe('correct-guess animation', () => {
     expect(document.querySelector('.speech-bubble')).toBeNull();
   });
 });
+
+describe('tag color picker', () => {
+  it('long-press opens the picker; picking a swatch sets that color', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    const tag = document.querySelectorAll('.tag')[1] as HTMLElement;
+    await user.pointer({ keys: '[MouseLeft>]', target: tag });
+    await new Promise((r) => setTimeout(r, 500));
+    await user.pointer('[/MouseLeft]');
+    const picker = document.querySelector('.tag-picker');
+    expect(picker).toBeTruthy();
+    expect(picker?.querySelectorAll('.tag-swatch')).toHaveLength(7);
+    await user.click(screen.getByRole('button', { name: 'magenta tag' }));
+    expect(tag.className).toContain('tag-magenta');
+    expect(document.querySelector('.tag-picker')).toBeNull();
+  });
+
+  it('picking the blank swatch clears; short click still cycles without opening', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    const tag = document.querySelectorAll('.tag')[1] as HTMLElement;
+    await user.pointer({ keys: '[MouseLeft>]', target: tag });
+    await new Promise((r) => setTimeout(r, 500));
+    await user.pointer('[/MouseLeft]');
+    await user.click(screen.getByRole('button', { name: 'clear tag' }));
+    expect(tag.className).toBe('tag');
+    await user.click(tag);
+    expect(document.querySelector('.tag-picker')).toBeNull();
+    expect(tag.className).toContain('tag-yellow');
+  });
+});

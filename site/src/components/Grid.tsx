@@ -1,6 +1,6 @@
 import type { Puzzle } from "../../../shared/puzzle";
 import ClueText, { clueReferencedIndices, gridLabel } from "../clue/ClueText";
-import type { GameState } from "../game/reducer";
+import type { GameState, Tag } from "../game/reducer";
 import Card from "./Card";
 
 interface GridProps {
@@ -8,8 +8,12 @@ interface GridProps {
   state: GameState;
   /** Card that just flipped from a correct guess (shows the Correct! bubble). */
   justFlipped: number | null;
+  /** Card whose long-press color picker is open. */
+  pickerIndex: number | null;
   onOpen: (index: number) => void;
   onCycleTag: (index: number) => void;
+  onOpenPicker: (index: number) => void;
+  onPickTag: (index: number, tag: Tag | null) => void;
   onToggleClue: (index: number) => void;
 }
 
@@ -17,8 +21,11 @@ export default function Grid({
   puzzle,
   state,
   justFlipped,
+  pickerIndex,
   onOpen,
   onCycleTag,
+  onOpenPicker,
+  onPickTag,
   onToggleClue,
 }: GridProps) {
   // Every active (flipped, unconsumed) clue emphasizes its own card's name
@@ -45,6 +52,7 @@ export default function Grid({
           tag={state.tags[i]}
           consumed={state.consumed.includes(i)}
           justFlipped={justFlipped === i}
+          pickerOpen={pickerIndex === i}
           nameReferenced={nameRefs.has(i)}
           profReferenced={profRefs.has(i)}
           clueNode={
@@ -59,6 +67,8 @@ export default function Grid({
           }
           onOpen={() => onOpen(i)}
           onCycleTag={() => onCycleTag(i)}
+          onOpenPicker={() => onOpenPicker(i)}
+          onPickTag={(tag) => onPickTag(i, tag)}
           onToggleClue={() => onToggleClue(i)}
         />
       ))}
