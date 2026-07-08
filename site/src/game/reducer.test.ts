@@ -96,6 +96,18 @@ describe('gameReducer', () => {
     expect(s.elapsedMs).toBe(70_000);
   });
 
+  it('blocks a rejected verdict for that card until the next reveal', () => {
+    let s = guess(initialGameState(puzzle), 1, 'innocent'); // wrong trait
+    expect(s.blocked).toEqual({ 1: ['innocent'] });
+    const repeat = guess(s, 1, 'innocent'); // blocked: ignored, no extra mistake
+    expect(repeat).toBe(s);
+    s = guess(s, 3, 'criminal'); // correct but not deducible: also blocked
+    expect(s.blocked).toEqual({ 1: ['innocent'], 3: ['criminal'] });
+    s = guess(s, 1, 'criminal'); // reveal opens everything back up
+    expect(s.flipped).toContain(1);
+    expect(s.blocked).toEqual({});
+  });
+
   it('clearRejection resets rejectedIndex and rejectedGuess; restore rebuilds state', () => {
     const rejected = guess(initialGameState(puzzle), 1, 'innocent');
     expect(rejected.rejectedGuess).toBe('innocent');
@@ -139,8 +151,8 @@ describe('per-card wrong answers', () => {
   it('records each card that ever got a bad answer, once', () => {
     let s = initialGameState(puzzle);
     s = guess(s, 1, 'innocent'); // wrong trait
-    s = guess(s, 1, 'innocent'); // wrong again, same card
     s = guess(s, 3, 'criminal'); // correct but not deducible
+    s = guess(s, 3, 'innocent'); // wrong trait, same card again
     expect(s.wrong).toEqual([1, 3]);
     expect(s.mistakes).toBe(3);
     s = guess(s, 1, 'criminal'); // finally right

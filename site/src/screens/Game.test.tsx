@@ -89,6 +89,21 @@ describe('Game', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
+  it('disables a rejected verdict for that suspect until the next reveal', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    await user.click(screen.getByText('mira'));
+    await user.click(screen.getByRole('button', { name: 'Innocent' })); // wrong trait
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    await user.click(screen.getByText('mira'));
+    expect(screen.getByRole('button', { name: 'Innocent' })).toHaveProperty('disabled', true);
+    expect(screen.getByRole('button', { name: 'Criminal' })).toHaveProperty('disabled', false);
+    await user.click(screen.getByRole('button', { name: 'Criminal' })); // reveals mira
+    await user.click(screen.getByText('lena'));
+    expect(screen.getByRole('button', { name: 'Innocent' })).toHaveProperty('disabled', false);
+    await user.click(screen.getByRole('button', { name: 'Close' }));
+  });
+
   it('shows completion with mistakes count', async () => {
     const user = userEvent.setup();
     await renderGame();

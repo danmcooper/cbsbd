@@ -468,6 +468,29 @@ a {
   border-color: var(--criminal);
   color: var(--criminal);
 }
+/* Popup buttons fill with their color on hover, like the real site. */
+.btn-innocent,
+.btn-criminal,
+.btn-continue {
+  transition: background-color 0.15s, color 0.15s;
+}
+.btn-innocent:hover:not(:disabled) {
+  background: var(--innocent);
+  color: #fff;
+}
+.btn-criminal:hover:not(:disabled) {
+  background: var(--criminal);
+  color: #fff;
+}
+.btn-continue:hover {
+  background: #b59430;
+  color: var(--modal-bg);
+}
+/* A rejected verdict stays disabled until the next suspect is revealed. */
+.modal button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
 .btn-close {
   border: 1px solid #7f818c;
   color: var(--text);

@@ -137,11 +137,14 @@ function EvidenceModal({
 function GuessModal({
   puzzle,
   index,
+  blocked,
   onGuess,
   onClose,
 }: {
   puzzle: Puzzle;
   index: number;
+  /** Verdicts already rejected for this suspect; disabled until the next reveal. */
+  blocked: Guess[];
   onGuess: (guess: Guess) => void;
   onClose: () => void;
 }) {
@@ -160,10 +163,18 @@ function GuessModal({
         <div className="modal-name">{person.name}</div>
         <div className="modal-prof">{person.profession}</div>
         <div className="modal-choices">
-          <button className="btn-innocent" onClick={() => onGuess("innocent")}>
+          <button
+            className="btn-innocent"
+            disabled={blocked.includes("innocent")}
+            onClick={() => onGuess("innocent")}
+          >
             Innocent
           </button>
-          <button className="btn-criminal" onClick={() => onGuess("criminal")}>
+          <button
+            className="btn-criminal"
+            disabled={blocked.includes("criminal")}
+            onClick={() => onGuess("criminal")}
+          >
             Criminal
           </button>
         </div>
@@ -370,6 +381,7 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
         <GuessModal
           puzzle={puzzle}
           index={guessing}
+          blocked={state.blocked[guessing] ?? []}
           onGuess={(guess) => {
             dispatch({
               type: "guess",

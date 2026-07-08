@@ -16,6 +16,8 @@ export interface GameState {
   rejectedIndex: number | null;
   /** The verdict the player picked when rejectedIndex was set. */
   rejectedGuess: Guess | null;
+  /** Rejected verdicts per card, disabled until the next suspect is revealed. */
+  blocked: Record<number, Guess[]>;
   completed: boolean;
   tags: Record<number, Tag>;
   /** Bottom-right corner marks, set via the color picker. */
@@ -59,6 +61,7 @@ export function initialGameState(puzzle: Puzzle): GameState {
     lastActionAt: null,
     rejectedIndex: null,
     rejectedGuess: null,
+    blocked: {},
     completed: false,
     tags: {},
     marks: {},
@@ -93,6 +96,7 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
       return initialGameState(puzzle);
     case 'guess': {
       if (state.completed || state.flipped.includes(action.index)) return state;
+      if ((state.blocked[action.index] ?? []).includes(action.guess)) return state;
       const person = puzzle.people[action.index];
       const correctTrait = (action.guess === 'criminal') === person.criminal;
       const allowed = correctTrait && isDeducible(puzzle, state.flipped, action.index);
@@ -105,6 +109,10 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
           mistakes: timed.mistakes + 1,
           rejectedIndex: action.index,
           rejectedGuess: action.guess,
+          blocked: {
+            ...timed.blocked,
+            [action.index]: [...(timed.blocked[action.index] ?? []), action.guess],
+          },
           wrong,
         };
       }
@@ -114,6 +122,7 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
         flipped,
         rejectedIndex: null,
         rejectedGuess: null,
+        blocked: {}, // a new reveal is new evidence; blocked verdicts open back up
         completed: flipped.length === puzzle.people.length,
       };
     }
