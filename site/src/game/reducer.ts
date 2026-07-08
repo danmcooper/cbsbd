@@ -15,6 +15,8 @@ export interface GameState {
   tags: Record<number, Tag>;
   /** Cards that ever received a bad answer (for the results grid). */
   wrong: number[];
+  /** Cards whose clue the player marked as used (dimmed). */
+  consumed: number[];
 }
 
 export type GameAction =
@@ -22,6 +24,7 @@ export type GameAction =
   | { type: 'guess'; index: number; guess: Guess; now: number }
   | { type: 'clearRejection' }
   | { type: 'cycleTag'; index: number }
+  | { type: 'toggleConsumed'; index: number }
   | {
       type: 'restore';
       flipped: number[];
@@ -29,6 +32,7 @@ export type GameAction =
       elapsedMs: number;
       tags?: Record<number, Tag>;
       wrong?: number[];
+      consumed?: number[];
     };
 
 const TAG_CYCLE: (Tag | undefined)[] = [undefined, 'yellow', 'red', 'green'];
@@ -45,6 +49,7 @@ export function initialGameState(puzzle: Puzzle): GameState {
     completed: false,
     tags: {},
     wrong: [],
+    consumed: [],
   };
 }
 
@@ -91,6 +96,13 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
       else tags[action.index] = next;
       return { ...state, tags };
     }
+    case 'toggleConsumed':
+      return {
+        ...state,
+        consumed: state.consumed.includes(action.index)
+          ? state.consumed.filter((i) => i !== action.index)
+          : [...state.consumed, action.index],
+      };
     case 'restore':
       return {
         ...initialGameState(puzzle),
@@ -100,6 +112,7 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
         completed: action.flipped.length === puzzle.people.length,
         tags: { ...action.tags },
         wrong: [...(action.wrong ?? [])],
+        consumed: [...(action.consumed ?? [])],
       };
   }
 }

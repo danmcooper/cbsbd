@@ -7,6 +7,7 @@ export interface SavedProgress {
   completed: boolean;
   tags?: Record<number, Tag>;
   wrong?: number[];
+  consumed?: number[];
 }
 
 const key = (puzzleId: string) => `cbs:progress:${puzzleId}`;
@@ -19,8 +20,9 @@ function isSavedProgress(v: unknown): v is SavedProgress {
     (typeof p.tags === 'object' &&
       p.tags !== null &&
       Object.values(p.tags).every((t) => t === 'yellow' || t === 'red' || t === 'green'));
-  const wrongOk =
-    p.wrong === undefined || (Array.isArray(p.wrong) && p.wrong.every((n) => Number.isInteger(n)));
+  const intArrayOk = (v: unknown) =>
+    v === undefined || (Array.isArray(v) && v.every((n) => Number.isInteger(n)));
+  const wrongOk = intArrayOk(p.wrong) && intArrayOk(p.consumed);
   return (
     Array.isArray(p.flipped) &&
     p.flipped.every((n) => Number.isInteger(n)) &&

@@ -42,7 +42,11 @@ function nameRef(props: ClueTextProps, index: number): string {
 
 // Positional paraphrase of an inclusive card range, ported from the live
 // bundle: describe the segment by row/column or by the cards just outside it.
-function betweenText(seg: { a: number; b: number }, props: ClueTextProps): string | null {
+// `refs` lists the boundary cards named in the phrase (self excluded).
+function betweenParts(
+  seg: { a: number; b: number },
+  props: ClueTextProps,
+): { text: string; refs: number[] } | null {
   const { people, width } = props;
   const height = people.length / width;
   const lo = Math.min(seg.a, seg.b);
@@ -55,18 +59,53 @@ function betweenText(seg: { a: number; b: number }, props: ClueTextProps): strin
   const sameRow = loRow === hiRow;
   const before = lo - (sameRow ? 1 : width);
   const after = hi + (sameRow ? 1 : width);
+  const refs = (...indices: number[]) => indices.filter((i) => i !== props.selfIndex);
   if (sameRow) {
-    if (loCol === 0 && hiCol === width - 1) return `in row ${loRow + 1}`;
-    if (loCol === 0) return `to the left of ${nameRef(props, after)}`;
-    if (hiCol === width - 1) return `to the right of ${nameRef(props, before)}`;
+    if (loCol === 0 && hiCol === width - 1) return { text: `in row ${loRow + 1}`, refs: [] };
+    if (loCol === 0) return { text: `to the left of ${nameRef(props, after)}`, refs: refs(after) };
+    if (hiCol === width - 1) {
+      return { text: `to the right of ${nameRef(props, before)}`, refs: refs(before) };
+    }
   } else {
-    if (loRow === 0 && hiRow === height - 1) return `in column ${columnLetter(loCol)}`;
-    if (loRow === 0) return `above ${nameRef(props, after)}`;
-    if (hiRow === height - 1) return `below ${nameRef(props, before)}`;
+    if (loRow === 0 && hiRow === height - 1) {
+      return { text: `in column ${columnLetter(loCol)}`, refs: [] };
+    }
+    if (loRow === 0) return { text: `above ${nameRef(props, after)}`, refs: refs(after) };
+    if (hiRow === height - 1) return { text: `below ${nameRef(props, before)}`, refs: refs(before) };
   }
-  if (props.selfIndex === before) return `in between ${nameRef(props, after)} and me`;
-  if (props.selfIndex === after) return `in between ${nameRef(props, before)} and me`;
-  return `in between ${nameRef(props, before)} and ${nameRef(props, after)}`;
+  if (props.selfIndex === before) {
+    return { text: `in between ${nameRef(props, after)} and me`, refs: refs(after) };
+  }
+  if (props.selfIndex === after) {
+    return { text: `in between ${nameRef(props, before)} and me`, refs: refs(before) };
+  }
+  return {
+    text: `in between ${nameRef(props, before)} and ${nameRef(props, after)}`,
+    refs: refs(before, after),
+  };
+}
+
+/** Cards a clue mentions (by name, boundary phrase, or profession), excluding the clue's own card. */
+export function clueReferencedIndices(
+  clue: string,
+  people: Person[],
+  width: number,
+  selfIndex: number,
+): { names: number[]; profs: number[] } {
+  const names = new Set<number>();
+  const profs = new Set<number>();
+  for (const seg of tokenizeClue(clue)) {
+    if (seg.kind === 'name') {
+      if (seg.index !== selfIndex && people[seg.index]) names.add(seg.index);
+    } else if (seg.kind === 'prof') {
+      people.forEach((p, i) => {
+        if (p.profession === seg.word) profs.add(i);
+      });
+    } else if (seg.kind === 'between') {
+      betweenParts(seg, { clue, people, width, selfIndex })?.refs.forEach((i) => names.add(i));
+    }
+  }
+  return { names: [...names].sort((a, b) => a - b), profs: [...profs].sort((a, b) => a - b) };
 }
 
 function rawToken(seg: ClueSegment): string {
@@ -97,7 +136,7 @@ function segmentText(seg: ClueSegment, props: ClueTextProps): string {
       // #C:n is 1-based ("column #C:1" is column A); the word "column" is in the source text.
       return seg.column >= 1 ? columnLetter(seg.column - 1) : rawToken(seg);
     case 'between':
-      return betweenText(seg, props) ?? rawToken(seg);
+      return betweenParts(seg, props)?.text ?? rawToken(seg);
     case 'text':
       return seg.text;
   }

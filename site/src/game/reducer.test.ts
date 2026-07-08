@@ -186,3 +186,18 @@ describe('start action', () => {
     expect(s.lastActionAt).toBe(10_000);
   });
 });
+
+describe('consumed clues', () => {
+  it('toggleConsumed toggles per card and survives restore', () => {
+    let s = initialGameState(puzzle);
+    s = gameReducer(puzzle, s, { type: 'toggleConsumed', index: 1 });
+    expect(s.consumed).toEqual([1]);
+    s = gameReducer(puzzle, s, { type: 'toggleConsumed', index: 3 });
+    s = gameReducer(puzzle, s, { type: 'toggleConsumed', index: 1 });
+    expect(s.consumed).toEqual([3]);
+    const restored = gameReducer(puzzle, initialGameState(puzzle), {
+      type: 'restore', flipped: [0], mistakes: 0, elapsedMs: 0, consumed: [2],
+    });
+    expect(restored.consumed).toEqual([2]);
+  });
+});

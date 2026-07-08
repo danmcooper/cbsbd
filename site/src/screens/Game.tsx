@@ -175,6 +175,7 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
           state={state}
           onOpen={setGuessing}
           onCycleTag={(index) => dispatch({ type: "cycleTag", index })}
+          onToggleClue={(index) => dispatch({ type: "toggleConsumed", index })}
         />
         <h1>{puzzle.title}</h1>
         <p className="meta">

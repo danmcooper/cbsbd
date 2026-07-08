@@ -218,6 +218,34 @@ a {
   opacity: 0.87;
   padding: 0 2px;
   margin: auto 0;
+  cursor: pointer;
+  transition: opacity 0.1s ease-in-out;
+}
+.card.consumed .card-clue {
+  opacity: 0.2;
+}
+/* Cards mentioned by an active clue get the real site's emphasis + bounce. */
+.card-name.referenced {
+  opacity: 1;
+  transform: scale(1.05);
+  animation: bounce-ref 0.27s ease-in-out;
+}
+.card-prof.referenced {
+  opacity: 0.95;
+  font-weight: 700;
+  transform: scale(1.06);
+  animation: bounce-ref 0.27s ease-in-out;
+}
+@keyframes bounce-ref {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-1px) scale(1.35);
+  }
+  100% {
+    transform: translateY(0) scale(1.05);
+  }
 }
 .rejection {
   color: var(--criminal);

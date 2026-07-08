@@ -2,7 +2,7 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type { Person } from '../../../shared/puzzle';
-import ClueText from './ClueText';
+import ClueText, { clueReferencedIndices } from './ClueText';
 
 const person = (name: string, profession: string): Person => ({
   name, profession, gender: 'male', criminal: false, clue: null, origHint: null, paths: [],
@@ -115,5 +115,24 @@ describe('ClueText', () => {
   it('renders unknown tokens and out-of-range indices as plain text', () => {
     const { container } = render(<ClueText clue="#FFF and #NAME:99" people={people} width={3} />);
     expect(container.textContent).toBe('#FFF and #NAME:99');
+  });
+});
+
+describe('clueReferencedIndices', () => {
+  it('collects name, profession, and between-boundary references, excluding self', () => {
+    const refs = clueReferencedIndices(
+      'The #PROF:coder saw #NAME:2 and #NAME:9 #BETWEEN:pair(0,4)',
+      grid.map((p, i) => (i === 2 ? { ...p, profession: 'cook' } : p)),
+      4,
+      9,
+    );
+    // #NAME:9 is self (excluded); pair(0,4) touches the top so it references Kay (8).
+    expect(refs.names).toEqual([2, 8]);
+    // every coder card (all but index 2, which we made a cook)
+    expect(refs.profs).toEqual(grid.map((_, i) => i).filter((i) => i !== 2));
+  });
+
+  it('returns nothing for flavor clues', () => {
+    expect(clueReferencedIndices('Nothing to see here', grid, 4, 0)).toEqual({ names: [], profs: [] });
   });
 });

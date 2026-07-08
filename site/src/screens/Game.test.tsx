@@ -219,3 +219,21 @@ describe('timer under a minute', () => {
     expect(timer.textContent).toBe('0 min');
   });
 });
+
+describe('consumed clues', () => {
+  it('clicking a clue dims it and drops name emphasis; clicking again restores', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    await user.click(screen.getByText('mira'));
+    await user.click(screen.getByRole('button', { name: 'Criminal' }));
+    const card = screen.getAllByRole('group')[1];
+    // Active clue: its own card name is emphasized.
+    expect(card.querySelector('.card-name')?.className).toContain('referenced');
+    await user.click(screen.getByText('Clue of me'));
+    expect(card.className).toContain('consumed');
+    expect(card.querySelector('.card-name')?.className).not.toContain('referenced');
+    await user.click(screen.getByText('Clue of me'));
+    expect(card.className).not.toContain('consumed');
+    expect(card.querySelector('.card-name')?.className).toContain('referenced');
+  });
+});
