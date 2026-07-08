@@ -328,8 +328,12 @@ a {
 }
 .modal-choices {
   display: flex;
+  align-items: center;
   gap: 12px;
   margin-top: 12px;
+}
+.modal-choices button {
+  margin-top: 0;
 }
 .modal button {
   background: transparent;
