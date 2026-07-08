@@ -114,7 +114,8 @@ a {
 .pause-overlay {
   position: fixed;
   inset: 0;
-  background: var(--overlay);
+  /* Heavy dim: the board should be barely visible while paused. */
+  background: rgba(26, 29, 36, 0.93);
   z-index: 15;
 }
 .reset-modal {
