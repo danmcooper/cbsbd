@@ -51,9 +51,14 @@ a {
   padding: 1rem;
   text-align: center;
 }
-.game header {
+/* Shrinks to the grid's width so children can align to the grid edges. */
+.board-wrap {
+  display: inline-block;
+  text-align: center;
+}
+.archive-link {
   text-align: left;
-  margin-bottom: 0.5rem;
+  margin: 1rem 0 0;
 }
 .game h1 {
   font-size: 1.3rem;

@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
-import type { Puzzle } from '../../../shared/puzzle';
-import { validatePuzzle } from '../../../shared/puzzle';
-import Grid from '../components/Grid';
-import { faceFor } from '../faces';
-import { liveElapsedMs, type GameState, type Guess } from '../game/reducer';
-import { useGameState } from '../game/useGameState';
-import { useFetch } from '../useFetch';
+import { useEffect, useRef, useState } from "react";
+import type { Puzzle } from "../../../shared/puzzle";
+import { validatePuzzle } from "../../../shared/puzzle";
+import Grid from "../components/Grid";
+import { faceFor } from "../faces";
+import { liveElapsedMs, type GameState, type Guess } from "../game/reducer";
+import { useGameState } from "../game/useGameState";
+import { useFetch } from "../useFetch";
 
 const REJECTION_COPY = "That doesn't fit yet.";
 
 function formatTime(ms: number): string {
   const total = Math.floor(ms / 1000);
-  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
 }
 
 // "2026-07-07" -> "Jul 7th 2026"
@@ -19,19 +19,27 @@ function formatDateOrdinal(date: string): string {
   const d = new Date(`${date}T00:00:00`);
   const day = d.getDate();
   const suffix =
-    day % 100 >= 11 && day % 100 <= 13 ? 'th' : (['th', 'st', 'nd', 'rd'][day % 10] ?? 'th');
-  return `${d.toLocaleString('en-US', { month: 'short' })} ${day}${suffix} ${d.getFullYear()}`;
+    day % 100 >= 11 && day % 100 <= 13
+      ? "th"
+      : (["th", "st", "nd", "rd"][day % 10] ?? "th");
+  return `${d.toLocaleString("en-US", { month: "short" })} ${day}${suffix} ${d.getFullYear()}`;
 }
 
 // Results grid: green = clean solve, yellow = had a bad answer.
 // (Orange = used a clue on the real site; we have no hint feature yet.)
-type CellColor = 'green' | 'yellow' | 'orange';
+type CellColor = "green" | "yellow" | "orange";
 
 function cellColors(puzzle: Puzzle, state: GameState): CellColor[] {
-  return puzzle.people.map((_, i) => (state.wrong.includes(i) ? 'yellow' : 'green'));
+  return puzzle.people.map((_, i) =>
+    state.wrong.includes(i) ? "yellow" : "green",
+  );
 }
 
-const CELL_EMOJI: Record<CellColor, string> = { green: '🟩', yellow: '🟨', orange: '🟠' };
+const CELL_EMOJI: Record<CellColor, string> = {
+  green: "🟩",
+  yellow: "🟨",
+  orange: "🟠",
+};
 
 function ResultsModal({
   puzzle,
@@ -51,7 +59,9 @@ function ResultsModal({
   );
 
   const copyText = async () => {
-    const grid = rows.map((row) => row.map((c) => CELL_EMOJI[c]).join('')).join('\n');
+    const grid = rows
+      .map((row) => row.map((c) => CELL_EMOJI[c]).join(""))
+      .join("\n");
     await navigator.clipboard.writeText(
       `I solved the daily #CluesBySam, ${title}, in ${formatTime(state.elapsedMs)}\n${grid}\nhttps://cluesbysam.com`,
     );
@@ -60,7 +70,12 @@ function ResultsModal({
 
   return (
     <div className="overlay" onClick={onClose}>
-      <div role="dialog" aria-label="results" className="modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        role="dialog"
+        aria-label="results"
+        className="modal"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="results-title">{title}</h2>
         <div className="share-grid">
           {rows.map((row, r) => (
@@ -73,7 +88,7 @@ function ResultsModal({
         </div>
         <p className="solved-in">{solvedIn}</p>
         <button className="btn-copy" onClick={copyText}>
-          {copied ? 'Copied!' : 'Copy Text'}
+          {copied ? "Copied!" : "Copy Text"}
         </button>
         <button className="btn-close" onClick={onClose}>
           Close
@@ -97,15 +112,22 @@ function GuessModal({
   const person = puzzle.people[index];
   return (
     <div className="overlay" onClick={onClose}>
-      <div role="dialog" aria-label={person.name} className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-face">{faceFor(person.profession, person.gender)}</div>
+      <div
+        role="dialog"
+        aria-label={person.name}
+        className="modal"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="modal-face">
+          {faceFor(person.profession, person.gender)}
+        </div>
         <div className="modal-name">{person.name}</div>
         <div className="modal-prof">{person.profession}</div>
         <div className="modal-choices">
-          <button className="btn-innocent" onClick={() => onGuess('innocent')}>
+          <button className="btn-innocent" onClick={() => onGuess("innocent")}>
             Innocent
           </button>
-          <button className="btn-criminal" onClick={() => onGuess('criminal')}>
+          <button className="btn-criminal" onClick={() => onGuess("criminal")}>
             Criminal
           </button>
         </div>
@@ -146,30 +168,43 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
 
   return (
     <main className="game">
-      <header>
-        <a href="#/">← Archive</a>
-      </header>
-      <Grid
-        puzzle={puzzle}
-        state={state}
-        onOpen={setGuessing}
-        onCycleTag={(index) => dispatch({ type: 'cycleTag', index })}
-      />
-      <h1>{puzzle.title}</h1>
-      <p className="meta">
-        {puzzle.date} · {puzzle.difficulty} · mistakes: {state.mistakes}
-        {!state.completed && minutes !== null && ` · ${minutes} min`}
-      </p>
-      {state.rejectedIndex !== null && <p className="rejection">{REJECTION_COPY}</p>}
-      {state.completed && (
-        <p className="completed">
-          Solved! {state.mistakes} mistakes · {formatTime(state.elapsedMs)}{' '}
-          <button className="btn-results" onClick={() => setResultsOpen(true)}>
-            Results
-          </button>
+      <div className="board-wrap">
+        <Grid
+          puzzle={puzzle}
+          state={state}
+          onOpen={setGuessing}
+          onCycleTag={(index) => dispatch({ type: "cycleTag", index })}
+        />
+        <h1>{puzzle.title}</h1>
+        <p className="meta">
+          {puzzle.date} · {puzzle.difficulty} · mistakes: {state.mistakes}
+          {!state.completed && minutes !== null && ` · ${minutes} min`}
         </p>
+        {state.rejectedIndex !== null && (
+          <p className="rejection">{REJECTION_COPY}</p>
+        )}
+        {state.completed && (
+          <p className="completed">
+            Solved! {state.mistakes} mistakes · {formatTime(state.elapsedMs)}{" "}
+            <button
+              className="btn-results"
+              onClick={() => setResultsOpen(true)}
+            >
+              Results
+            </button>
+          </p>
+        )}
+        <p className="archive-link">
+          <a href="#/">← Archive</a>
+        </p>
+      </div>
+      {resultsOpen && (
+        <ResultsModal
+          puzzle={puzzle}
+          state={state}
+          onClose={() => setResultsOpen(false)}
+        />
       )}
-      {resultsOpen && <ResultsModal puzzle={puzzle} state={state} onClose={() => setResultsOpen(false)} />}
       {startOpen && (
         <div className="overlay">
           <div role="dialog" aria-label="start" className="modal start-modal">
@@ -181,7 +216,7 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
             <button
               className="btn-start"
               onClick={() => {
-                dispatch({ type: 'start', now: Date.now() });
+                dispatch({ type: "start", now: Date.now() });
                 setStartOpen(false);
               }}
             >
@@ -195,7 +230,12 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
           puzzle={puzzle}
           index={guessing}
           onGuess={(guess) => {
-            dispatch({ type: 'guess', index: guessing, guess, now: Date.now() });
+            dispatch({
+              type: "guess",
+              index: guessing,
+              guess,
+              now: Date.now(),
+            });
             setGuessing(null);
           }}
           onClose={() => setGuessing(null)}
