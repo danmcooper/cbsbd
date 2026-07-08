@@ -61,7 +61,12 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
           {puzzle.date} · {puzzle.difficulty} · mistakes: {state.mistakes}
         </p>
       </header>
-      <Grid puzzle={puzzle} state={state} onOpen={setGuessing} />
+      <Grid
+        puzzle={puzzle}
+        state={state}
+        onOpen={setGuessing}
+        onCycleTag={(index) => dispatch({ type: 'cycleTag', index })}
+      />
       {state.rejectedIndex !== null && <p className="rejection">{REJECTION_COPY}</p>}
       {state.completed && (
         <p className="completed">

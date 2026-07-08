@@ -1,8 +1,11 @@
+import type { Tag } from './reducer';
+
 export interface SavedProgress {
   flipped: number[];
   mistakes: number;
   elapsedMs: number;
   completed: boolean;
+  tags?: Record<number, Tag>;
 }
 
 const key = (puzzleId: string) => `cbs:progress:${puzzleId}`;
@@ -10,12 +13,18 @@ const key = (puzzleId: string) => `cbs:progress:${puzzleId}`;
 function isSavedProgress(v: unknown): v is SavedProgress {
   if (typeof v !== 'object' || v === null) return false;
   const p = v as Record<string, unknown>;
+  const tagsOk =
+    p.tags === undefined ||
+    (typeof p.tags === 'object' &&
+      p.tags !== null &&
+      Object.values(p.tags).every((t) => t === 'yellow' || t === 'red' || t === 'green'));
   return (
     Array.isArray(p.flipped) &&
     p.flipped.every((n) => Number.isInteger(n)) &&
     typeof p.mistakes === 'number' &&
     typeof p.elapsedMs === 'number' &&
-    typeof p.completed === 'boolean'
+    typeof p.completed === 'boolean' &&
+    tagsOk
   );
 }
 

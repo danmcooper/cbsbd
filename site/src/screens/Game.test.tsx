@@ -96,3 +96,20 @@ describe('Game', () => {
     expect(await screen.findByRole('button', { name: /retry/i })).toBeTruthy();
   });
 });
+
+describe('corner tags', () => {
+  it('clicking the tag corner cycles yellow/red/green/none without opening the modal', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    const tag = document.querySelectorAll('.tag')[1] as HTMLElement;
+    await user.click(tag);
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(tag.className).toContain('tag-yellow');
+    await user.click(tag);
+    expect(tag.className).toContain('tag-red');
+    await user.click(tag);
+    expect(tag.className).toContain('tag-green');
+    await user.click(tag);
+    expect(tag.className).toBe('tag');
+  });
+});

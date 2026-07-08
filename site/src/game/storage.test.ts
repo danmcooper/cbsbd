@@ -27,3 +27,12 @@ describe('storage', () => {
     expect(loadProgress('a6f09e2713b2')).toBeNull();
   });
 });
+
+describe('storage tags', () => {
+  it('round-trips tags and tolerates saves without them', () => {
+    saveProgress('a6f09e2713b2', { ...saved, tags: { 2: 'green' } });
+    expect(loadProgress('a6f09e2713b2')?.tags).toEqual({ 2: 'green' });
+    localStorage.setItem('cbs:progress:ffffffffffff', JSON.stringify(saved));
+    expect(loadProgress('ffffffffffff')).toMatchObject({ flipped: [0, 2] });
+  });
+});

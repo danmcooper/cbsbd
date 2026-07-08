@@ -20,14 +20,19 @@ const renderClue = (clue: string, opts: { people?: Person[]; width?: number; sel
   ).container.textContent;
 
 describe('ClueText', () => {
-  it('renders names capitalized and highlighted', () => {
+  it('renders the whole clue as a single flat span with no nested markup', () => {
     const { container } = render(
-      <ClueText clue="Ask #NAME:1 or #NAMES:0 friend" people={people} width={3} />,
+      <ClueText clue="#NAME:0 is one of 11 innocents on the edges" people={people} width={3} />,
     );
-    expect(container.textContent).toBe("Ask Mira or Banda's friend");
-    const names = container.querySelectorAll('.clue-name');
-    expect(names).toHaveLength(2);
-    expect(names[0].textContent).toBe('Mira');
+    expect(container.innerHTML).toBe(
+      '<span class="clue-text">Banda is one of 11 innocents on the edges</span>',
+    );
+  });
+
+  it('renders names capitalized', () => {
+    expect(renderClue('Ask #NAME:1 or #NAMES:0 friend', { people, width: 3 })).toBe(
+      "Ask Mira or Banda's friend",
+    );
   });
 
   it('gives names ending in s a bare-apostrophe possessive', () => {
@@ -46,12 +51,18 @@ describe('ClueText', () => {
     expect(renderClue('#NAME:1 and #NAME:0 are cousins', { selfIndex: 1 })).toBe('Banda and I are cousins');
   });
 
-  it('renders professions and columns, pluralizing witch specially', () => {
-    const { container } = render(
-      <ClueText clue="The #PROF:coder in column #C:0, two #PROFS:witch" people={people} width={3} />,
+  it('renders professions, pluralizing witch specially', () => {
+    expect(renderClue('The #PROF:coder saw two #PROFS:witch', { people, width: 3 })).toBe(
+      'The coder saw two witches',
     );
-    expect(container.textContent).toBe('The coder in column A, two witches');
-    expect(container.querySelector('.clue-prof')?.textContent).toBe('coder');
+  });
+
+  it('renders 1-based #C column tokens as letters', () => {
+    // Real data: Jerry's "There is only one criminal in column #C:1" renders as column A.
+    expect(renderClue('There is only one criminal in column #C:1')).toBe(
+      'There is only one criminal in column A',
+    );
+    expect(renderClue('two cops in column #C:4')).toBe('Two cops in column D');
   });
 
   describe('#BETWEEN positional paraphrasing (ported from the real renderer)', () => {

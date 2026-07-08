@@ -3,6 +3,8 @@ import { isDeducible } from './deduce';
 
 export type Guess = 'criminal' | 'innocent';
 
+export type Tag = 'yellow' | 'red' | 'green';
+
 export interface GameState {
   flipped: number[];
   mistakes: number;
@@ -10,12 +12,16 @@ export interface GameState {
   lastActionAt: number | null;
   rejectedIndex: number | null;
   completed: boolean;
+  tags: Record<number, Tag>;
 }
 
 export type GameAction =
   | { type: 'guess'; index: number; guess: Guess; now: number }
   | { type: 'clearRejection' }
-  | { type: 'restore'; flipped: number[]; mistakes: number; elapsedMs: number };
+  | { type: 'cycleTag'; index: number }
+  | { type: 'restore'; flipped: number[]; mistakes: number; elapsedMs: number; tags?: Record<number, Tag> };
+
+const TAG_CYCLE: (Tag | undefined)[] = [undefined, 'yellow', 'red', 'green'];
 
 const MAX_TICK_MS = 60_000;
 
@@ -27,6 +33,7 @@ export function initialGameState(puzzle: Puzzle): GameState {
     lastActionAt: null,
     rejectedIndex: null,
     completed: false,
+    tags: {},
   };
 }
 
@@ -57,6 +64,13 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
     }
     case 'clearRejection':
       return state.rejectedIndex === null ? state : { ...state, rejectedIndex: null };
+    case 'cycleTag': {
+      const next = TAG_CYCLE[(TAG_CYCLE.indexOf(state.tags[action.index]) + 1) % TAG_CYCLE.length];
+      const tags = { ...state.tags };
+      if (next === undefined) delete tags[action.index];
+      else tags[action.index] = next;
+      return { ...state, tags };
+    }
     case 'restore':
       return {
         ...initialGameState(puzzle),
@@ -64,6 +78,7 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
         mistakes: action.mistakes,
         elapsedMs: action.elapsedMs,
         completed: action.flipped.length === puzzle.people.length,
+        tags: { ...action.tags },
       };
   }
 }

@@ -105,3 +105,29 @@ describe('gameReducer', () => {
     expect(restored).toMatchObject({ flipped: [0, 1], mistakes: 2, elapsedMs: 9_000, completed: false });
   });
 });
+
+describe('tags', () => {
+  it('cycleTag cycles none -> yellow -> red -> green -> none', () => {
+    let s = initialGameState(puzzle);
+    s = gameReducer(puzzle, s, { type: 'cycleTag', index: 2 });
+    expect(s.tags).toEqual({ 2: 'yellow' });
+    s = gameReducer(puzzle, s, { type: 'cycleTag', index: 2 });
+    expect(s.tags).toEqual({ 2: 'red' });
+    s = gameReducer(puzzle, s, { type: 'cycleTag', index: 2 });
+    expect(s.tags).toEqual({ 2: 'green' });
+    s = gameReducer(puzzle, s, { type: 'cycleTag', index: 2 });
+    expect(s.tags).toEqual({});
+  });
+
+  it('tags are independent per card and survive restore', () => {
+    let s = initialGameState(puzzle);
+    s = gameReducer(puzzle, s, { type: 'cycleTag', index: 1 });
+    s = gameReducer(puzzle, s, { type: 'cycleTag', index: 3 });
+    s = gameReducer(puzzle, s, { type: 'cycleTag', index: 3 });
+    expect(s.tags).toEqual({ 1: 'yellow', 3: 'red' });
+    const restored = gameReducer(puzzle, initialGameState(puzzle), {
+      type: 'restore', flipped: [0], mistakes: 0, elapsedMs: 0, tags: { 2: 'green' },
+    });
+    expect(restored.tags).toEqual({ 2: 'green' });
+  });
+});

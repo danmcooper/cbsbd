@@ -7,9 +7,10 @@ interface GridProps {
   puzzle: Puzzle;
   state: GameState;
   onOpen: (index: number) => void;
+  onCycleTag: (index: number) => void;
 }
 
-export default function Grid({ puzzle, state, onOpen }: GridProps) {
+export default function Grid({ puzzle, state, onOpen, onCycleTag }: GridProps) {
   return (
     <div className="grid" style={{ gridTemplateColumns: `repeat(${puzzle.width}, auto)` }}>
       {puzzle.people.map((person, i) => (
@@ -19,12 +20,14 @@ export default function Grid({ puzzle, state, onOpen }: GridProps) {
           label={gridLabel(i, puzzle.width)}
           flipped={state.flipped.includes(i)}
           rejected={state.rejectedIndex === i}
+          tag={state.tags[i]}
           clueNode={
             person.clue ? (
               <ClueText clue={person.clue} people={puzzle.people} width={puzzle.width} selfIndex={i} />
             ) : undefined
           }
           onOpen={() => onOpen(i)}
+          onCycleTag={() => onCycleTag(i)}
         />
       ))}
     </div>

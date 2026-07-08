@@ -24,8 +24,9 @@ export function useGameState(puzzle: Puzzle): {
       mistakes: state.mistakes,
       elapsedMs: state.elapsedMs,
       completed: state.completed,
+      tags: state.tags,
     });
-  }, [puzzle.id, state.flipped, state.mistakes, state.elapsedMs, state.completed]);
+  }, [puzzle.id, state.flipped, state.mistakes, state.elapsedMs, state.completed, state.tags]);
 
   return { state, dispatch };
 }

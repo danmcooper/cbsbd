@@ -86,17 +86,26 @@ a {
   text-align: center;
   --band: var(--background-highlight);
 }
-/* Corner tag affordance: a rotated translucent square peeking into the corner. */
-.card::before {
-  content: '';
+/* Corner tag: click to cycle none -> yellow -> red -> green -> none. */
+.tag {
   position: absolute;
-  top: -23px;
-  left: -23px;
-  width: 40px;
-  height: 40px;
-  transform: rotate(45deg);
-  background: rgba(255, 255, 255, 0.04);
-  pointer-events: none;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  z-index: 2;
+  cursor: pointer;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  background: rgba(255, 255, 255, 0.06);
+}
+.tag.tag-yellow {
+  background: #ffee00;
+}
+.tag.tag-red {
+  background: #e03c3c;
+}
+.tag.tag-green {
+  background: #52d017;
 }
 .card.flipped {
   cursor: default;
@@ -166,11 +175,6 @@ a {
   padding: 0 2px;
   margin: auto 0;
 }
-.clue-name,
-.clue-prof {
-  font-weight: 700;
-}
-
 .rejection {
   color: var(--criminal);
   font-weight: 700;
