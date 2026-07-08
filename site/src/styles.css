@@ -486,6 +486,12 @@ a {
   background: #b59430;
   color: var(--modal-bg);
 }
+.btn-close {
+  transition: background-color 0.15s;
+}
+.btn-close:hover {
+  background: #7f818c;
+}
 /* A rejected verdict stays disabled until the next suspect is revealed. */
 .modal button:disabled {
   opacity: 0.35;
