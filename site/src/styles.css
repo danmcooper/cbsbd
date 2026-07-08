@@ -361,13 +361,11 @@ a {
 /* Cards mentioned by an active clue get the real site's emphasis + bounce. */
 .card-name.referenced {
   opacity: 1;
-  transform: scale(1.05);
   animation: bounce-ref 0.27s ease-in-out;
 }
 .card-prof.referenced {
   opacity: 0.95;
   font-weight: 700;
-  transform: scale(1.06);
   animation: bounce-ref 0.27s ease-in-out;
 }
 @keyframes bounce-ref {
@@ -378,7 +376,7 @@ a {
     transform: translateY(-1px) scale(1.35);
   }
   100% {
-    transform: translateY(0) scale(1.05);
+    transform: translateY(0) scale(1);
   }
 }
 /* Wrong-guess popup: real site's "Not enough evidence!" modal. */
