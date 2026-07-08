@@ -70,15 +70,23 @@ describe('Game', () => {
     expect(card.textContent).toContain('Clue of me');
   });
 
-  it('shows the same generic rejection for wrong trait and non-deducible guesses', async () => {
+  it('shows the same "Not enough evidence!" popup for wrong trait and non-deducible guesses', async () => {
     const user = userEvent.setup();
     await renderGame();
     await user.click(screen.getByText('mira'));
     await user.click(screen.getByRole('button', { name: 'Innocent' })); // wrong trait
-    expect(screen.getByText("That doesn't fit yet.")).toBeTruthy();
+    let dialog = screen.getByRole('dialog');
+    expect(dialog.textContent).toContain('Not enough evidence!');
+    expect(dialog.textContent).toContain("mira can't be logically identified as innocent");
+    expect(dialog.textContent).toContain('mira could be criminal');
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
     await user.click(screen.getByText('lena'));
     await user.click(screen.getByRole('button', { name: 'Criminal' })); // correct but not deducible
-    expect(screen.getByText("That doesn't fit yet.")).toBeTruthy();
+    dialog = screen.getByRole('dialog');
+    expect(dialog.textContent).toContain("lena can't be logically identified as criminal");
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   it('shows completion with mistakes count', async () => {
@@ -126,6 +134,7 @@ describe('results popup', () => {
     await user.click(screen.getByRole('button', { name: 'Criminal' }));
     await user.click(screen.getByText('ozan'));
     await user.click(screen.getByRole('button', { name: 'Criminal' })); // wrong: ozan is innocent
+    await user.click(screen.getByRole('button', { name: 'Continue' })); // dismiss the evidence popup
     await user.click(screen.getByText('ozan'));
     await user.click(screen.getByRole('button', { name: 'Innocent' }));
     await user.click(screen.getByText('lena'));

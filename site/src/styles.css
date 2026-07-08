@@ -377,9 +377,32 @@ a {
     transform: translateY(0) scale(1.05);
   }
 }
-.rejection {
-  color: var(--criminal);
-  font-weight: 700;
+/* Wrong-guess popup: real site's "Not enough evidence!" modal. */
+.evidence-modal {
+  padding: 0 0 20px;
+  font-family: "Chalkboard SE", "Comic Sans MS", "Comic Sans", sans-serif;
+}
+.evidence-title {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 20px 12px;
+  background: #2d3038;
+  border-radius: 6px 6px 0 0;
+  font-size: 1.3em;
+}
+.evidence-text {
+  margin: 14px 0 0;
+  padding: 0 22px;
+  line-height: 1.6;
+}
+.evidence-text .suspect {
+  text-transform: capitalize;
+}
+.btn-continue {
+  border: 2px solid #b59430;
+  color: #b59430;
+  margin-top: 22px;
 }
 .completed {
   color: var(--innocent);

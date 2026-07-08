@@ -7,8 +7,6 @@ import type { GameState, Guess } from "../game/reducer";
 import { useGameState } from "../game/useGameState";
 import { useFetch } from "../useFetch";
 
-const REJECTION_COPY = "That doesn't fit yet.";
-
 function formatTime(ms: number): string {
   const total = Math.floor(ms / 1000);
   return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
@@ -92,6 +90,44 @@ function ResultsModal({
         </button>
         <button className="btn-close" onClick={onClose}>
           Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Wrong-guess popup: the real site's "Not enough evidence!" modal (sans the
+// share-scenario option). Shown for both wrong-trait and non-deducible
+// guesses, so it never leaks which one happened.
+function EvidenceModal({
+  name,
+  guess,
+  onClose,
+}: {
+  name: string;
+  guess: Guess;
+  onClose: () => void;
+}) {
+  const other: Guess = guess === "criminal" ? "innocent" : "criminal";
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div
+        role="dialog"
+        aria-label="not enough evidence"
+        className="modal evidence-modal"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="evidence-title">⚠️ Not enough evidence!</h2>
+        <p className="evidence-text">
+          <b className="suspect">{name}</b> can't be logically identified as{" "}
+          <b>{guess}</b> from the available info.
+        </p>
+        <p className="evidence-text">
+          This means there exists at least one other logical scenario where{" "}
+          <b className="suspect">{name}</b> could be <b>{other}</b>
+        </p>
+        <button className="btn-continue" onClick={onClose}>
+          Continue
         </button>
       </div>
     </div>
@@ -260,9 +296,6 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
             </span>
           </p>
         </div>
-        {state.rejectedIndex !== null && (
-          <p className="rejection">{REJECTION_COPY}</p>
-        )}
         {state.completed && (
           <p className="completed">
             Solved! {state.mistakes} mistakes · {formatTime(state.elapsedMs)}{" "}
@@ -279,6 +312,13 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
         </p>
       </div>
       {paused && <div className="pause-overlay" />}
+      {state.rejectedIndex !== null && state.rejectedGuess !== null && (
+        <EvidenceModal
+          name={puzzle.people[state.rejectedIndex].name}
+          guess={state.rejectedGuess}
+          onClose={() => dispatch({ type: "clearRejection" })}
+        />
+      )}
       {resetOpen && (
         <div className="overlay" onClick={() => setResetOpen(false)}>
           <div

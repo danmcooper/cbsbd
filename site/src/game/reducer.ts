@@ -14,6 +14,8 @@ export interface GameState {
   elapsedMs: number;
   lastActionAt: number | null;
   rejectedIndex: number | null;
+  /** The verdict the player picked when rejectedIndex was set. */
+  rejectedGuess: Guess | null;
   completed: boolean;
   tags: Record<number, Tag>;
   /** Bottom-right corner marks, set via the color picker. */
@@ -56,6 +58,7 @@ export function initialGameState(puzzle: Puzzle): GameState {
     elapsedMs: 0,
     lastActionAt: null,
     rejectedIndex: null,
+    rejectedGuess: null,
     completed: false,
     tags: {},
     marks: {},
@@ -97,18 +100,27 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
       if (!allowed) {
         // Same rejection for "wrong trait" and "not deducible" - never leak which.
         const wrong = timed.wrong.includes(action.index) ? timed.wrong : [...timed.wrong, action.index];
-        return { ...timed, mistakes: timed.mistakes + 1, rejectedIndex: action.index, wrong };
+        return {
+          ...timed,
+          mistakes: timed.mistakes + 1,
+          rejectedIndex: action.index,
+          rejectedGuess: action.guess,
+          wrong,
+        };
       }
       const flipped = [...timed.flipped, action.index];
       return {
         ...timed,
         flipped,
         rejectedIndex: null,
+        rejectedGuess: null,
         completed: flipped.length === puzzle.people.length,
       };
     }
     case 'clearRejection':
-      return state.rejectedIndex === null ? state : { ...state, rejectedIndex: null };
+      return state.rejectedIndex === null
+        ? state
+        : { ...state, rejectedIndex: null, rejectedGuess: null };
     case 'cycleTag': {
       const next = TAG_CYCLE[(TAG_CYCLE.indexOf(state.tags[action.index]) + 1) % TAG_CYCLE.length];
       const tags = { ...state.tags };

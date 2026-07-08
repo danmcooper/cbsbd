@@ -96,9 +96,12 @@ describe('gameReducer', () => {
     expect(s.elapsedMs).toBe(70_000);
   });
 
-  it('clearRejection resets rejectedIndex; restore rebuilds state', () => {
+  it('clearRejection resets rejectedIndex and rejectedGuess; restore rebuilds state', () => {
     const rejected = guess(initialGameState(puzzle), 1, 'innocent');
-    expect(gameReducer(puzzle, rejected, { type: 'clearRejection' }).rejectedIndex).toBeNull();
+    expect(rejected.rejectedGuess).toBe('innocent');
+    const cleared = gameReducer(puzzle, rejected, { type: 'clearRejection' });
+    expect(cleared.rejectedIndex).toBeNull();
+    expect(cleared.rejectedGuess).toBeNull();
     const restored = gameReducer(puzzle, initialGameState(puzzle), {
       type: 'restore', flipped: [0, 1], mistakes: 2, elapsedMs: 9_000,
     });
