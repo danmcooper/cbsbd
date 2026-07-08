@@ -96,13 +96,13 @@ a {
   width: 110px;
   height: 35px;
   padding: 5px;
-  font-family: 'Chalkboard SE', 'Comic Sans MS', 'Comic Sans', sans-serif;
+  font-family: "Chalkboard SE", "Comic Sans MS", "Comic Sans", sans-serif;
   font-size: 0.95em;
 }
 .date-line {
   display: flex;
   justify-content: space-between;
-  font-family: 'Chalkboard SE', 'Comic Sans MS', 'Comic Sans', sans-serif;
+  font-family: "Chalkboard SE", "Comic Sans MS", "Comic Sans", sans-serif;
   font-weight: 700;
   font-size: 1.05em;
   margin: 0.9rem 0 0.25rem;
@@ -131,6 +131,7 @@ a {
   display: grid;
   gap: 5px;
   justify-content: center;
+  padding-top: 2px; /* Added by Dan */
 }
 
 .card {
@@ -152,7 +153,7 @@ a {
   text-align: center;
   --band: var(--background-highlight);
   transition: transform 0.05s linear;
-  font-family: 'Chalkboard SE', 'Comic Sans MS', 'Comic Sans', sans-serif;
+  font-family: "Chalkboard SE", "Comic Sans MS", "Comic Sans", sans-serif;
 }
 /* No mobile tap-highlight flash on cards (matches the real site). */
 .card,
@@ -177,7 +178,7 @@ a {
   cursor: pointer;
 }
 .tag::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   clip-path: polygon(calc(100% - 22px) 0, 100% 0, 100% 22px);
@@ -297,7 +298,7 @@ a {
 .card-name {
   background: var(--band);
   width: 100%;
-  padding: 0 0 3px;
+  /* padding: 0 0 3px; */ /* Deleted by Dan */
   font-size: 16px;
   line-height: 16px;
   font-weight: 700;
@@ -427,7 +428,7 @@ a {
 .start-modal {
   padding: 20px 0 24px;
   gap: 6px;
-  font-family: 'Chalkboard SE', 'Comic Sans MS', 'Comic Sans', sans-serif;
+  font-family: "Chalkboard SE", "Comic Sans MS", "Comic Sans", sans-serif;
 }
 .start-title {
   margin: 6px 0 2px;
