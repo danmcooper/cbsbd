@@ -167,7 +167,7 @@ a {
   }
 }
 /* Corner tag: click to cycle none -> yellow -> red -> green -> none.
-   Visible triangle matches the real site (~22px legs); hitbox is larger. */
+   Visible triangle matches the real site (20px legs); hitbox is larger. */
 .tag {
   position: absolute;
   top: 0;
@@ -181,7 +181,7 @@ a {
   content: "";
   position: absolute;
   inset: 0;
-  clip-path: polygon(calc(100% - 22px) 0, 100% 0, 100% 22px);
+  clip-path: polygon(calc(100% - 20px) 0, 100% 0, 100% 20px);
   background: #3b3943;
 }
 .tag.tag-yellow::before {
@@ -209,7 +209,7 @@ a {
   content: "";
   position: absolute;
   inset: 0;
-  clip-path: polygon(calc(100% - 22px) 100%, 100% calc(100% - 22px), 100% 100%);
+  clip-path: polygon(calc(100% - 20px) 100%, 100% calc(100% - 20px), 100% 100%);
 }
 .mark.mark-yellow::before {
   background: #ffff54;
