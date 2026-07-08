@@ -176,7 +176,14 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
   }, [state.completed, dispatch]);
   const elapsed = state.elapsedMs;
   const minutes = Math.floor(elapsed / 60_000);
-  const [showSeconds, setShowSeconds] = useState(false);
+  const [showSeconds, setShowSeconds] = useState(
+    () => localStorage.getItem("cbs:pref:showSeconds") === "1",
+  );
+  const toggleSeconds = () => {
+    const next = !showSeconds;
+    localStorage.setItem("cbs:pref:showSeconds", next ? "1" : "0");
+    setShowSeconds(next);
+  };
   const [paused, setPaused] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
 
@@ -194,7 +201,6 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
     dispatch({ type: "reset" });
     setResetOpen(false);
     setPaused(false);
-    setShowSeconds(false);
     setStartOpen(true);
   };
 
@@ -218,7 +224,7 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
             <span>
               {formatDateOrdinal(puzzle.date)} ({puzzle.difficulty})
             </span>
-            <span className="timer" onClick={() => setShowSeconds((s) => !s)}>
+            <span className="timer" onClick={toggleSeconds}>
               {showSeconds ? formatTime(elapsed) : `${minutes} Minute${minutes === 1 ? '' : 's'}`}
             </span>
           </p>

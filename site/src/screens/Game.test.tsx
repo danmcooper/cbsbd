@@ -289,3 +289,22 @@ describe('timer resume', () => {
     expect(timer.textContent).toBe('02:06');
   });
 });
+
+describe('seconds preference', () => {
+  it('remembers the seconds display across a refresh', async () => {
+    localStorage.setItem(
+      'cbs:progress:a6f09e2713b2',
+      JSON.stringify({ flipped: [0, 1], mistakes: 1, elapsedMs: 125_000, completed: false }),
+    );
+    const user = userEvent.setup();
+    const first = render(<Game date="2026-07-07" />);
+    await screen.findAllByRole('group');
+    await user.click(screen.getByText('2 Minutes'));
+    expect(document.querySelector('.timer')?.textContent).toMatch(/^\d{2}:\d{2}$/);
+    first.unmount();
+
+    render(<Game date="2026-07-07" />);
+    await screen.findAllByRole('group');
+    expect(document.querySelector('.timer')?.textContent).toMatch(/^\d{2}:\d{2}$/);
+  });
+});
