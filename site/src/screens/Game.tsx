@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Puzzle } from '../../../shared/puzzle';
 import { validatePuzzle } from '../../../shared/puzzle';
 import Grid from '../components/Grid';
 import { faceFor } from '../faces';
-import type { Guess } from '../game/reducer';
+import type { GameState, Guess } from '../game/reducer';
 import { useGameState } from '../game/useGameState';
 import { useFetch } from '../useFetch';
 
@@ -11,7 +11,74 @@ const REJECTION_COPY = "That doesn't fit yet.";
 
 function formatTime(ms: number): string {
   const total = Math.floor(ms / 1000);
-  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+}
+
+// "2026-07-07" -> "Jul 7th 2026"
+function formatDateOrdinal(date: string): string {
+  const d = new Date(`${date}T00:00:00`);
+  const day = d.getDate();
+  const suffix =
+    day % 100 >= 11 && day % 100 <= 13 ? 'th' : (['th', 'st', 'nd', 'rd'][day % 10] ?? 'th');
+  return `${d.toLocaleString('en-US', { month: 'short' })} ${day}${suffix} ${d.getFullYear()}`;
+}
+
+// Results grid: green = clean solve, yellow = had a bad answer.
+// (Orange = used a clue on the real site; we have no hint feature yet.)
+type CellColor = 'green' | 'yellow' | 'orange';
+
+function cellColors(puzzle: Puzzle, state: GameState): CellColor[] {
+  return puzzle.people.map((_, i) => (state.wrong.includes(i) ? 'yellow' : 'green'));
+}
+
+const CELL_EMOJI: Record<CellColor, string> = { green: '🟩', yellow: '🟨', orange: '🟠' };
+
+function ResultsModal({
+  puzzle,
+  state,
+  onClose,
+}: {
+  puzzle: Puzzle;
+  state: GameState;
+  onClose: () => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  const title = `${formatDateOrdinal(puzzle.date)} (${puzzle.difficulty})`;
+  const solvedIn = `Solved in ${formatTime(state.elapsedMs)}`;
+  const colors = cellColors(puzzle, state);
+  const rows = [...Array(puzzle.height)].map((_, r) =>
+    colors.slice(r * puzzle.width, (r + 1) * puzzle.width),
+  );
+
+  const copyText = async () => {
+    const grid = rows.map((row) => row.map((c) => CELL_EMOJI[c]).join('')).join('\n');
+    await navigator.clipboard.writeText(`${title}\n${solvedIn}\n${grid}`);
+    setCopied(true);
+  };
+
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div role="dialog" aria-label="results" className="modal" onClick={(e) => e.stopPropagation()}>
+        <h2 className="results-title">{title}</h2>
+        <div className="share-grid">
+          {rows.map((row, r) => (
+            <div key={r} className="share-row">
+              {row.map((color, c) => (
+                <span key={c} className={`share-cell share-${color}`} />
+              ))}
+            </div>
+          ))}
+        </div>
+        <p className="solved-in">{solvedIn}</p>
+        <button className="btn-copy" onClick={copyText}>
+          {copied ? 'Copied!' : 'Copy Text'}
+        </button>
+        <button className="btn-close" onClick={onClose}>
+          Close
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function GuessModal({
@@ -51,6 +118,12 @@ function GuessModal({
 function Board({ puzzle }: { puzzle: Puzzle }) {
   const { state, dispatch } = useGameState(puzzle);
   const [guessing, setGuessing] = useState<number | null>(null);
+  const [resultsOpen, setResultsOpen] = useState(false);
+  const completedAtMount = useRef(state.completed);
+
+  useEffect(() => {
+    if (state.completed && !completedAtMount.current) setResultsOpen(true);
+  }, [state.completed]);
 
   return (
     <main className="game">
@@ -70,9 +143,13 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
       {state.rejectedIndex !== null && <p className="rejection">{REJECTION_COPY}</p>}
       {state.completed && (
         <p className="completed">
-          Solved! {state.mistakes} mistakes · {formatTime(state.elapsedMs)}
+          Solved! {state.mistakes} mistakes · {formatTime(state.elapsedMs)}{' '}
+          <button className="btn-results" onClick={() => setResultsOpen(true)}>
+            Results
+          </button>
         </p>
       )}
+      {resultsOpen && <ResultsModal puzzle={puzzle} state={state} onClose={() => setResultsOpen(false)} />}
       {guessing !== null && (
         <GuessModal
           puzzle={puzzle}

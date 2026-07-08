@@ -6,6 +6,7 @@ export interface SavedProgress {
   elapsedMs: number;
   completed: boolean;
   tags?: Record<number, Tag>;
+  wrong?: number[];
 }
 
 const key = (puzzleId: string) => `cbs:progress:${puzzleId}`;
@@ -18,13 +19,16 @@ function isSavedProgress(v: unknown): v is SavedProgress {
     (typeof p.tags === 'object' &&
       p.tags !== null &&
       Object.values(p.tags).every((t) => t === 'yellow' || t === 'red' || t === 'green'));
+  const wrongOk =
+    p.wrong === undefined || (Array.isArray(p.wrong) && p.wrong.every((n) => Number.isInteger(n)));
   return (
     Array.isArray(p.flipped) &&
     p.flipped.every((n) => Number.isInteger(n)) &&
     typeof p.mistakes === 'number' &&
     typeof p.elapsedMs === 'number' &&
     typeof p.completed === 'boolean' &&
-    tagsOk
+    tagsOk &&
+    wrongOk
   );
 }
 

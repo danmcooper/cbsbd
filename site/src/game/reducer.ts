@@ -13,13 +13,22 @@ export interface GameState {
   rejectedIndex: number | null;
   completed: boolean;
   tags: Record<number, Tag>;
+  /** Cards that ever received a bad answer (for the results grid). */
+  wrong: number[];
 }
 
 export type GameAction =
   | { type: 'guess'; index: number; guess: Guess; now: number }
   | { type: 'clearRejection' }
   | { type: 'cycleTag'; index: number }
-  | { type: 'restore'; flipped: number[]; mistakes: number; elapsedMs: number; tags?: Record<number, Tag> };
+  | {
+      type: 'restore';
+      flipped: number[];
+      mistakes: number;
+      elapsedMs: number;
+      tags?: Record<number, Tag>;
+      wrong?: number[];
+    };
 
 const TAG_CYCLE: (Tag | undefined)[] = [undefined, 'yellow', 'red', 'green'];
 
@@ -34,6 +43,7 @@ export function initialGameState(puzzle: Puzzle): GameState {
     rejectedIndex: null,
     completed: false,
     tags: {},
+    wrong: [],
   };
 }
 
@@ -52,7 +62,8 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
       const timed = tick(state, action.now);
       if (!allowed) {
         // Same rejection for "wrong trait" and "not deducible" - never leak which.
-        return { ...timed, mistakes: timed.mistakes + 1, rejectedIndex: action.index };
+        const wrong = timed.wrong.includes(action.index) ? timed.wrong : [...timed.wrong, action.index];
+        return { ...timed, mistakes: timed.mistakes + 1, rejectedIndex: action.index, wrong };
       }
       const flipped = [...timed.flipped, action.index];
       return {
@@ -79,6 +90,7 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
         elapsedMs: action.elapsedMs,
         completed: action.flipped.length === puzzle.people.length,
         tags: { ...action.tags },
+        wrong: [...(action.wrong ?? [])],
       };
   }
 }

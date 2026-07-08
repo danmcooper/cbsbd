@@ -131,3 +131,23 @@ describe('tags', () => {
     expect(restored.tags).toEqual({ 2: 'green' });
   });
 });
+
+describe('per-card wrong answers', () => {
+  it('records each card that ever got a bad answer, once', () => {
+    let s = initialGameState(puzzle);
+    s = guess(s, 1, 'innocent'); // wrong trait
+    s = guess(s, 1, 'innocent'); // wrong again, same card
+    s = guess(s, 3, 'criminal'); // correct but not deducible
+    expect(s.wrong).toEqual([1, 3]);
+    expect(s.mistakes).toBe(3);
+    s = guess(s, 1, 'criminal'); // finally right
+    expect(s.wrong).toEqual([1, 3]);
+  });
+
+  it('restores wrong indices', () => {
+    const restored = gameReducer(puzzle, initialGameState(puzzle), {
+      type: 'restore', flipped: [0], mistakes: 2, elapsedMs: 0, wrong: [2],
+    });
+    expect(restored.wrong).toEqual([2]);
+  });
+});

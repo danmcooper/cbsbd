@@ -245,6 +245,50 @@ a {
   margin-top: 10px;
   min-width: 80px;
 }
+.btn-copy {
+  border-color: var(--innocent);
+  color: var(--innocent);
+  margin-top: 8px;
+}
+.btn-results {
+  font-size: 0.8em;
+  padding: 0.2em 0.8em;
+  margin-left: 6px;
+}
+.results-title {
+  margin: 8px 0 4px;
+  font-size: 1.2em;
+}
+.solved-in {
+  font-weight: 700;
+  font-size: 1.1em;
+  margin: 6px 0 2px;
+}
+.share-grid {
+  margin: 6px 0;
+  filter: drop-shadow(0 0 2px #000);
+}
+.share-row {
+  line-height: 0;
+}
+.share-cell {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 1px;
+  border-radius: 3px;
+  background-color: #6a6a6a;
+}
+.share-cell.share-green {
+  background-color: #5ac110;
+}
+.share-cell.share-yellow {
+  background-color: #ffee00;
+}
+.share-cell.share-orange {
+  background-color: #f89315;
+  border-radius: 100%;
+}
 
 .archive {
   max-width: 420px;

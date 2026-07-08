@@ -87,7 +87,10 @@ describe('Game', () => {
       await user.click(screen.getByText(name));
       await user.click(screen.getByRole('button', { name: verdict }));
     }
-    expect(screen.getByText(/solved/i)).toBeTruthy();
+    // Completion auto-opens the results dialog; the banner sits behind it.
+    expect(screen.getByRole('dialog')).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Close' }));
+    expect(screen.getByText(/solved!/i)).toBeTruthy();
   });
 
   it('shows an error screen with retry when the fetch fails', async () => {
@@ -111,5 +114,51 @@ describe('corner tags', () => {
     expect(tag.className).toContain('tag-green');
     await user.click(tag);
     expect(tag.className).toBe('tag');
+  });
+});
+
+describe('results popup', () => {
+  async function solveWithOneWrong() {
+    const user = userEvent.setup();
+    await renderGame();
+    await user.click(screen.getByText('mira'));
+    await user.click(screen.getByRole('button', { name: 'Criminal' }));
+    await user.click(screen.getByText('ozan'));
+    await user.click(screen.getByRole('button', { name: 'Criminal' })); // wrong: ozan is innocent
+    await user.click(screen.getByText('ozan'));
+    await user.click(screen.getByRole('button', { name: 'Innocent' }));
+    await user.click(screen.getByText('lena'));
+    await user.click(screen.getByRole('button', { name: 'Criminal' }));
+    return user;
+  }
+
+  it('opens on completion with date, level, color grid, and solve time', async () => {
+    await solveWithOneWrong();
+    const dialog = screen.getByRole('dialog');
+    expect(dialog.textContent).toContain('Jul 7th 2026 (Easy)');
+    expect(dialog.textContent).toMatch(/Solved in \d{2}:\d{2}/);
+    const cells = dialog.querySelectorAll('.share-cell');
+    expect(cells).toHaveLength(4);
+    expect(cells[0].className).toContain('share-green'); // banda: initial reveal
+    expect(cells[1].className).toContain('share-green'); // mira: clean
+    expect(cells[2].className).toContain('share-yellow'); // ozan: had a bad answer
+    expect(cells[3].className).toContain('share-green'); // lena: clean
+  });
+
+  it('Copy Text puts the emoji summary on the clipboard and Close dismisses', async () => {
+    const user = await solveWithOneWrong();
+    // userEvent installs its own clipboard stub; spy on it after setup.
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    await user.click(screen.getByRole('button', { name: /copy text/i }));
+    expect(writeText).toHaveBeenCalledTimes(1);
+    const copied = String(writeText.mock.calls[0]?.[0]);
+    expect(copied).toContain('Jul 7th 2026 (Easy)');
+    expect(copied).toMatch(/Solved in \d{2}:\d{2}/);
+    expect(copied).toContain('🟩🟩\n🟨🟩');
+    await user.click(screen.getByRole('button', { name: 'Close' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    // Reopenable via the results button next to the solved banner.
+    await user.click(screen.getByRole('button', { name: /results/i }));
+    expect(screen.getByRole('dialog')).toBeTruthy();
   });
 });
