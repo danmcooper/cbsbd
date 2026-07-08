@@ -1,11 +1,13 @@
 # Scrapes today's puzzle from cluesbysam.com and deploys the site if new.
+# The source updates at 9pm Pacific; run at 9:01pm Pacific. Cron is UTC-only,
+# so both DST offsets are scheduled (04:01 UTC = PDT, 05:01 UTC = PST) - the
+# extractor is idempotent, so the off-season firing is a no-op.
 name: Scrape daily puzzle
 
 on:
   schedule:
-    - cron: '40 0 * * *'
-    - cron: '40 6 * * *'
-    - cron: '40 12 * * *'
+    - cron: '1 4 * * *'
+    - cron: '1 5 * * *'
   workflow_dispatch: {}
 
 permissions:
