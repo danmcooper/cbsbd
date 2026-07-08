@@ -310,9 +310,32 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
         />
         <div className="controls">
           <div className="button-row">
-            <button onClick={togglePause}>{paused ? 'Unpause' : 'Pause'}</button>
+            <button
+              className="btn-pause"
+              aria-label={paused ? "Unpause" : "Pause"}
+              onClick={togglePause}
+            >
+              {/* Play/pause combo (triangle + two bars), one icon for both states. */}
+              <svg viewBox="0 0 20 16" width="18" height="14" aria-hidden="true">
+                <path
+                  d="M2.6 2.6 C2.6 1.4 3.5 1 4.3 1.7 L9.6 7.1 C10.1 7.6 10.1 8.4 9.6 8.9 L4.3 14.3 C3.5 15 2.6 14.6 2.6 13.4 Z"
+                  fill="currentColor"
+                />
+                <rect x="12" y="1.5" width="3.2" height="13" rx="1.4" fill="currentColor" />
+                <rect x="16.8" y="1.5" width="3.2" height="13" rx="1.4" fill="currentColor" />
+              </svg>
+            </button>
+            <button
+              disabled={
+                Object.keys(state.tags).length === 0 && Object.keys(state.marks).length === 0
+              }
+              onClick={() => dispatch({ type: "clearTags" })}
+            >
+              Clear Tags
+            </button>
             <button onClick={() => setResetOpen(true)}>Reset</button>
             <button
+              className="btn-hint"
               disabled={!puzzle.hints || state.completed}
               onClick={() => dispatch({ type: "hint", now: Date.now() })}
             >

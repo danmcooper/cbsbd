@@ -301,15 +301,38 @@ describe('control bar', () => {
     expect(screen.getByRole('button', { name: /show hint/i })).toBeTruthy();
   });
 
-  it('Pause dims the board, freezes play, and toggles to Unpause', async () => {
+  it('the play/pause icon button dims the board and toggles, keeping the same icon', async () => {
     const user = userEvent.setup();
     await renderGame();
-    await user.click(screen.getByRole('button', { name: 'Pause' }));
+    const pause = screen.getByRole('button', { name: 'Pause' });
+    // A drawn play/pause icon (triangle + two bars), same in both states.
+    expect(pause.querySelectorAll('svg rect')).toHaveLength(2);
+    expect(pause.querySelector('svg path')).toBeTruthy();
+    expect(pause.className).toContain('btn-pause');
+    await user.click(pause);
     expect(document.querySelector('.pause-overlay')).toBeTruthy();
     const unpause = screen.getByRole('button', { name: 'Unpause' });
+    expect(unpause.querySelector('svg path')).toBeTruthy(); // icon stays while paused
+    expect(unpause.textContent).toBe(''); // no text swap
     await user.click(unpause);
     expect(document.querySelector('.pause-overlay')).toBeNull();
     expect(screen.getByRole('button', { name: 'Pause' })).toBeTruthy();
+  });
+
+  it('Clear Tags sits left of Reset and wipes tags and marks; disabled when there are none', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    const clear = screen.getByRole('button', { name: 'Clear Tags' });
+    expect(clear).toHaveProperty('disabled', true); // nothing to clear yet
+    const buttons = [...document.querySelectorAll('.button-row button')].map((b) => b.textContent);
+    expect(buttons.indexOf('Clear Tags')).toBe(buttons.indexOf('Reset') - 1);
+
+    const tag = document.querySelectorAll('.tag')[1] as HTMLElement;
+    await user.click(tag); // yellow tag on card 1
+    expect(clear).toHaveProperty('disabled', false);
+    await user.click(clear);
+    expect(tag.className).toBe('tag');
+    expect(clear).toHaveProperty('disabled', true);
   });
 
   it('Reset asks for confirmation; Cancel keeps progress, Reset wipes it', async () => {

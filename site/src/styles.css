@@ -93,11 +93,26 @@ a {
   z-index: 16; /* stays clickable above the pause dim */
 }
 .button-row button {
-  width: 110px;
+  width: 88px;
   height: 35px;
   padding: 5px;
   font-family: "Chalkboard SE", "Comic Sans MS", "Comic Sans", sans-serif;
   font-size: 0.95em;
+}
+/* Narrow square pause button; the drawn icon keeps rendering consistent
+   across platforms (emoji fonts vary, e.g. on Android). */
+.button-row .btn-pause {
+  width: 40px;
+  flex: none;
+  padding: 0;
+}
+.button-row .btn-pause svg {
+  display: block;
+  margin: 0 auto;
+}
+/* "💡Show hint" is the longest label; give it the leftover room. */
+.button-row .btn-hint {
+  width: 112px;
 }
 .date-line {
   display: flex;

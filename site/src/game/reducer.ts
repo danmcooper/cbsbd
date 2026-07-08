@@ -50,6 +50,7 @@ export type GameAction =
   | { type: 'clearRejection' }
   | { type: 'cycleTag'; index: number }
   | { type: 'setMark'; index: number; mark: Tag | null }
+  | { type: 'clearTags' }
   | { type: 'toggleConsumed'; index: number }
   | {
       type: 'restore';
@@ -210,6 +211,8 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
       else marks[action.index] = action.mark;
       return { ...state, marks };
     }
+    case 'clearTags':
+      return { ...state, tags: {}, marks: {} };
     case 'toggleConsumed':
       return {
         ...state,

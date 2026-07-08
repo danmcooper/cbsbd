@@ -134,6 +134,17 @@ describe('tags', () => {
     expect(s.tags).toEqual({});
   });
 
+  it('clearTags wipes all tags and marks, leaving the rest of the state alone', () => {
+    let s = initialGameState(puzzle);
+    s = gameReducer(puzzle, s, { type: 'cycleTag', index: 1 });
+    s = gameReducer(puzzle, s, { type: 'setMark', index: 2, mark: 'magenta' });
+    s = gameReducer(puzzle, s, { type: 'toggleConsumed', index: 3 });
+    s = gameReducer(puzzle, s, { type: 'clearTags' });
+    expect(s.tags).toEqual({});
+    expect(s.marks).toEqual({});
+    expect(s.consumed).toEqual([3]); // dimmed clues are not tags
+  });
+
   it('tags are independent per card and survive restore', () => {
     let s = initialGameState(puzzle);
     s = gameReducer(puzzle, s, { type: 'cycleTag', index: 1 });
