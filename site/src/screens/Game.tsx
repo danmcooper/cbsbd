@@ -148,11 +148,6 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
     <main className="game">
       <header>
         <a href="#/">← Archive</a>
-        <h1>{puzzle.title}</h1>
-        <p className="meta">
-          {puzzle.date} · {puzzle.difficulty} · mistakes: {state.mistakes}
-          {!state.completed && minutes !== null && ` · ${minutes} min`}
-        </p>
       </header>
       <Grid
         puzzle={puzzle}
@@ -160,6 +155,11 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
         onOpen={setGuessing}
         onCycleTag={(index) => dispatch({ type: 'cycleTag', index })}
       />
+      <h1>{puzzle.title}</h1>
+      <p className="meta">
+        {puzzle.date} · {puzzle.difficulty} · mistakes: {state.mistakes}
+        {!state.completed && minutes !== null && ` · ${minutes} min`}
+      </p>
       {state.rejectedIndex !== null && <p className="rejection">{REJECTION_COPY}</p>}
       {state.completed && (
         <p className="completed">
