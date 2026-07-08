@@ -25,10 +25,11 @@ export function useGameState(puzzle: Puzzle): {
       elapsedMs: state.elapsedMs,
       completed: state.completed,
       tags: state.tags,
+      marks: state.marks,
       wrong: state.wrong,
       consumed: state.consumed,
     });
-  }, [puzzle.id, state.flipped, state.mistakes, state.elapsedMs, state.completed, state.tags, state.wrong, state.consumed]);
+  }, [puzzle.id, state.flipped, state.mistakes, state.elapsedMs, state.completed, state.tags, state.marks, state.wrong, state.consumed]);
 
   return { state, dispatch };
 }

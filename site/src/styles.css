@@ -193,17 +193,44 @@ a {
 .tag.tag-green::before {
   background: #52d017;
 }
-.tag.tag-orange::before {
+
+/* Bottom-right corner mark: click opens the color picker. */
+.mark {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  z-index: 2;
+  cursor: pointer;
+}
+.mark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(calc(100% - 22px) 100%, 100% calc(100% - 22px), 100% 100%);
+  background: rgba(255, 255, 255, 0.06);
+}
+.mark.mark-yellow::before {
+  background: #ffee00;
+}
+.mark.mark-red::before {
+  background: #e03c3c;
+}
+.mark.mark-green::before {
+  background: #52d017;
+}
+.mark.mark-orange::before {
   background: #f89315;
 }
-.tag.tag-magenta::before {
+.mark.mark-magenta::before {
   background: #e83ce8;
 }
-.tag.tag-cyan::before {
+.mark.mark-cyan::before {
   background: #67e4f2;
 }
 
-/* Long-press color picker (real site's color strip, tap-to-pick). */
+/* Mark color picker (real site's color strip, tap-to-pick). */
 .card-container {
   position: relative;
 }

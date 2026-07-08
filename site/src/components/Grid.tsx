@@ -8,12 +8,12 @@ interface GridProps {
   state: GameState;
   /** Card that just flipped from a correct guess (shows the Correct! bubble). */
   justFlipped: number | null;
-  /** Card whose long-press color picker is open. */
+  /** Card whose mark color picker is open. */
   pickerIndex: number | null;
   onOpen: (index: number) => void;
   onCycleTag: (index: number) => void;
   onOpenPicker: (index: number) => void;
-  onPickTag: (index: number, tag: Tag | null) => void;
+  onPickMark: (index: number, mark: Tag | null) => void;
   onToggleClue: (index: number) => void;
 }
 
@@ -25,7 +25,7 @@ export default function Grid({
   onOpen,
   onCycleTag,
   onOpenPicker,
-  onPickTag,
+  onPickMark,
   onToggleClue,
 }: GridProps) {
   // Every active (flipped, unconsumed) clue emphasizes its own card's name
@@ -50,6 +50,7 @@ export default function Grid({
           flipped={state.flipped.includes(i)}
           rejected={state.rejectedIndex === i}
           tag={state.tags[i]}
+          mark={state.marks[i]}
           consumed={state.consumed.includes(i)}
           justFlipped={justFlipped === i}
           pickerOpen={pickerIndex === i}
@@ -68,7 +69,7 @@ export default function Grid({
           onOpen={() => onOpen(i)}
           onCycleTag={() => onCycleTag(i)}
           onOpenPicker={() => onOpenPicker(i)}
-          onPickTag={(tag) => onPickTag(i, tag)}
+          onPickMark={(mark) => onPickMark(i, mark)}
           onToggleClue={() => onToggleClue(i)}
         />
       ))}

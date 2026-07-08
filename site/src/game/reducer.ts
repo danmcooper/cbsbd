@@ -5,7 +5,7 @@ export type Guess = 'criminal' | 'innocent';
 
 export type Tag = 'yellow' | 'red' | 'green' | 'orange' | 'magenta' | 'cyan';
 
-/** Picker order, matching the real site's color strip (null = no tag). */
+/** Picker order, matching the real site's color strip (null = no mark). */
 export const TAG_COLORS: (Tag | null)[] = [null, 'yellow', 'red', 'green', 'orange', 'magenta', 'cyan'];
 
 export interface GameState {
@@ -16,6 +16,8 @@ export interface GameState {
   rejectedIndex: number | null;
   completed: boolean;
   tags: Record<number, Tag>;
+  /** Bottom-right corner marks, set via the color picker. */
+  marks: Record<number, Tag>;
   /** Cards that ever received a bad answer (for the results grid). */
   wrong: number[];
   /** Cards whose clue the player marked as used (dimmed). */
@@ -30,7 +32,7 @@ export type GameAction =
   | { type: 'guess'; index: number; guess: Guess; now: number }
   | { type: 'clearRejection' }
   | { type: 'cycleTag'; index: number }
-  | { type: 'setTag'; index: number; tag: Tag | null }
+  | { type: 'setMark'; index: number; mark: Tag | null }
   | { type: 'toggleConsumed'; index: number }
   | {
       type: 'restore';
@@ -38,6 +40,7 @@ export type GameAction =
       mistakes: number;
       elapsedMs: number;
       tags?: Record<number, Tag>;
+      marks?: Record<number, Tag>;
       wrong?: number[];
       consumed?: number[];
     };
@@ -55,6 +58,7 @@ export function initialGameState(puzzle: Puzzle): GameState {
     rejectedIndex: null,
     completed: false,
     tags: {},
+    marks: {},
     wrong: [],
     consumed: [],
   };
@@ -112,11 +116,11 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
       else tags[action.index] = next;
       return { ...state, tags };
     }
-    case 'setTag': {
-      const tags = { ...state.tags };
-      if (action.tag === null) delete tags[action.index];
-      else tags[action.index] = action.tag;
-      return { ...state, tags };
+    case 'setMark': {
+      const marks = { ...state.marks };
+      if (action.mark === null) delete marks[action.index];
+      else marks[action.index] = action.mark;
+      return { ...state, marks };
     }
     case 'toggleConsumed':
       return {
@@ -133,6 +137,7 @@ export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction
         elapsedMs: action.elapsedMs,
         completed: action.flipped.length === puzzle.people.length,
         tags: { ...action.tags },
+        marks: { ...action.marks },
         wrong: [...(action.wrong ?? [])],
         consumed: [...(action.consumed ?? [])],
       };

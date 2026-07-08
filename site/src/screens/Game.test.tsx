@@ -332,33 +332,38 @@ describe('correct-guess animation', () => {
   });
 });
 
-describe('tag color picker', () => {
-  it('long-press opens the picker; picking a swatch sets that color', async () => {
+describe('mark color picker', () => {
+  it('clicking the bottom-right mark opens the picker; picking a swatch sets that color', async () => {
     const user = userEvent.setup();
     await renderGame();
-    const tag = document.querySelectorAll('.tag')[1] as HTMLElement;
-    await user.pointer({ keys: '[MouseLeft>]', target: tag });
-    await new Promise((r) => setTimeout(r, 500));
-    await user.pointer('[/MouseLeft]');
+    const mark = document.querySelectorAll('.mark')[1] as HTMLElement;
+    await user.click(mark);
     const picker = document.querySelector('.tag-picker');
     expect(picker).toBeTruthy();
     expect(picker?.querySelectorAll('.tag-swatch')).toHaveLength(7);
-    await user.click(screen.getByRole('button', { name: 'magenta tag' }));
-    expect(tag.className).toContain('tag-magenta');
+    await user.click(screen.getByRole('button', { name: 'magenta mark' }));
+    expect(mark.className).toContain('mark-magenta');
     expect(document.querySelector('.tag-picker')).toBeNull();
   });
 
-  it('picking the blank swatch clears; short click still cycles without opening', async () => {
+  it('picking the blank swatch clears the mark', async () => {
+    const user = userEvent.setup();
+    await renderGame();
+    const mark = document.querySelectorAll('.mark')[1] as HTMLElement;
+    await user.click(mark);
+    await user.click(screen.getByRole('button', { name: 'clear mark' }));
+    expect(mark.className).toBe('mark');
+    expect(document.querySelector('.tag-picker')).toBeNull();
+  });
+
+  it('the top-right tag cycles on click and never opens the picker', async () => {
     const user = userEvent.setup();
     await renderGame();
     const tag = document.querySelectorAll('.tag')[1] as HTMLElement;
-    await user.pointer({ keys: '[MouseLeft>]', target: tag });
-    await new Promise((r) => setTimeout(r, 500));
-    await user.pointer('[/MouseLeft]');
-    await user.click(screen.getByRole('button', { name: 'clear tag' }));
-    expect(tag.className).toBe('tag');
     await user.click(tag);
     expect(document.querySelector('.tag-picker')).toBeNull();
     expect(tag.className).toContain('tag-yellow');
+    await user.click(tag);
+    expect(tag.className).toContain('tag-red');
   });
 });

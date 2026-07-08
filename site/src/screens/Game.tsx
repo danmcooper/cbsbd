@@ -167,7 +167,7 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
     // Mount-time resume only.
   }, []);
 
-  // Long-press tag color picker; any click outside it closes it.
+  // Bottom-right mark color picker; any click outside it closes it.
   const [pickerIndex, setPickerIndex] = useState<number | null>(null);
   useEffect(() => {
     if (pickerIndex === null) return;
@@ -239,8 +239,8 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
           onOpen={setGuessing}
           onCycleTag={(index) => dispatch({ type: "cycleTag", index })}
           onOpenPicker={setPickerIndex}
-          onPickTag={(index, tag) => {
-            dispatch({ type: "setTag", index, tag });
+          onPickMark={(index, mark) => {
+            dispatch({ type: "setMark", index, mark });
             setPickerIndex(null);
           }}
           onToggleClue={(index) => dispatch({ type: "toggleConsumed", index })}

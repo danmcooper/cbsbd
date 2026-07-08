@@ -235,14 +235,15 @@ describe('tick action', () => {
   });
 });
 
-describe('setTag', () => {
-  it('sets any picker color directly and null clears', () => {
+describe('setMark', () => {
+  it('sets any picker color directly and null clears, without touching tags', () => {
     let s = initialGameState(puzzle);
-    s = gameReducer(puzzle, s, { type: 'setTag', index: 2, tag: 'magenta' });
-    expect(s.tags).toEqual({ 2: 'magenta' });
-    s = gameReducer(puzzle, s, { type: 'setTag', index: 2, tag: 'cyan' });
-    expect(s.tags).toEqual({ 2: 'cyan' });
-    s = gameReducer(puzzle, s, { type: 'setTag', index: 2, tag: null });
+    s = gameReducer(puzzle, s, { type: 'setMark', index: 2, mark: 'magenta' });
+    expect(s.marks).toEqual({ 2: 'magenta' });
+    s = gameReducer(puzzle, s, { type: 'setMark', index: 2, mark: 'cyan' });
+    expect(s.marks).toEqual({ 2: 'cyan' });
     expect(s.tags).toEqual({});
+    s = gameReducer(puzzle, s, { type: 'setMark', index: 2, mark: null });
+    expect(s.marks).toEqual({});
   });
 });

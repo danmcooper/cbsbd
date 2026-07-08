@@ -29,10 +29,19 @@ describe('storage', () => {
 });
 
 describe('storage tags', () => {
-  it('round-trips tags and tolerates saves without them', () => {
-    saveProgress('a6f09e2713b2', { ...saved, tags: { 2: 'green' } });
+  it('round-trips tags and marks and tolerates saves without them', () => {
+    saveProgress('a6f09e2713b2', { ...saved, tags: { 2: 'green' }, marks: { 3: 'magenta' } });
     expect(loadProgress('a6f09e2713b2')?.tags).toEqual({ 2: 'green' });
+    expect(loadProgress('a6f09e2713b2')?.marks).toEqual({ 3: 'magenta' });
     localStorage.setItem('cbs:progress:ffffffffffff', JSON.stringify(saved));
     expect(loadProgress('ffffffffffff')).toMatchObject({ flipped: [0, 2] });
+  });
+
+  it('rejects saves with an invalid mark color', () => {
+    localStorage.setItem(
+      'cbs:progress:a6f09e2713b2',
+      JSON.stringify({ ...saved, marks: { 1: 'purple' } }),
+    );
+    expect(loadProgress('a6f09e2713b2')).toBeNull();
   });
 });

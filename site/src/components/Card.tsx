@@ -1,9 +1,7 @@
-import { useRef, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { Person } from "../../../shared/puzzle";
 import { faceFor } from "../faces";
 import { TAG_COLORS, type Tag } from "../game/reducer";
-
-const LONG_PRESS_MS = 400;
 
 interface CardProps {
   person: Person;
@@ -11,6 +9,8 @@ interface CardProps {
   flipped: boolean;
   rejected: boolean;
   tag?: Tag;
+  /** Bottom-right corner mark, set via the color picker. */
+  mark?: Tag;
   /** The player marked this card's clue as used. */
   consumed: boolean;
   /** Just flipped from a correct guess; shows the Correct! bubble. */
@@ -18,7 +18,7 @@ interface CardProps {
   /** An active (unconsumed) clue mentions this card's name / profession. */
   nameReferenced: boolean;
   profReferenced: boolean;
-  /** The long-press color picker for this card is open. */
+  /** The color picker for this card's mark is open. */
   pickerOpen: boolean;
   /** Rendered clue shown on the card once it is flipped. */
   clueNode?: ReactNode;
@@ -26,10 +26,10 @@ interface CardProps {
   onOpen: () => void;
   /** Cycles the corner tag: none -> yellow -> red -> green -> none. */
   onCycleTag: () => void;
-  /** Long-press on the tag corner opens the full color picker. */
+  /** Click on the bottom-right corner opens the color picker. */
   onOpenPicker: () => void;
-  /** Picker selection (null clears the tag). */
-  onPickTag: (tag: Tag | null) => void;
+  /** Picker selection (null clears the mark). */
+  onPickMark: (mark: Tag | null) => void;
   /** Toggles this card's clue between active and consumed. */
   onToggleClue: () => void;
 }
@@ -40,6 +40,7 @@ export default function Card({
   flipped,
   rejected,
   tag,
+  mark,
   consumed,
   justFlipped,
   nameReferenced,
@@ -49,26 +50,9 @@ export default function Card({
   onOpen,
   onCycleTag,
   onOpenPicker,
-  onPickTag,
+  onPickMark,
   onToggleClue,
 }: CardProps) {
-  const pressTimer = useRef<number | null>(null);
-  const longPressed = useRef(false);
-
-  const startPress = () => {
-    longPressed.current = false;
-    pressTimer.current = window.setTimeout(() => {
-      longPressed.current = true;
-      onOpenPicker();
-    }, LONG_PRESS_MS);
-  };
-  const endPress = () => {
-    if (pressTimer.current !== null) {
-      clearTimeout(pressTimer.current);
-      pressTimer.current = null;
-    }
-  };
-
   const classes = [
     "card",
     flipped ? "flipped" : "",
@@ -84,20 +68,16 @@ export default function Card({
       <div role="group" className={classes} onClick={flipped ? undefined : onOpen}>
         <div
           className={tag ? `tag tag-${tag}` : "tag"}
-          onPointerDown={(e) => {
-            e.stopPropagation();
-            startPress();
-          }}
-          onPointerUp={endPress}
-          onPointerLeave={endPress}
-          onContextMenu={(e) => e.preventDefault()}
           onClick={(e) => {
             e.stopPropagation();
-            if (longPressed.current) {
-              longPressed.current = false;
-              return;
-            }
             onCycleTag();
+          }}
+        />
+        <div
+          className={mark ? `mark mark-${mark}` : "mark"}
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenPicker();
           }}
         />
         <div className="card-pos">{label}</div>
@@ -118,15 +98,15 @@ export default function Card({
           {TAG_COLORS.map((color) => (
             <button
               key={color ?? "none"}
-              aria-label={color ? `${color} tag` : "clear tag"}
+              aria-label={color ? `${color} mark` : "clear mark"}
               className={[
                 "tag-swatch",
                 `swatch-${color ?? "none"}`,
-                (tag ?? null) === color ? "active" : "",
+                (mark ?? null) === color ? "active" : "",
               ]
                 .filter(Boolean)
                 .join(" ")}
-              onClick={() => onPickTag(color)}
+              onClick={() => onPickMark(color)}
             />
           ))}
         </div>

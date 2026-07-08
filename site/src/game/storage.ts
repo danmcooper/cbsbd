@@ -6,6 +6,7 @@ export interface SavedProgress {
   elapsedMs: number;
   completed: boolean;
   tags?: Record<number, Tag>;
+  marks?: Record<number, Tag>;
   wrong?: number[];
   consumed?: number[];
 }
@@ -16,11 +17,12 @@ function isSavedProgress(v: unknown): v is SavedProgress {
   if (typeof v !== 'object' || v === null) return false;
   const p = v as Record<string, unknown>;
   const validTags = ['yellow', 'red', 'green', 'orange', 'magenta', 'cyan'];
-  const tagsOk =
-    p.tags === undefined ||
-    (typeof p.tags === 'object' &&
-      p.tags !== null &&
-      Object.values(p.tags).every((t) => validTags.includes(t as string)));
+  const tagRecordOk = (v: unknown) =>
+    v === undefined ||
+    (typeof v === 'object' &&
+      v !== null &&
+      Object.values(v).every((t) => validTags.includes(t as string)));
+  const tagsOk = tagRecordOk(p.tags) && tagRecordOk(p.marks);
   const intArrayOk = (v: unknown) =>
     v === undefined || (Array.isArray(v) && v.every((n) => Number.isInteger(n)));
   const wrongOk = intArrayOk(p.wrong) && intArrayOk(p.consumed);
