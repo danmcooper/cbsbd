@@ -293,6 +293,7 @@ a {
 .start-modal {
   padding: 20px 0 24px;
   gap: 6px;
+  font-family: 'Chalkboard SE', 'Comic Sans MS', 'Comic Sans', sans-serif;
 }
 .start-title {
   margin: 6px 0 2px;
@@ -306,11 +307,13 @@ a {
 .start-difficulty {
   margin: 6px 0;
 }
-.btn-start {
+/* .modal button sets transparent backgrounds; out-specify it for the filled Start. */
+.modal button.btn-start {
   background: var(--innocent);
   border-color: var(--innocent);
   color: #fff;
   font-weight: 700;
+  font-family: inherit;
   width: 130px;
   margin-top: 12px;
 }
