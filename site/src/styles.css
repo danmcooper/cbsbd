@@ -81,7 +81,10 @@ a {
 }
 .game h1 {
   font-size: 1.3rem;
-  margin: 0.75rem 0 0.25rem;
+  margin: 0.25rem 0 0.5rem;
+}
+.game .meta {
+  margin-top: 0.75rem;
 }
 .game .meta {
   color: var(--text-muted);

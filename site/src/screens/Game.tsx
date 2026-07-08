@@ -177,7 +177,6 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
           onCycleTag={(index) => dispatch({ type: "cycleTag", index })}
           onToggleClue={(index) => dispatch({ type: "toggleConsumed", index })}
         />
-        <h1>{puzzle.title}</h1>
         <p className="meta">
           {puzzle.date} · {puzzle.difficulty} · mistakes: {state.mistakes}
           {!state.completed && (
@@ -189,6 +188,7 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
             </>
           )}
         </p>
+        <h1>{puzzle.title}</h1>
         {state.rejectedIndex !== null && (
           <p className="rejection">{REJECTION_COPY}</p>
         )}
