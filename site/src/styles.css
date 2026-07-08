@@ -246,6 +246,30 @@ a {
   margin-top: 12px;
   min-width: 110px;
 }
+.start-modal {
+  padding: 20px 0 24px;
+  gap: 6px;
+}
+.start-title {
+  margin: 6px 0 2px;
+  font-size: 1.25em;
+}
+.start-date {
+  font-weight: 700;
+  font-size: 1.1em;
+  margin: 0 0 10px;
+}
+.start-difficulty {
+  margin: 6px 0;
+}
+.btn-start {
+  background: var(--innocent);
+  border-color: var(--innocent);
+  color: #fff;
+  font-weight: 700;
+  width: 130px;
+  margin-top: 12px;
+}
 .btn-copy {
   border: 1px solid var(--innocent);
   color: var(--innocent);

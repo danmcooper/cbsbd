@@ -170,3 +170,19 @@ describe('liveElapsedMs', () => {
     expect(liveElapsedMs(s, 999_000)).toBe(s.elapsedMs);
   });
 });
+
+describe('start action', () => {
+  it('starts the clock so time accrues before the first guess', () => {
+    let s = initialGameState(puzzle);
+    s = gameReducer(puzzle, s, { type: 'start', now: 10_000 });
+    expect(liveElapsedMs(s, 30_000)).toBe(20_000);
+    s = guess(s, 1, 'criminal', 40_000);
+    expect(s.elapsedMs).toBe(30_000);
+  });
+
+  it('is idempotent once the clock is running', () => {
+    let s = gameReducer(puzzle, initialGameState(puzzle), { type: 'start', now: 10_000 });
+    s = gameReducer(puzzle, s, { type: 'start', now: 99_000 });
+    expect(s.lastActionAt).toBe(10_000);
+  });
+});

@@ -18,6 +18,7 @@ export interface GameState {
 }
 
 export type GameAction =
+  | { type: 'start'; now: number }
   | { type: 'guess'; index: number; guess: Guess; now: number }
   | { type: 'clearRejection' }
   | { type: 'cycleTag'; index: number }
@@ -60,6 +61,8 @@ function tick(state: GameState, now: number): GameState {
 
 export function gameReducer(puzzle: Puzzle, state: GameState, action: GameAction): GameState {
   switch (action.type) {
+    case 'start':
+      return state.lastActionAt === null ? { ...state, lastActionAt: action.now } : state;
     case 'guess': {
       if (state.completed || state.flipped.includes(action.index)) return state;
       const person = puzzle.people[action.index];

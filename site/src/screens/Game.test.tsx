@@ -30,7 +30,11 @@ afterEach(() => vi.unstubAllGlobals());
 
 async function renderGame() {
   render(<Game date="2026-07-07" />);
-  return await screen.findByText('A tiny test mystery');
+  const title = await screen.findByText('A tiny test mystery');
+  // Fresh puzzles open with the start popup; click through it.
+  const start = screen.queryByRole('button', { name: 'Start' });
+  if (start) await userEvent.click(start);
+  return title;
 }
 
 describe('Game', () => {
@@ -160,5 +164,29 @@ describe('results popup', () => {
     // Reopenable via the results button next to the solved banner.
     await user.click(screen.getByRole('button', { name: /results/i }));
     expect(screen.getByRole('dialog')).toBeTruthy();
+  });
+});
+
+describe('start popup', () => {
+  it('welcomes on a fresh puzzle and dismisses on Start', async () => {
+    const user = userEvent.setup();
+    render(<Game date="2026-07-07" />);
+    await screen.findByText('A tiny test mystery');
+    const dialog = screen.getByRole('dialog');
+    expect(dialog.textContent).toContain('Welcome to Clues by Sam!');
+    expect(dialog.textContent).toContain('Jul 7th 2026');
+    expect(dialog.textContent).toContain('Difficulty: Easy');
+    await user.click(screen.getByRole('button', { name: 'Start' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('does not show when localStorage already has guesses', async () => {
+    localStorage.setItem(
+      'cbs:progress:a6f09e2713b2',
+      JSON.stringify({ flipped: [0, 1], mistakes: 1, elapsedMs: 5_000, completed: false }),
+    );
+    render(<Game date="2026-07-07" />);
+    await screen.findByText('A tiny test mystery');
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 });

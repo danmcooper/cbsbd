@@ -121,6 +121,13 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
   const { state, dispatch } = useGameState(puzzle);
   const [guessing, setGuessing] = useState<number | null>(null);
   const [resultsOpen, setResultsOpen] = useState(false);
+  // A puzzle is "new" when localStorage holds no guesses yet.
+  const [startOpen, setStartOpen] = useState(
+    () =>
+      !state.completed &&
+      state.mistakes === 0 &&
+      state.flipped.length === puzzle.initialReveals.length,
+  );
   const completedAtMount = useRef(state.completed);
 
   useEffect(() => {
@@ -163,6 +170,26 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
         </p>
       )}
       {resultsOpen && <ResultsModal puzzle={puzzle} state={state} onClose={() => setResultsOpen(false)} />}
+      {startOpen && (
+        <div className="overlay">
+          <div role="dialog" aria-label="start" className="modal start-modal">
+            <h2 className="start-title">Welcome to Clues by Sam!</h2>
+            <p className="start-date">{formatDateOrdinal(puzzle.date)}</p>
+            <p className="start-difficulty">
+              Difficulty: <b>{puzzle.difficulty}</b>
+            </p>
+            <button
+              className="btn-start"
+              onClick={() => {
+                dispatch({ type: 'start', now: Date.now() });
+                setStartOpen(false);
+              }}
+            >
+              Start
+            </button>
+          </div>
+        </div>
+      )}
       {guessing !== null && (
         <GuessModal
           puzzle={puzzle}
