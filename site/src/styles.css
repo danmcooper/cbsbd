@@ -48,13 +48,32 @@ a {
 .game {
   max-width: 420px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0 1rem 1rem;
   text-align: center;
 }
-/* Shrinks to the grid's width so children can align to the grid edges. */
+/* Shrinks to the grid's width so children can align to the grid edges.
+   Top margin and small-screen scaling match the real site's breakpoints. */
 .board-wrap {
   display: inline-block;
   text-align: center;
+  margin-top: 4px;
+}
+@media (min-width: 768px) {
+  .board-wrap {
+    margin-top: 50px;
+  }
+}
+@media (max-width: 369px) {
+  .board-wrap {
+    transform: scale(0.95);
+    transform-origin: top center;
+  }
+}
+@media (max-width: 344px) {
+  .board-wrap {
+    transform: scale(0.9);
+    transform-origin: top center;
+  }
 }
 .archive-link {
   text-align: left;
