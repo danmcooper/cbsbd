@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import type { Puzzle } from "../../../shared/puzzle";
 import ClueText, { clueReferencedIndices, gridLabel } from "../clue/ClueText";
 import type { GameState, Tag } from "../game/reducer";
@@ -32,13 +33,40 @@ export default function Grid({
   // plus the names/professions it mentions.
   const nameRefs = new Set<number>();
   const profRefs = new Set<number>();
+  // Subset of the above excluding the clue's own card: only these are
+  // eligible for the reveal bounce (the card a player just clicked doesn't
+  // need to bounce at itself).
+  const otherNameRefs = new Set<number>();
+  const otherProfRefs = new Set<number>();
   puzzle.people.forEach((person, i) => {
     if (!person.clue || !state.flipped.includes(i) || state.consumed.includes(i)) return;
     nameRefs.add(i);
     const refs = clueReferencedIndices(person.clue, puzzle.people, puzzle.width, i);
-    refs.names.forEach((n) => nameRefs.add(n));
-    refs.profs.forEach((n) => profRefs.add(n));
+    refs.names.forEach((n) => {
+      nameRefs.add(n);
+      if (n !== i) otherNameRefs.add(n);
+    });
+    refs.profs.forEach((n) => {
+      profRefs.add(n);
+      if (n !== i) otherProfRefs.add(n);
+    });
   });
+
+  // Bounce animation plays only for cards newly emphasized by an unhidden
+  // clue (a fresh flip or un-consuming), never on the initial mount (so a
+  // refresh doesn't replay it for clues that were already active).
+  const prevOtherRefs = useRef<{ names: Set<number>; profs: Set<number> } | null>(null);
+  const [bounceNames, setBounceNames] = useState<Set<number>>(new Set());
+  const [bounceProfs, setBounceProfs] = useState<Set<number>>(new Set());
+  useEffect(() => {
+    const prev = prevOtherRefs.current;
+    if (prev) {
+      setBounceNames(new Set([...otherNameRefs].filter((i) => !prev.names.has(i))));
+      setBounceProfs(new Set([...otherProfRefs].filter((i) => !prev.profs.has(i))));
+    }
+    prevOtherRefs.current = { names: new Set(otherNameRefs), profs: new Set(otherProfRefs) };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.flipped, state.consumed]);
 
   return (
     <div
@@ -65,6 +93,8 @@ export default function Grid({
           }
           nameReferenced={nameRefs.has(i)}
           profReferenced={profRefs.has(i)}
+          nameBounce={bounceNames.has(i) && otherNameRefs.has(i)}
+          profBounce={bounceProfs.has(i) && otherProfRefs.has(i)}
           clueNode={
             person.clue ? (
               <ClueText

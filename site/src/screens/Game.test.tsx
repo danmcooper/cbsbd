@@ -495,14 +495,119 @@ describe('correct-guess animation', () => {
     expect(cards[0].querySelector('.speech-bubble')).toBeNull();
   });
 
-  it('does not reappear when revisiting a puzzle', async () => {
+  it('flashes on the most recently correct suspect when reloading a puzzle', async () => {
     localStorage.setItem(
       'cbs:progress:a6f09e2713b2',
       JSON.stringify({ flipped: [0, 1], mistakes: 0, elapsedMs: 5_000, completed: false }),
     );
     render(<Game date="2026-07-07" />);
-    await screen.findAllByRole('group');
+    const cards = await screen.findAllByRole('group');
+    expect(cards[1].querySelector('.speech-bubble')?.textContent).toBe('Correct!');
+    expect(cards[0].querySelector('.speech-bubble')).toBeNull(); // initial reveal, not a guess
+  });
+
+  it('flashes again on the most recently correct suspect after unpausing', async () => {
+    const user = userEvent.setup();
+    await renderGame(user);
+    await user.click(screen.getByText('mira'));
+    await user.click(screen.getByRole('button', { name: 'Criminal' }));
+    // Let the flip's own flash expire first.
+    await new Promise((r) => setTimeout(r, 1400));
     expect(document.querySelector('.speech-bubble')).toBeNull();
+
+    await user.click(screen.getByRole('button', { name: 'Pause' }));
+    await user.click(screen.getByRole('button', { name: 'Unpause' }));
+    const cards = screen.getAllByRole('group');
+    expect(cards[1].querySelector('.speech-bubble')?.textContent).toBe('Correct!');
+  });
+});
+
+describe('pause persistence', () => {
+  it('stays paused across a refresh', async () => {
+    const user = userEvent.setup();
+    const first = render(<Game date="2026-07-07" />);
+    await screen.findAllByRole('group');
+    const start = screen.queryByRole('button', { name: 'Start' });
+    if (start) await user.click(start);
+    await user.click(screen.getByRole('button', { name: 'Pause' }));
+    expect(document.querySelector('.pause-overlay')).toBeTruthy();
+    first.unmount();
+
+    render(<Game date="2026-07-07" />);
+    await screen.findAllByRole('group');
+    expect(document.querySelector('.pause-overlay')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Unpause' })).toBeTruthy();
+  });
+
+  it('does not stay paused after a reset', async () => {
+    const user = userEvent.setup();
+    const first = render(<Game date="2026-07-07" />);
+    await screen.findAllByRole('group');
+    const start = screen.queryByRole('button', { name: 'Start' });
+    if (start) await user.click(start);
+    await user.click(screen.getByRole('button', { name: 'Pause' }));
+    await user.click(screen.getByRole('button', { name: 'Reset' }));
+    const confirm = screen.getByRole('dialog');
+    await user.click(within(confirm).getByRole('button', { name: 'Reset' }));
+    first.unmount();
+
+    render(<Game date="2026-07-07" />);
+    await screen.findAllByRole('group');
+    expect(document.querySelector('.pause-overlay')).toBeNull();
+  });
+});
+
+describe('reference bounce animation', () => {
+  // mira's clue references ozan by name, instead of the default self-reference.
+  const crossRefPuzzle = {
+    ...puzzle,
+    people: puzzle.people.map((p, i) => (i === 1 ? { ...p, clue: 'Clue about #NAME:2' } : p)),
+  };
+
+  beforeEach(() => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response(JSON.stringify(crossRefPuzzle), { status: 200 })),
+    );
+  });
+
+  it('bounces the referenced suspect, not the clue owner, when the clue is revealed', async () => {
+    const user = userEvent.setup();
+    await renderGame(user);
+    await user.click(screen.getByText('mira'));
+    await user.click(screen.getByRole('button', { name: 'Criminal' }));
+    const cards = screen.getAllByRole('group');
+    const miraName = cards[1].querySelector('.card-name');
+    const ozanName = cards[2].querySelector('.card-name');
+    expect(miraName?.className).toContain('referenced');
+    expect(miraName?.className).not.toContain('bounce'); // the clue's own card: no bounce
+    expect(ozanName?.className).toContain('referenced');
+    expect(ozanName?.className).toContain('bounce'); // the referenced suspect: bounces
+  });
+
+  it('does not replay the bounce for a reference that was already active on load', async () => {
+    localStorage.setItem(
+      'cbs:progress:a6f09e2713b2',
+      JSON.stringify({ flipped: [0, 1], mistakes: 0, elapsedMs: 5_000, completed: false }),
+    );
+    render(<Game date="2026-07-07" />);
+    const cards = await screen.findAllByRole('group');
+    const ozanName = cards[2].querySelector('.card-name');
+    expect(ozanName?.className).toContain('referenced'); // still statically highlighted
+    expect(ozanName?.className).not.toContain('bounce'); // no replay on refresh
+  });
+
+  it('bounces again when the clue is hidden and unhidden', async () => {
+    const user = userEvent.setup();
+    await renderGame(user);
+    await user.click(screen.getByText('mira'));
+    await user.click(screen.getByRole('button', { name: 'Criminal' }));
+    await user.click(screen.getByText('Clue about Ozan'));
+    let cards = screen.getAllByRole('group');
+    expect(cards[2].querySelector('.card-name')?.className).not.toContain('referenced');
+    await user.click(screen.getByText('Clue about Ozan'));
+    cards = screen.getAllByRole('group');
+    expect(cards[2].querySelector('.card-name')?.className).toContain('bounce');
   });
 });
 

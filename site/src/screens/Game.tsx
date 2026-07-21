@@ -34,6 +34,13 @@ function cellColors(puzzle: Puzzle, state: GameState): CellColor[] {
   );
 }
 
+/** The last card correctly flipped by a guess, or null if only initial reveals are flipped. */
+function mostRecentCorrectFlip(puzzle: Puzzle, state: GameState): number | null {
+  return state.flipped.length > puzzle.initialReveals.length
+    ? state.flipped[state.flipped.length - 1]
+    : null;
+}
+
 const CELL_EMOJI: Record<CellColor, string> = {
   green: "🟩",
   yellow: "🟨",
@@ -218,14 +225,24 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
     }
   }, [state.completed]);
 
-  // A started puzzle resumes its clock immediately after a page refresh.
+  // Paused state persists per-puzzle, so a refresh while paused stays paused.
+  const [paused, setPaused] = useState(
+    () => localStorage.getItem(`cbs:paused:${puzzle.id}`) === "1",
+  );
+  useEffect(() => {
+    localStorage.setItem(`cbs:paused:${puzzle.id}`, paused ? "1" : "0");
+  }, [paused, puzzle.id]);
+
+  // A started puzzle resumes its clock immediately after a page refresh,
+  // unless it was left paused (that stays paused until unpaused).
   useEffect(() => {
     const begun =
       state.elapsedMs > 0 ||
       state.mistakes > 0 ||
       state.flipped.length > puzzle.initialReveals.length;
-    if (begun && !state.completed) dispatch({ type: "start", now: Date.now() });
+    if (begun && !state.completed && !paused) dispatch({ type: "start", now: Date.now() });
     // Mount-time resume only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Bottom-right mark color picker; any click outside it closes it.
@@ -240,17 +257,37 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
   }, [pickerIndex]);
 
   // "Correct!" speech bubble on the card that just flipped (real-site pop-fade).
-  const [justFlipped, setJustFlipped] = useState<number | null>(null);
+  // Also flashed on the most recent correct suspect right from mount (a
+  // refresh) - set via the initial state itself so it's there on the very
+  // first paint, not a follow-up effect - and again when coming out of pause,
+  // so the feedback isn't lost mid-solve.
+  const [justFlipped, setJustFlipped] = useState<number | null>(() =>
+    state.completed ? null : mostRecentCorrectFlip(puzzle, state),
+  );
+  const flashTimer = useRef<number | null>(null);
+  const flashCorrect = (index: number) => {
+    setJustFlipped(index);
+    if (flashTimer.current !== null) clearTimeout(flashTimer.current);
+    flashTimer.current = window.setTimeout(() => setJustFlipped(null), 1300);
+  };
   const prevFlippedLen = useRef(state.flipped.length);
   useEffect(() => {
     if (state.flipped.length > prevFlippedLen.current) {
       prevFlippedLen.current = state.flipped.length;
-      setJustFlipped(state.flipped[state.flipped.length - 1]);
-      const t = setTimeout(() => setJustFlipped(null), 1300);
-      return () => clearTimeout(t);
+      flashCorrect(state.flipped[state.flipped.length - 1]);
+    } else {
+      prevFlippedLen.current = state.flipped.length;
     }
-    prevFlippedLen.current = state.flipped.length;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.flipped]);
+
+  // Arms the auto-clear for the flash set by the initial state above.
+  useEffect(() => {
+    if (justFlipped === null) return;
+    flashTimer.current = window.setTimeout(() => setJustFlipped(null), 1300);
+    // Mount-time only; later flashes are timed by flashCorrect itself.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Once started (and not paused/completed), the clock ticks every second the
   // page is shown; each tick folds elapsed time into state, which persists it.
@@ -269,13 +306,14 @@ function Board({ puzzle }: { puzzle: Puzzle }) {
     localStorage.setItem("cbs:pref:showSeconds", next ? "1" : "0");
     setShowSeconds(next);
   };
-  const [paused, setPaused] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
 
   const togglePause = () => {
     if (paused) {
       dispatch({ type: "start", now: Date.now() });
       setPaused(false);
+      const recent = mostRecentCorrectFlip(puzzle, state);
+      if (recent !== null) flashCorrect(recent);
     } else {
       dispatch({ type: "pause", now: Date.now() });
       setPaused(true);

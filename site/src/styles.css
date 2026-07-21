@@ -373,14 +373,17 @@ a {
 .card.consumed .card-clue {
   opacity: 0.2;
 }
-/* Cards mentioned by an active clue get the real site's emphasis + bounce. */
+/* Cards mentioned by an active clue get the real site's emphasis. The bounce
+   itself only plays when a clue newly reveals the reference (see .bounce). */
 .card-name.referenced {
   opacity: 1;
-  animation: bounce-ref 0.27s ease-in-out;
 }
 .card-prof.referenced {
   opacity: 0.95;
   font-weight: 700;
+}
+.card-name.bounce,
+.card-prof.bounce {
   animation: bounce-ref 0.27s ease-in-out;
 }
 @keyframes bounce-ref {

@@ -20,6 +20,9 @@ interface CardProps {
   /** An active (unconsumed) clue mentions this card's name / profession. */
   nameReferenced: boolean;
   profReferenced: boolean;
+  /** A clue newly revealed this reference (not on mount, not the clue's own card): play the bounce. */
+  nameBounce: boolean;
+  profBounce: boolean;
   /** The color picker for this card's mark is open. */
   pickerOpen: boolean;
   /** The active hint points at this card's clue (solid outline). */
@@ -51,6 +54,8 @@ export default function Card({
   justFlipped,
   nameReferenced,
   profReferenced,
+  nameBounce,
+  profBounce,
   pickerOpen,
   hintClue,
   hintCard,
@@ -109,8 +114,26 @@ export default function Card({
         <div className="card-pos">{label}</div>
         {justFlipped && <div className="speech-bubble">Correct!</div>}
         <div className="card-face">{faceFor(person)}</div>
-        <div className={nameReferenced ? "card-name referenced" : "card-name"}>{person.name}</div>
-        <div className={profReferenced ? "card-prof referenced" : "card-prof"}>
+        <div
+          className={[
+            "card-name",
+            nameReferenced ? "referenced" : "",
+            nameBounce ? "bounce" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          {person.name}
+        </div>
+        <div
+          className={[
+            "card-prof",
+            profReferenced ? "referenced" : "",
+            profBounce ? "bounce" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        >
           {person.profession}
         </div>
         {flipped && clueNode && (
