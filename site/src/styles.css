@@ -633,6 +633,33 @@ a {
   font-size: 1rem;
   color: var(--text-muted);
 }
+.archive-filters {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+}
+.archive-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  color: var(--text-muted);
+}
+.archive-filters select {
+  border: 1px solid var(--border-neutral);
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: inherit;
+  padding: 0.3rem 0.4rem;
+  font-size: 0.85rem;
+}
+.archive summary {
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 0.4rem 0;
+  cursor: pointer;
+}
 .archive ul {
   list-style: none;
   padding: 0;

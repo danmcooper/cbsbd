@@ -22,3 +22,43 @@ export function groupByMonth(entries: ManifestEntry[]): { month: string; entries
   }
   return groups;
 }
+
+export function groupByYear(
+  entries: ManifestEntry[],
+  currentYear: number = new Date().getFullYear(),
+): { year: string; open: boolean; entries: ManifestEntry[] }[] {
+  const groups: { year: string; open: boolean; entries: ManifestEntry[] }[] = [];
+  for (const entry of entries) {
+    const year = entry.date.slice(0, 4);
+    const last = groups[groups.length - 1];
+    if (last && last.year === year) last.entries.push(entry);
+    else groups.push({ year, open: year === String(currentYear), entries: [entry] });
+  }
+  return groups;
+}
+
+const DIFFICULTY_ORDER = ['Easy', 'Medium', 'Tricky', 'Hard', 'Brutal'];
+
+export function sortDifficulties(difficulties: string[]): string[] {
+  return [...difficulties].sort((a, b) => {
+    const ai = DIFFICULTY_ORDER.indexOf(a);
+    const bi = DIFFICULTY_ORDER.indexOf(b);
+    if (ai !== -1 && bi !== -1) return ai - bi;
+    if (ai !== -1) return -1;
+    if (bi !== -1) return 1;
+    return a.localeCompare(b);
+  });
+}
+
+export interface ArchiveFilters {
+  difficulty?: string;
+  status?: PuzzleStatus;
+}
+
+export function filterEntries(entries: ManifestEntry[], filters: ArchiveFilters): ManifestEntry[] {
+  return entries.filter((entry) => {
+    if (filters.difficulty && entry.difficulty !== filters.difficulty) return false;
+    if (filters.status && statusFor(entry.id) !== filters.status) return false;
+    return true;
+  });
+}
