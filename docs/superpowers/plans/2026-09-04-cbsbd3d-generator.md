@@ -536,20 +536,22 @@ git commit -m "Evaluate predicates against the lattice"
 ### Task 5: Port the geometry-free core
 
 **Files:**
-- Create: `shared/solver/sat.ts`, `cardinality.ts`, `encode.ts`, `clues.ts`, `solve.ts`, `enumerate.ts` (forks of cbs2's)
+- Create: `shared/solver/sat.ts`, `cardinality.ts`, `encode.ts`, `clues.ts`, `solve.ts`, `enumerate.ts`, `corpus.ts` (forks of cbs2's)
 - Test: the matching `*.test.ts` files, forked
 
 **Interfaces:**
 - Consumes: `predicates.ts`, `hint.ts`.
-- Produces: `Cnf`, `encode`, `supports`, `SUPPORTED`, `MAX_ENUMERATED_UNIT`, `forcedGiven`, `isUniquelySolvable`, `solveChain`, `hintSteps`, `minimalPaths`, `parseClues`, `activeHints`, `knownFrom` — all with cbs2's signatures.
+- Produces: `Cnf`, `encode`, `supports`, `SUPPORTED`, `MAX_ENUMERATED_UNIT`, `forcedGiven`, `isUniquelySolvable`, `solveChain`, `hintSteps`, `minimalPaths`, `parseClues`, `activeHints`, `knownFrom` — all with cbs2's signatures. Plus, from `corpus.ts`: `boardFor(puzzle: Puzzle): Board`, `isSelfReferential`, `CROSS_TRAIT`, `CROSS_TRAIT_RATE`.
 
 These files never mention a coordinate. The only edits are import paths and the `makeBoard` arity change.
+
+`corpus.ts` is the exception and is forked **minus its archive reading**: delete `loadArchive`, `archiveClueMix`, `ArchivePuzzle` and `PUZZLES_DIR`, which read the scraped 4x5 archive this repo does not have. Keep `boardFor` (Task 12 needs it to re-derive a board from a file) and `CROSS_TRAIT` / `CROSS_TRAIT_RATE` (Task 7's `candidates.ts` imports them). `ClueMix` moves out of this file entirely — it lives in `mix.ts`, Task 9.
 
 - [ ] **Step 1: Copy the files and their tests**
 
 ```bash
 cd ~/code/cbsbd3d
-for f in sat cardinality encode clues solve enumerate; do
+for f in sat cardinality encode clues solve enumerate corpus; do
   cp ~/code/cbsbd/shared/solver/$f.ts shared/solver/
 done
 cp ~/code/cbsbd/shared/solver/sat.test.ts ~/code/cbsbd/shared/solver/sat.differential.test.ts \
@@ -905,6 +907,8 @@ export function mixFor3d(flat: ClueMix): ClueMix {
 
 `loadMix` validates shape and throws `MixFormatError` on anything else, following `loadBands` in cbs2's `difficulty.ts`.
 
+`ClueMix` is declared here, not in `corpus.ts` as it was in cbs2 — it no longer comes from an archive read, so it no longer belongs to one. `orderPool` and `GenerateInput` in Task 12 import it from `./mix`.
+
 - [ ] **Step 5: Run and commit**
 
 Run: `npx vitest run shared/solver/mix.test.ts`
@@ -1005,6 +1009,8 @@ export interface Puzzle {
 }
 ```
 
+`title` is drawn from `TITLES` and `FLAVOUR` in `vocab.ts` by the same seeded rng that builds the puzzle, so it is reproducible from the filename like everything else. `source` is the literal `'generated'` — there is no other kind of puzzle here.
+
 - [ ] **Step 1: Write the failing tests**
 
 ```ts
@@ -1093,8 +1099,9 @@ it('is deterministic in its seed', () => {
 
 it('is uniquely solvable', () => {
   const { puzzle } = generatePuzzle(input);
-  const board = boardOf(puzzle);
-  expect(isUniquelySolvable(board, cluesOf(puzzle))).toBe(true);
+  const board = boardFor(puzzle);                        // from corpus.ts, Task 5
+  const clues = parseClues(puzzle.people.map((p) => p.origHint));  // from clues.ts, Task 5
+  expect(isUniquelySolvable(board, clues)).toBe(true);
 });
 ```
 
