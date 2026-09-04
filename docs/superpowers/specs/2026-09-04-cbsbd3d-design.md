@@ -144,12 +144,40 @@ Building one cube:
 Each date generates one cube, `classify` reads the difficulty off the result
 using bands refitted from 20 cards to 27 by `bandsFor`, and that label is
 recorded and shown. Nothing is discarded or retried for missing a target, which
-also removes the 2D generator's most expensive loop.
+also removes the 2D generator's most expensive loop. This is `generatePuzzle`'s
+`labelOf` hook, which already exists and is already how 2D generation is driven
+in practice.
+
+`band` still *shapes* an attempt even when it no longer rejects one — it sets
+the criminal-count range, the reveal ceiling and the abstraction target — so
+every attempt is shaped by the refitted **Medium** band, and the label is
+whatever `classify` says came out.
 
 The label is therefore descriptive, not prescriptive — and worth reading
 loosely. The 2D bands are fitted from human ratings on the source site's 4×5
 archive; there is no rated 3D archive and never will be, so a refitted label on
 a cube is an estimate. It costs nothing to display and nothing to be wrong.
+
+**Clue mix is vendored.** `orderPool` needs a `ClueMix` or the candidate
+pool's own combinatorial shape decides the clue proportions, which is how 2D's
+generated puzzles once came out three times heavier on `between` than any real
+one. That mix comes from `archiveClueMix()`, a read of the scraped archive —
+which cbsbd3d does not have and never will. So the mix is computed once in
+`cbs2`, committed to cbsbd3d as `config/clue-mix.json`, and translated to the
+cube's vocabulary by `mixFor3d`:
+
+- `pred` shares carry over verbatim: the 29 predicates are unchanged.
+- `dir:dx,dy` becomes `dir:dx,dy,0`; the two new depth directions each take the
+  mean of the four 2D directions.
+- `unit:neighbor`'s share splits evenly between `unit:hneighbor` and
+  `unit:vneighbor`.
+- `unit:slice` takes the mean of `unit:row` and `unit:col`.
+- `unit:reach` takes `unit:between`'s share — both are wide multi-cell units.
+- `unit:face` and `unit:core` each take `unit:corner`'s share.
+- `professionShapes` are refitted to 27 cards by `professionShapesFor`.
+
+Every number past the first bullet is an estimate. They exist to stop the pool
+running away with the mix, not because anyone measured them on a cube.
 
 **Cost is the open risk.** 27 cards is fewer than the 6×6 that takes about six
 seconds, but the unit space is much larger: nine slabs, six reach directions on
