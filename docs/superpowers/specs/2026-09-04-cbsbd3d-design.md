@@ -128,8 +128,8 @@ Building one cube:
    sorted, so alphabetical order is address order.
 2. Deal professions with `professionsFor` refitted to 27 cards, landing near
    two or three cards each.
-3. Sample a criminal assignment. The count comes from the target band's
-   `criminals` range, refitted to 27 cards by `bandsFor`, as in 2D. The 2D
+3. Sample a criminal assignment. The count is drawn from the refitted
+   `criminals` range, spanning all bands rather than one. The 2D
    inward bias is **dropped**: it exists to match the source archive's 65.8%
    edge share, and on a cube 26 of 27 cells are on the outer shell, so the
    statistic has no meaning here. Draw uniformly, and revisit only if generated
@@ -140,20 +140,16 @@ Building one cube:
 6. Compute each card's deduction path, for the flip-enforcement rule.
 7. Pick the initial reveals.
 
-The weekday picks the target difficulty band, easiest Monday to hardest
-Sunday, never easier than the day before — five calibrated bands over seven
-days, so two repeat mid-week rather than jumping at the weekend:
+**Generation is unaimed.** There is no target band and no weekday schedule.
+Each date generates one cube, `classify` reads the difficulty off the result
+using bands refitted from 20 cards to 27 by `bandsFor`, and that label is
+recorded and shown. Nothing is discarded or retried for missing a target, which
+also removes the 2D generator's most expensive loop.
 
-| Mon | Tue | Wed | Thu | Fri | Sat | Sun |
-| --- | --- | --- | --- | --- | --- | --- |
-| Easy | Medium | Medium | Tricky | Tricky | Hard | Brutal |
-
-`bandsFor` refits the card-counting fields from the calibrated 20 cards to 27.
-
-**Difficulty is judgment, not measurement.** The 2D bands are fitted from human
-ratings on the source site's 4×5 archive. There is no rated 3D archive and never
-will be. The refitted bands are a starting point to be corrected by playing the
-first weeks' cubes.
+The label is therefore descriptive, not prescriptive — and worth reading
+loosely. The 2D bands are fitted from human ratings on the source site's 4×5
+archive; there is no rated 3D archive and never will be, so a refitted label on
+a cube is an estimate. It costs nothing to display and nothing to be wrong.
 
 **Cost is the open risk.** 27 cards is fewer than the 6×6 that takes about six
 seconds, but the unit space is much larger: nine slabs, six reach directions on
@@ -220,5 +216,6 @@ WebGL is required. Without it the app says so rather than degrading.
 
 ## Out of scope
 
-Backfilled archive dates. Practice or endless mode. Cube sizes other than
+Backfilled archive dates. Aiming generation at a difficulty, and any weekday
+schedule. Practice or endless mode. Cube sizes other than
 3×3×3. Variants. A non-WebGL fallback. Sharing the solver with the 2D repo.
