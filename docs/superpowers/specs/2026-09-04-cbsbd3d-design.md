@@ -58,9 +58,11 @@ board:
 
 - **Slabs** — nine units of nine cells: rows 1–3, columns A–C, slices a–c.
 - **Reach**, anchored on a card and a direction — `above` is every cell in the
-  rows above that card (9 or 18 cells), and likewise `below`, `left`, `right`,
-  `in front`, `behind`. Alongside each sits the single-step `directly above`
-  and friends, which is all the 2D game ever had.
+  rows above that card, and likewise `below`, `left`, `right`, `in front`,
+  `behind`. `Dir` is one of the six unit vectors. A reach holds 18, 9 or 0
+  cells depending on where its anchor sits; an empty reach is never offered as
+  a clue unit. Alongside each sits the single-step `directly above` and
+  friends, which is all the 2D game ever had.
 - **Neighbours**, two kinds, anchored on a card — *horizontal*: the face
   neighbours sharing its row, up to 4 (left, right, in front, behind);
   *vertical*: the 1–2 directly over or under. No diagonals. This is a
@@ -126,14 +128,26 @@ Building one cube:
    sorted, so alphabetical order is address order.
 2. Deal professions with `professionsFor` refitted to 27 cards, landing near
    two or three cards each.
-3. Sample a criminal assignment.
+3. Sample a criminal assignment. The count comes from the target band's
+   `criminals` range, refitted to 27 cards by `bandsFor`, as in 2D. The 2D
+   inward bias is **dropped**: it exists to match the source archive's 65.8%
+   edge share, and on a cube 26 of 27 cells are on the outer shell, so the
+   statistic has no meaning here. Draw uniformly, and revisit only if generated
+   cubes read badly.
 4. Generate candidate hints for every card.
 5. SAT-check that the board has a unique solution; prune to a minimal set that
    still forces it.
 6. Compute each card's deduction path, for the flip-enforcement rule.
 7. Pick the initial reveals.
 
-The weekday picks the target difficulty band, easiest Monday to hardest Sunday.
+The weekday picks the target difficulty band, easiest Monday to hardest
+Sunday, never easier than the day before — five calibrated bands over seven
+days, so two repeat mid-week rather than jumping at the weekend:
+
+| Mon | Tue | Wed | Thu | Fri | Sat | Sun |
+| --- | --- | --- | --- | --- | --- | --- |
+| Easy | Medium | Medium | Tricky | Tricky | Hard | Brutal |
+
 `bandsFor` refits the card-counting fields from the calibrated 20 cards to 27.
 
 **Difficulty is judgment, not measurement.** The 2D bands are fitted from human
@@ -194,7 +208,7 @@ WebGL is required. Without it the app says so rather than degrading.
 ## Testing
 
 - `lattice.ts` unit tests: addresses round-trip, slab membership, reach counts
-  (9 or 18), neighbour counts (corner A1a: 2 horizontal, 1 vertical; core B2b:
+  (18, 9 or 0, and an empty one is never offered), neighbour counts (corner A1a: 2 horizontal, 1 vertical; core B2b:
   4 and 2), position groups partition all 27 cells.
 - Solver tests port from 2D, re-pointed at the cube.
 - `render.ts` tests cover every new word.
