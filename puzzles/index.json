@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-08",
+    "slug": "2026-09-08",
+    "variant": "real",
+    "id": "eb8b8967f5b6",
+    "difficulty": "Medium",
+    "title": "One innocent is into horse-trading",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-08",
+    "slug": "2026-09-08-dan",
+    "variant": "dan",
+    "id": "99114c7746a8",
+    "difficulty": "Tricky",
+    "title": "Four Rows, One Confession",
+    "width": 4,
+    "height": 4
+  },
+  {
     "date": "2026-09-07",
     "slug": "2026-09-07",
     "variant": "real",
