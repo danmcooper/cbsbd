@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-09",
+    "slug": "2026-09-09",
+    "variant": "real",
+    "id": "ec9762de6882",
+    "difficulty": "Tricky",
+    "title": "One innocent is like ketchup on ice cream. Wrong.",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-09",
+    "slug": "2026-09-09-dan",
+    "variant": "dan",
+    "id": "63655c9fa31b",
+    "difficulty": "Hard",
+    "title": "Nine Alibis and a Gap",
+    "width": 4,
+    "height": 5
+  },
+  {
     "date": "2026-09-08",
     "slug": "2026-09-08",
     "variant": "real",
