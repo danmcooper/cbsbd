@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-11",
+    "slug": "2026-09-11",
+    "variant": "real",
+    "id": "410db3a65bf7",
+    "difficulty": "Tricky",
+    "title": "The criminals have unusually many eyeballs on them",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-11",
+    "slug": "2026-09-11-dan",
+    "variant": "dan",
+    "id": "c6fc427e07d6",
+    "difficulty": "Tricky",
+    "title": "A Quiet Morning at the Depot",
+    "width": 5,
+    "height": 5
+  },
+  {
     "date": "2026-09-10",
     "slug": "2026-09-10",
     "variant": "real",
