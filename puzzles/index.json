@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-12",
+    "slug": "2026-09-12",
+    "variant": "real",
+    "id": "0b009b454d67",
+    "difficulty": "Hard",
+    "title": "Some innocents don't appreciate value",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-12",
+    "slug": "2026-09-12-dan",
+    "variant": "dan",
+    "id": "8287f91e9771",
+    "difficulty": "Medium",
+    "title": "The Greenhouse Roster",
+    "width": 5,
+    "height": 6
+  },
+  {
     "date": "2026-09-11",
     "slug": "2026-09-11",
     "variant": "real",
