@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-13",
+    "slug": "2026-09-13",
+    "variant": "real",
+    "id": "cbb5d700abe1",
+    "difficulty": "Hard",
+    "title": "One criminal didn't really need another trophy",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-13",
+    "slug": "2026-09-13-dan",
+    "variant": "dan",
+    "id": "86f12c115fb8",
+    "difficulty": "Hard",
+    "title": "A Quiet Morning at the Depot",
+    "width": 6,
+    "height": 6
+  },
+  {
     "date": "2026-09-12",
     "slug": "2026-09-12",
     "variant": "real",
