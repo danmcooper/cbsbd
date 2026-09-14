@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-14",
+    "slug": "2026-09-14",
+    "variant": "real",
+    "id": "248454e1a738",
+    "difficulty": "Easy",
+    "title": "One criminal might like skirlie",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-14",
+    "slug": "2026-09-14-dan",
+    "variant": "dan",
+    "id": "541a46448e88",
+    "difficulty": "Tricky",
+    "title": "Twenty Faces, Five Lies",
+    "width": 3,
+    "height": 4
+  },
+  {
     "date": "2026-09-13",
     "slug": "2026-09-13",
     "variant": "real",
