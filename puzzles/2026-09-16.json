@@ -1,0 +1,857 @@
+{
+  "formatVersion": 1,
+  "id": "b2f2fccc6669",
+  "date": "2026-09-16",
+  "title": "There are by estimate 1031 criminals",
+  "difficulty": "Tricky",
+  "width": 4,
+  "height": 5,
+  "initialReveals": [
+    17
+  ],
+  "source": "cluesbysam.com",
+  "people": [
+    {
+      "name": "andre",
+      "profession": "mech",
+      "gender": "male",
+      "criminal": true,
+      "clue": "#NAME:2 and #NAME:6 have 2 innocent neighbors in common",
+      "origHint": "units_share_n_traits(unit(neighbor,2),unit(neighbor,6),innocent,2)",
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "brian",
+      "profession": "guard",
+      "gender": "male",
+      "criminal": true,
+      "clue": "There is only one innocent in row 3",
+      "origHint": "number_of_traits_in_unit(unit(row,3),innocent,1)",
+      "paths": [
+        [
+          17,
+          9
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "cheryl",
+      "profession": "guard",
+      "gender": "female",
+      "criminal": true,
+      "clue": "2 innocents on the edges have an innocent directly to the left of them",
+      "origHint": "n_t_in_unit_have_trait_in_dir(unit(edge,void),innocent,innocent,-1,0,2)",
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "diane",
+      "profession": "mech",
+      "gender": "female",
+      "criminal": false,
+      "clue": "#NAME:14 is one of #NAMES:11 4 innocent neighbors",
+      "origHint": "is_one_of_n_traits_in_unit(unit(neighbor,11),14,innocent,4)",
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "frida",
+      "profession": "painter",
+      "gender": "female",
+      "criminal": true,
+      "clue": "In my estimation, I just got caught.",
+      "origHint": null,
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6,
+          3,
+          10
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "ghani",
+      "profession": "guard",
+      "gender": "male",
+      "criminal": true,
+      "clue": "I overestimated my chances of escaping",
+      "origHint": null,
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6,
+          3
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "hazel",
+      "profession": "cook",
+      "gender": "female",
+      "criminal": false,
+      "clue": "Only 1 of the 5 criminals neighboring #NAME:6 is in column #C:4",
+      "origHint": "unit_shares_n_out_of_n_traits_with_unit(unit(neighbor,6),unit(col,4),criminal,1,5)",
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "jason",
+      "profession": "mech",
+      "gender": "male",
+      "criminal": false,
+      "clue": "In my estimation, all criminals will be caught today",
+      "origHint": null,
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6,
+          3
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "karen",
+      "profession": "painter",
+      "gender": "female",
+      "criminal": true,
+      "clue": "#NAME:7 has exactly 3 innocent neighbors",
+      "origHint": "number_of_traits_in_unit(unit(neighbor,7),innocent,3)",
+      "paths": [
+        [
+          17,
+          9,
+          1
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "lucy",
+      "profession": "painter",
+      "gender": "female",
+      "criminal": true,
+      "clue": "#NAME:1 is one of 3 criminals in row 1",
+      "origHint": "is_one_of_n_traits_in_unit(unit(row,1),1,criminal,3)",
+      "paths": [
+        [
+          17
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "martin",
+      "profession": "cook",
+      "gender": "male",
+      "criminal": false,
+      "clue": "Each row has at least 2 criminals",
+      "origHint": "all_units_have_at_least_n_traits(row,criminal,2)",
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6,
+          3
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "nick",
+      "profession": "cook",
+      "gender": "male",
+      "criminal": true,
+      "clue": "Wouldn't it be fun if clues were just estimates?",
+      "origHint": null,
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6,
+          3
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "olsi",
+      "profession": "teacher",
+      "gender": "male",
+      "criminal": false,
+      "clue": "Only 1 of us 3 #PROFS:teacher have an innocent directly to the right of us",
+      "origHint": "n_professions_have_trait_in_dir(teacher,innocent,1,0,1)",
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6,
+          2,
+          3,
+          10,
+          19
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "penny",
+      "profession": "singer",
+      "gender": "female",
+      "criminal": true,
+      "clue": "How about we estimate that you let me go?",
+      "origHint": null,
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6,
+          2,
+          3,
+          10,
+          19
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "ryan",
+      "profession": "singer",
+      "gender": "male",
+      "criminal": false,
+      "clue": "Numbers in clues are always exact unless stated otherwise",
+      "origHint": null,
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6,
+          3
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "susan",
+      "profession": "sleuth",
+      "gender": "female",
+      "criminal": true,
+      "clue": "Don't underestimate our wits!",
+      "origHint": null,
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6,
+          3
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "uma",
+      "profession": "teacher",
+      "gender": "female",
+      "criminal": false,
+      "clue": "Did anyone listen to what #NAME:14 actually had to say?",
+      "origHint": null,
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6,
+          2,
+          3,
+          10,
+          19,
+          12
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "will",
+      "profession": "teacher",
+      "gender": "male",
+      "criminal": false,
+      "clue": "1 of the 2 criminals #BETWEEN:pair(9,11) is #NAMES:12 neighbor",
+      "origHint": "unit_shares_n_out_of_n_traits_with_unit(unit(between,pair(9,11)),unit(neighbor,12),criminal,1,2)",
+      "paths": [],
+      "face": null
+    },
+    {
+      "name": "xavi",
+      "profession": "sleuth",
+      "gender": "male",
+      "criminal": true,
+      "clue": "In my estimation we won today! But I'm known for poor estimates.",
+      "origHint": null,
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6,
+          2,
+          3,
+          10,
+          19,
+          12
+        ]
+      ],
+      "face": null
+    },
+    {
+      "name": "zach",
+      "profession": "sleuth",
+      "gender": "male",
+      "criminal": true,
+      "clue": "1 of the 2 criminals neighboring #NAME:17 is #NAMES:10 neighbor",
+      "origHint": "unit_shares_n_out_of_n_traits_with_unit(unit(neighbor,17),unit(neighbor,10),criminal,1,2)",
+      "paths": [
+        [
+          17,
+          9,
+          1,
+          8,
+          0,
+          6,
+          2,
+          3,
+          10
+        ]
+      ],
+      "face": null
+    }
+  ],
+  "hints": [
+    {
+      "flipped": [
+        17
+      ],
+      "clues": [
+        17
+      ],
+      "reveals": [
+        9
+      ]
+    },
+    {
+      "flipped": [
+        17,
+        9
+      ],
+      "clues": [
+        9
+      ],
+      "reveals": [
+        1
+      ]
+    },
+    {
+      "flipped": [
+        17,
+        9,
+        1
+      ],
+      "clues": [
+        17,
+        1
+      ],
+      "reveals": [
+        8
+      ]
+    },
+    {
+      "flipped": [
+        8,
+        17,
+        9,
+        1
+      ],
+      "clues": [
+        17,
+        9,
+        8
+      ],
+      "reveals": [
+        0,
+        6
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        6,
+        8,
+        9,
+        17
+      ],
+      "clues": [
+        17,
+        0,
+        6
+      ],
+      "reveals": [
+        2
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        3,
+        6,
+        8,
+        9,
+        17
+      ],
+      "clues": [
+        9
+      ],
+      "reveals": [
+        2
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        6,
+        8,
+        9,
+        17
+      ],
+      "clues": [
+        9
+      ],
+      "reveals": [
+        3
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        8,
+        9,
+        17
+      ],
+      "clues": [
+        3
+      ],
+      "reveals": [
+        14
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        8,
+        9,
+        14,
+        17
+      ],
+      "clues": [
+        17,
+        3,
+        6
+      ],
+      "reveals": [
+        10,
+        11,
+        15,
+        5,
+        7
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        7,
+        8,
+        9,
+        14,
+        17
+      ],
+      "clues": [
+        6
+      ],
+      "reveals": [
+        11
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        8,
+        9,
+        14,
+        15,
+        17
+      ],
+      "clues": [
+        3
+      ],
+      "reveals": [
+        10,
+        7
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        8,
+        9,
+        11,
+        14,
+        17
+      ],
+      "clues": [
+        17
+      ],
+      "reveals": [
+        10
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        8,
+        9,
+        10,
+        14,
+        17
+      ],
+      "clues": [
+        17
+      ],
+      "reveals": [
+        11
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        8,
+        9,
+        14,
+        17
+      ],
+      "clues": [
+        6
+      ],
+      "reveals": [
+        10
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        8,
+        9,
+        10,
+        11,
+        14,
+        17
+      ],
+      "clues": [
+        6
+      ],
+      "reveals": [
+        5,
+        7
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        14,
+        17
+      ],
+      "clues": [
+        3
+      ],
+      "reveals": [
+        15
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15,
+        17
+      ],
+      "clues": [
+        10
+      ],
+      "reveals": [
+        4
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15,
+        17
+      ],
+      "clues": [
+        10,
+        2
+      ],
+      "reveals": [
+        19
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15,
+        17,
+        19
+      ],
+      "clues": [
+        19
+      ],
+      "reveals": [
+        13
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        13,
+        14,
+        15,
+        17,
+        19
+      ],
+      "clues": [
+        10,
+        19
+      ],
+      "reveals": [
+        12
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        17,
+        19
+      ],
+      "clues": [
+        12
+      ],
+      "reveals": [
+        18
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        17,
+        18,
+        19
+      ],
+      "clues": [
+        19
+      ],
+      "reveals": [
+        16
+      ]
+    }
+  ]
+}

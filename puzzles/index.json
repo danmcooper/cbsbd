@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-16",
+    "slug": "2026-09-16",
+    "variant": "real",
+    "id": "b2f2fccc6669",
+    "difficulty": "Tricky",
+    "title": "There are by estimate 1031 criminals",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-16",
+    "slug": "2026-09-16-dan",
+    "variant": "dan",
+    "id": "778a20ad5a16",
+    "difficulty": "Tricky",
+    "title": "A Draft in the Archive Room",
+    "width": 4,
+    "height": 5
+  },
+  {
     "date": "2026-09-15",
     "slug": "2026-09-15",
     "variant": "real",
