@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-19",
+    "slug": "2026-09-19",
+    "variant": "real",
+    "id": "631381b6c270",
+    "difficulty": "Hard",
+    "title": "One criminal is an adult. The others, not so much.",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-19",
+    "slug": "2026-09-19-dan",
+    "variant": "dan",
+    "id": "643664ba9421",
+    "difficulty": "Hard",
+    "title": "Sunday Inventory",
+    "width": 5,
+    "height": 6
+  },
+  {
     "date": "2026-09-18",
     "slug": "2026-09-18",
     "variant": "real",
