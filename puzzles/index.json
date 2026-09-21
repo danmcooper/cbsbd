@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-21",
+    "slug": "2026-09-21",
+    "variant": "real",
+    "id": "5c7b4296e8dc",
+    "difficulty": "Easy",
+    "title": "All criminals make mistakes, some worse than others",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-21",
+    "slug": "2026-09-21-dan",
+    "variant": "dan",
+    "id": "3f8671c131a1",
+    "difficulty": "Tricky",
+    "title": "Whose Coat Is on the Hook",
+    "width": 3,
+    "height": 4
+  },
+  {
     "date": "2026-09-20",
     "slug": "2026-09-20",
     "variant": "real",
