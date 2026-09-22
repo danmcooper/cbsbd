@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-22",
+    "slug": "2026-09-22",
+    "variant": "real",
+    "id": "55fd076c35ef",
+    "difficulty": "Medium",
+    "title": "The criminals didn't know about the catch",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-22",
+    "slug": "2026-09-22-dan",
+    "variant": "dan",
+    "id": "5b23d2e0beb7",
+    "difficulty": "Tricky",
+    "title": "The Stairwell Census",
+    "width": 4,
+    "height": 4
+  },
+  {
     "date": "2026-09-21",
     "slug": "2026-09-21",
     "variant": "real",
