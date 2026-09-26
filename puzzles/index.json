@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-26",
+    "slug": "2026-09-26",
+    "variant": "real",
+    "id": "070ab87a842b",
+    "difficulty": "Hard",
+    "title": "One criminal was raised different",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-26",
+    "slug": "2026-09-26-dan",
+    "variant": "dan",
+    "id": "65a1d3ad7684",
+    "difficulty": "Hard",
+    "title": "The Lantern Street Lineup",
+    "width": 5,
+    "height": 6
+  },
+  {
     "date": "2026-09-25",
     "slug": "2026-09-25",
     "variant": "real",
