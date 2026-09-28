@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-28",
+    "slug": "2026-09-28",
+    "variant": "real",
+    "id": "eb1973cc75f5",
+    "difficulty": "Easy",
+    "title": "One criminal likes plain old forks",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-28",
+    "slug": "2026-09-28-dan",
+    "variant": "dan",
+    "id": "7091334cc65f",
+    "difficulty": "Medium",
+    "title": "Names Called at Dawn",
+    "width": 3,
+    "height": 4
+  },
+  {
     "date": "2026-09-27",
     "slug": "2026-09-27",
     "variant": "real",
