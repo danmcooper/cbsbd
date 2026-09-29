@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-29",
+    "slug": "2026-09-29",
+    "variant": "real",
+    "id": "f0e09126cb18",
+    "difficulty": "Medium",
+    "title": "One criminal has mastered the art of slow clap",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-29",
+    "slug": "2026-09-29-dan",
+    "variant": "dan",
+    "id": "1c328531e989",
+    "difficulty": "Medium",
+    "title": "Nine Alibis and a Gap",
+    "width": 4,
+    "height": 4
+  },
+  {
     "date": "2026-09-28",
     "slug": "2026-09-28",
     "variant": "real",
