@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-09-30",
+    "slug": "2026-09-30",
+    "variant": "real",
+    "id": "0d989e572085",
+    "difficulty": "Medium",
+    "title": "One innocent is not happy with his job",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-09-30",
+    "slug": "2026-09-30-dan",
+    "variant": "dan",
+    "id": "b72826c43450",
+    "difficulty": "Hard",
+    "title": "The Stairwell Census",
+    "width": 4,
+    "height": 5
+  },
+  {
     "date": "2026-09-29",
     "slug": "2026-09-29",
     "variant": "real",
