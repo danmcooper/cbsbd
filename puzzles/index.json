@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-10-02",
+    "slug": "2026-10-02",
+    "variant": "real",
+    "id": "66d0773a4ca2",
+    "difficulty": "Tricky",
+    "title": "One innocent doesn't know the meaning of secret",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-10-02",
+    "slug": "2026-10-02-dan",
+    "variant": "dan",
+    "id": "5e453e4c417c",
+    "difficulty": "Tricky",
+    "title": "The Stairwell Census",
+    "width": 5,
+    "height": 5
+  },
+  {
     "date": "2026-10-01",
     "slug": "2026-10-01",
     "variant": "real",
