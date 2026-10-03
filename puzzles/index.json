@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-10-03",
+    "slug": "2026-10-03",
+    "variant": "real",
+    "id": "0779171325b4",
+    "difficulty": "Hard",
+    "title": "The criminals went out of the frying pan and into the fire",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-10-03",
+    "slug": "2026-10-03-dan",
+    "variant": "dan",
+    "id": "7a20db0ce4c5",
+    "difficulty": "Hard",
+    "title": "Everyone Says They Were Reading",
+    "width": 5,
+    "height": 6
+  },
+  {
     "date": "2026-10-02",
     "slug": "2026-10-02",
     "variant": "real",
