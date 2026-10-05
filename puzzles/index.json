@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-10-05",
+    "slug": "2026-10-05",
+    "variant": "real",
+    "id": "fe367eb841bc",
+    "difficulty": "Easy",
+    "title": "One criminal is in immediate danger",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-10-05",
+    "slug": "2026-10-05-dan",
+    "variant": "dan",
+    "id": "53ee22afd6b1",
+    "difficulty": "Tricky",
+    "title": "The Greenhouse Roster",
+    "width": 3,
+    "height": 4
+  },
+  {
     "date": "2026-10-04",
     "slug": "2026-10-04",
     "variant": "real",
