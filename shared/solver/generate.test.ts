@@ -14,10 +14,13 @@ import { readingReplay } from './reading';
 import {
   COMBO_GAIN_CAP,
   GAIN_CAP,
+  LATE_FROM,
+  LINE_RUN_CAP,
   GenerationError,
   SOLO_CAP,
   castOf,
   generatePuzzle,
+  inOneLine,
   makeRng,
   orderPool,
   pickCriminals,
@@ -502,11 +505,17 @@ describe('generatePuzzle', () => {
       );
       expect(reads.length).toBe(p.people.filter((q) => q.origHint).length);
       const fed = new Set(reads.map((r) => r.feeds));
+      expect(p.initialReveals.every((i) => !p.people[i].criminal)).toBe(true);
+      let known = p.initialReveals.length;
       for (const r of reads) {
         expect(r.dead).toBe(false);
         if (r.gain.length === 0) expect(r.feeds).not.toBeNull();
-        expect(r.gain.length).toBeLessThanOrEqual(fed.has(r.host) ? COMBO_GAIN_CAP : GAIN_CAP);
+        if (known < LATE_FROM * p.people.length) {
+          expect(r.gain.length).toBeLessThanOrEqual(fed.has(r.host) ? COMBO_GAIN_CAP : GAIN_CAP);
+        }
+        if (r.gain.length >= LINE_RUN_CAP) expect(inOneLine(shape.grid, r.gain)).toBe(false);
         expect(r.solo.length).toBeLessThanOrEqual(SOLO_CAP);
+        known += r.gain.length;
       }
     }
   }, 60_000);

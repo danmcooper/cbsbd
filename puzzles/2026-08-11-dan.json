@@ -1,9 +1,9 @@
 {
   "formatVersion": 1,
-  "id": "0a21c2b589c2",
+  "id": "20a21c2b589c",
   "date": "2026-08-11",
-  "title": "The Corner Table Knows",
-  "difficulty": "Hard",
+  "title": "Nobody Left the Courtyard",
+  "difficulty": "Tricky",
   "width": 4,
   "height": 4,
   "initialReveals": [
@@ -55,7 +55,7 @@
       "profession": "pilot",
       "gender": "female",
       "criminal": true,
-      "clue": "You will have to ask the others.",
+      "clue": "I lost track of everyone after lunch.",
       "origHint": null,
       "paths": [
         [
@@ -96,18 +96,11 @@
       "profession": "painter",
       "gender": "male",
       "criminal": true,
-      "clue": "I heard something, but that is all.",
+      "clue": "I did not check the clock once.",
       "origHint": null,
       "paths": [
         [
-          10,
-          12
-        ],
-        [
-          0,
-          10,
-          13,
-          15
+          6
         ]
       ],
       "face": "👨‍🎨"
@@ -127,8 +120,8 @@
       "profession": "singer",
       "gender": "male",
       "criminal": true,
-      "clue": "No one in column #C:4 has more than 4 criminal neighbors",
-      "origHint": "max_number_of_traits_in_neighbors_in_unit(unit(col,4),criminal,4)",
+      "clue": "#NAME:4 is one of 2 criminals in row 2",
+      "origHint": "is_one_of_n_traits_in_unit(unit(row,2),4,criminal,2)",
       "paths": [
         [
           3,
@@ -151,20 +144,11 @@
       "profession": "pilot",
       "gender": "female",
       "criminal": false,
-      "clue": "I never remember faces.",
+      "clue": "I keep out of other people’s business.",
       "origHint": null,
       "paths": [
         [
-          6,
-          10,
-          14,
-          15
-        ],
-        [
-          0,
-          10,
-          13,
-          15
+          6
         ]
       ],
       "face": "👩‍✈️"
@@ -174,11 +158,23 @@
       "profession": "singer",
       "gender": "male",
       "criminal": false,
-      "clue": "I could not hear a thing over the fan.",
+      "clue": "I was sorting the post.",
       "origHint": null,
       "paths": [
         [
-          10
+          3,
+          5,
+          6,
+          12
+        ],
+        [
+          0,
+          6,
+          12
+        ],
+        [
+          1,
+          6
         ]
       ],
       "face": "👨‍🎤"
@@ -202,8 +198,8 @@
       "profession": "student",
       "gender": "male",
       "criminal": true,
-      "clue": "Only 1 of the 2 innocents #BETWEEN:pair(8,11) is #NAMES:6 neighbor",
-      "origHint": "unit_shares_n_out_of_n_traits_with_unit(unit(between,pair(8,11)),unit(neighbor,6),innocent,1,2)",
+      "clue": "I have nothing useful to add, sorry.",
+      "origHint": null,
       "paths": [
         [
           3,
@@ -226,11 +222,20 @@
       "profession": "painter",
       "gender": "female",
       "criminal": false,
-      "clue": "I was on the phone with my sister.",
+      "clue": "I was facing the other way.",
       "origHint": null,
       "paths": [
         [
-          10,
+          3,
+          5,
+          6,
+          12,
+          13
+        ],
+        [
+          0,
+          6,
+          13,
           15
         ]
       ],
@@ -432,92 +437,99 @@
     },
     {
       "flipped": [
-        10,
-        12
+        6
       ],
       "clues": [
-        10,
-        12
+        6
       ],
       "reveals": [
-        0,
         4,
-        8
+        5,
+        7
       ]
     },
     {
       "flipped": [
         0,
-        10,
-        13,
-        15
+        12
       ],
       "clues": [
         0,
+        12
+      ],
+      "reveals": [
+        6,
         10,
-        13
+        14
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        1
+      ],
+      "clues": [
+        0,
+        1
+      ],
+      "reveals": [
+        6,
+        10,
+        14
+      ]
+    },
+    {
+      "flipped": [
+        3,
+        5,
+        6,
+        12
+      ],
+      "clues": [
+        5,
+        6,
+        12
+      ],
+      "reveals": [
+        0,
+        4,
+        7,
+        8,
+        15
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        6,
+        12
+      ],
+      "clues": [
+        6,
+        12
       ],
       "reveals": [
         4,
         5,
-        6,
         7,
         8
       ]
     },
     {
       "flipped": [
-        0,
-        12
+        1,
+        6
       ],
       "clues": [
-        0,
-        12
-      ],
-      "reveals": [
-        6,
-        10,
-        14
-      ]
-    },
-    {
-      "flipped": [
-        0,
-        1
-      ],
-      "clues": [
-        0,
-        1
-      ],
-      "reveals": [
-        6,
-        10,
-        14
-      ]
-    },
-    {
-      "flipped": [
-        6,
-        10,
-        14,
-        15
-      ],
-      "clues": [
+        1,
         6
       ],
       "reveals": [
-        7
-      ]
-    },
-    {
-      "flipped": [
-        10
-      ],
-      "clues": [
-        10
-      ],
-      "reveals": [
-        8
+        4,
+        5,
+        7,
+        8,
+        12
       ]
     },
     {
@@ -534,18 +546,50 @@
     },
     {
       "flipped": [
-        10,
-        15
+        3,
+        5,
+        6,
+        12,
+        13
       ],
       "clues": [
-        10,
-        15
+        3,
+        5,
+        6,
+        12,
+        13
       ],
       "reveals": [
+        0,
+        4,
+        7,
         8,
         9,
+        10,
         11,
-        13
+        14,
+        15
+      ]
+    },
+    {
+      "flipped": [
+        0,
+        6,
+        13,
+        15
+      ],
+      "clues": [
+        0,
+        6,
+        13,
+        15
+      ],
+      "reveals": [
+        4,
+        5,
+        7,
+        9,
+        11
       ]
     },
     {

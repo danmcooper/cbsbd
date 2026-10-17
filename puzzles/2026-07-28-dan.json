@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
-  "id": "25a712ce9d56",
+  "id": "225a712ce9d5",
   "date": "2026-07-28",
-  "title": "A Quiet Morning at the Depot",
+  "title": "The Second Shift",
   "difficulty": "Tricky",
   "width": 4,
   "height": 4,
@@ -60,18 +60,22 @@
       "profession": "doctor",
       "gender": "male",
       "criminal": true,
-      "clue": "I had my hands full at the time.",
+      "clue": "I was counting crates, not people.",
       "origHint": null,
       "paths": [
         [
+          2,
           5,
+          9,
           14,
           15
         ],
         [
           0,
-          1,
-          5
+          2,
+          5,
+          9,
+          14
         ]
       ],
       "face": "👨‍⚕️"
@@ -95,8 +99,8 @@
       "profession": "sleuth",
       "gender": "male",
       "criminal": true,
-      "clue": "There's an odd number of innocents #BETWEEN:pair(0,3)",
-      "origHint": "odd_number_of_traits_in_unit(unit(between,pair(0,3)),innocent)",
+      "clue": "There are as many criminal #PROFS:teacher as there are criminal #PROFS:sleuth",
+      "origHint": "equal_number_of_traits_in_units(unit(profession,teacher),unit(profession,sleuth),criminal)",
       "paths": [
         [
           14,
@@ -110,8 +114,8 @@
       "profession": "cook",
       "gender": "female",
       "criminal": false,
-      "clue": "Column #C:1 is the only column with no criminals",
-      "origHint": "only_unit_has_exactly_n_traits(unit(col,1),criminal,0)",
+      "clue": "Nothing to report from where I stood.",
+      "origHint": null,
       "paths": [
         [
           0,
@@ -136,7 +140,7 @@
       "profession": "mechanic",
       "gender": "female",
       "criminal": false,
-      "clue": "I could not hear a thing over the fan.",
+      "clue": "My shift had already ended.",
       "origHint": null,
       "paths": [
         [
@@ -165,7 +169,7 @@
       "profession": "doctor",
       "gender": "female",
       "criminal": true,
-      "clue": "Somebody moved my chair, that is all I know.",
+      "clue": "Everyone looks the same in that light.",
       "origHint": null,
       "paths": [
         [
@@ -180,13 +184,12 @@
       "profession": "sleuth",
       "gender": "male",
       "criminal": false,
-      "clue": "I stepped outside for some air.",
+      "clue": "Somebody moved my chair, that is all I know.",
       "origHint": null,
       "paths": [
         [
-          2,
           5,
-          14
+          9
         ]
       ],
       "face": "🕵️‍♂️"
@@ -196,11 +199,13 @@
       "profession": "guard",
       "gender": "male",
       "criminal": false,
-      "clue": "I did not check the clock once.",
+      "clue": "I was sorting the post.",
       "origHint": null,
       "paths": [
         [
-          6
+          5,
+          9,
+          14
         ]
       ],
       "face": "💂‍♂️"
@@ -210,12 +215,12 @@
       "profession": "teacher",
       "gender": "female",
       "criminal": true,
-      "clue": "I was halfway out the door.",
+      "clue": "I was reading the noticeboard.",
       "origHint": null,
       "paths": [
         [
-          6,
-          14
+          5,
+          9
         ]
       ],
       "face": "👩‍🏫"
@@ -295,39 +300,55 @@
     },
     {
       "flipped": [
+        2,
         5,
+        9,
         14,
         15
       ],
       "clues": [
+        2,
         5,
+        9,
         14,
         15
       ],
       "reveals": [
         0,
         1,
-        2,
         3,
         4,
+        7,
         8,
-        9
+        11,
+        12,
+        13
       ]
     },
     {
       "flipped": [
         0,
-        1,
-        5
+        2,
+        5,
+        9,
+        14
       ],
       "clues": [
-        1,
-        5
+        2,
+        5,
+        9,
+        14
       ],
       "reveals": [
-        2,
+        1,
         3,
-        14
+        4,
+        7,
+        8,
+        11,
+        12,
+        13,
+        15
       ]
     },
     {
@@ -378,50 +399,37 @@
     },
     {
       "flipped": [
-        2,
         5,
-        14
+        9
       ],
       "clues": [
-        2,
         5,
-        14
+        9
       ],
       "reveals": [
+        1,
         7,
         11,
-        15
+        13
       ]
     },
     {
       "flipped": [
-        6
-      ],
-      "clues": [
-        6
-      ],
-      "reveals": [
-        0,
-        4,
-        8,
-        12
-      ]
-    },
-    {
-      "flipped": [
-        6,
-        14
-      ],
-      "clues": [
-        6,
-        14
-      ],
-      "reveals": [
-        0,
-        4,
         5,
+        9,
+        14
+      ],
+      "clues": [
+        5,
+        9,
+        14
+      ],
+      "reveals": [
+        1,
+        4,
+        7,
         8,
-        10,
+        11,
         12,
         13
       ]
@@ -469,20 +477,23 @@
     },
     {
       "flipped": [
-        6,
+        0,
+        1,
+        2,
+        4,
         7,
+        8,
         11,
-        15
+        12,
+        14
       ],
       "clues": [
-        6
+        2
       ],
       "reveals": [
-        0,
         3,
-        4,
-        8,
-        12
+        13,
+        15
       ]
     },
     {
@@ -518,23 +529,15 @@
     },
     {
       "flipped": [
-        2,
-        3,
-        13
+        5,
+        7
       ],
       "clues": [
-        2
+        5
       ],
       "reveals": [
-        0,
-        1,
-        4,
-        7,
-        8,
         11,
-        12,
-        14,
-        15
+        13
       ]
     },
     {
@@ -563,6 +566,27 @@
       ],
       "reveals": [
         13
+      ]
+    },
+    {
+      "flipped": [
+        2,
+        3,
+        13
+      ],
+      "clues": [
+        2
+      ],
+      "reveals": [
+        0,
+        1,
+        4,
+        7,
+        8,
+        11,
+        12,
+        14,
+        15
       ]
     }
   ]

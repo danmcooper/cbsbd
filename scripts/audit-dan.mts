@@ -16,7 +16,15 @@ import type { OneOffSlug, Puzzle, Variant } from '../shared/puzzle.ts';
 import { ONE_OFFS, VARIANTS, validatePuzzle } from '../shared/puzzle.ts';
 import { namedCards } from '../shared/solver/candidates.ts';
 import { archiveClueMix } from '../shared/solver/corpus.ts';
-import { COMBO_GAIN_CAP, GAIN_CAP, SOLO_CAP, professionShapesFor } from '../shared/solver/generate.ts';
+import {
+  COMBO_GAIN_CAP,
+  GAIN_CAP,
+  LATE_FROM,
+  LINE_RUN_CAP,
+  SOLO_CAP,
+  inOneLine,
+  professionShapesFor,
+} from '../shared/solver/generate.ts';
 import { parseHint } from '../shared/solver/hint.ts';
 import type { Bands } from '../shared/solver/difficulty.ts';
 import { bandsFor, classify, loadBands, measure } from '../shared/solver/difficulty.ts';
@@ -194,10 +202,25 @@ function audit(
   // something, and no one clue may tell them too much. The archive never hands
   // over a clue the board has already settled; a clue of its that opens nothing
   // when read is always one a later clue needs; and its clues force three or
-  // more cards on their own about once in a hundred, see SOLO_CAP.
+  // more cards on their own about once in a hundred, see SOLO_CAP. Opening
+  // several at once is held to a cap only before LATE_FROM of the board is
+  // known, since that is where the archive's big reveals are.
+  //
+  // A one-off is built once and kept, and may predate the newer rules: an
+  // innocent starting card, and no four cards opened together in one line.
+  const current = !l.oneOff;
+  if (current && puzzle.initialReveals.some((i) => truth[i])) {
+    bad.push('starts on a criminal; every archived puzzle starts on an innocent');
+  }
   const reads = readingReplay(shape, clues, truth, puzzle.initialReveals);
   const fed = new Set(reads.map((r) => r.feeds).filter((h) => typeof h === 'number'));
+  let known = puzzle.initialReveals.length;
   for (const read of reads) {
+    const late = known >= LATE_FROM * shape.grid.size;
+    known += read.gain.length;
+    if (current && read.gain.length >= LINE_RUN_CAP && inOneLine(shape.grid, read.gain)) {
+      bad.push(`card ${read.host}'s clue opens ${read.gain.length} cards in one line`);
+    }
     const who = `card ${read.host}'s clue`;
     if (read.dead) bad.push(`${who} is already settled by the board when it is read`);
     else if (read.feeds === null) bad.push(`${who} opens nothing, and no later clue needs it`);
@@ -205,7 +228,7 @@ function audit(
       bad.push(`${who} forces ${read.solo.length} cards on its own (cap ${SOLO_CAP})`);
     }
     const cap = fed.has(read.host) ? COMBO_GAIN_CAP : GAIN_CAP;
-    if (read.gain.length > cap) {
+    if (!late && read.gain.length > cap) {
       bad.push(`${who} opens ${read.gain.length} cards at once (cap ${cap})`);
     }
   }

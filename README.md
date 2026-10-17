@@ -142,6 +142,15 @@ by a later clue. That later read is the archive's "click" moment and may open
 up to `COMBO_GAIN_CAP` (4). A setup clue that nothing uses within five steps is
 withdrawn, and `audit-dan` checks that every one in a finished puzzle is used.
 
+The caps on opening several cards hold only until `LATE_FROM` (half) of the
+board is turned over. The archive's big reveals are late: 84% of its reads
+opening four or more come after that point, and half its puzzles end with a
+last clue sweeping up four or more. Past three quarters no reveal size is
+preferred over another, except that a step avoids leaving a single card for the
+last clue. Even then, no four cards may be opened together in one row or column
+(`LINE_RUN_CAP`), which the archive does once in 91 such reads, and every puzzle
+starts on an innocent, as all of the archive's do.
+
 The candidate pool is laid out in the archive's proportions of clue types and
 of criminal and innocent clues, but the caps discard some types far more often
 than others — the plain "exactly N criminals in row 2" opens a whole row more

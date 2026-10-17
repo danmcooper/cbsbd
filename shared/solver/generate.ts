@@ -11,7 +11,7 @@ import {
   measure,
 } from './difficulty';
 import type { Shape } from './enumerate';
-import { type Grid, edgeMembers, makeGrid } from './grid';
+import { type Grid, colOf, edgeMembers, makeGrid, rowOf } from './grid';
 import { type Hint, formatHint } from './hint';
 import { type Board, hintFeatures, makeBoard } from './predicates';
 import { render } from './render';
@@ -586,6 +586,39 @@ export const COMBO_GAIN_CAP = 4;
 const COMBO_GAIN_PREFERRED = 3;
 
 /**
+ * Where the gain caps lift. The archive's big reveals are late: of its 91 reads
+ * opening four or more cards, 84% come once half the board is turned over and
+ * 53 are the puzzle's last clue sweeping up everything left (half its final
+ * clues open four or more). Before half the board is known it opens four or
+ * more on 1% of reads; from half to three quarters on 11%, and past three
+ * quarters on 25%. So from `LATE_FROM` the caps above no longer apply, though
+ * smaller reveals are still preferred, and from `ENDGAME_FROM` no size is
+ * preferred over another — except by what a step leaves for the last clue: a
+ * single card, which only 6% of the archive's last clues turn over, is avoided,
+ * and two, which a quarter do, is mildly so. The last clue then tends to sweep
+ * up several cards, as half the archive's do.
+ * `SOLO_CAP` holds throughout: even the archive's sweeps come from clues read
+ * together, almost never one alone.
+ */
+export const LATE_FROM = 0.5;
+const ENDGAME_FROM = 0.75;
+
+/**
+ * Fewest cards that may not be opened together in a single row or column. Of
+ * the archive's reads opening four or more, one in 91 lies in one line; three
+ * in a line is ordinary (a quarter of its three-card reads).
+ */
+export const LINE_RUN_CAP = 4;
+
+/** Whether `cards` all lie in one row or all in one column. */
+export function inOneLine(grid: Grid, cards: number[]): boolean {
+  return (
+    new Set(cards.map((i) => rowOf(grid, i))).size === 1 ||
+    new Set(cards.map((i) => colOf(grid, i))).size === 1
+  );
+}
+
+/**
  * How often a step tries to write a setup clue: one that opens nothing when read
  * but that a later clue needs. The archive reads one of these on 11.6% of its
  * clues; without them every Dan step opened something, and puzzles read as a
@@ -721,6 +754,13 @@ function buildChain(
     // is still taken.
     const comboBonus = pending ? 8 : 0;
     const TOP = 7 + comboBonus;
+    const late = flipped.length >= LATE_FROM * size;
+    const endgame = flipped.length >= ENDGAME_FROM * size;
+    const sizeBonus = (n: number, usesSetup: boolean) => {
+      if (!endgame) return n <= (usesSetup ? COMBO_GAIN_PREFERRED : GAIN_PREFERRED) ? 4 : 0;
+      const left = size - flipped.length - n;
+      return left === 1 ? 0 : left === 2 ? 2 : 4;
+    };
 
     let tried = 0;
     let best: { hint: Hint; reveals: number[]; rank: number; usesSetup: boolean } | null = null;
@@ -745,10 +785,11 @@ function buildChain(
       }
       clues[host] = null;
       if (reveals.length === 0) continue;
-      if (reveals.length > (usesSetup ? COMBO_GAIN_CAP : GAIN_CAP)) continue;
+      if (!late && reveals.length > (usesSetup ? COMBO_GAIN_CAP : GAIN_CAP)) continue;
+      if (reveals.length >= LINE_RUN_CAP && inOneLine(shape.grid, reveals)) continue;
       const rank =
         base +
-        (reveals.length <= (usesSetup ? COMBO_GAIN_PREFERRED : GAIN_PREFERRED) ? 4 : 0) +
+        sizeBonus(reveals.length, usesSetup) +
         (usesSetup ? comboBonus : 0);
       if (best && rank <= best.rank) continue;
       // What the clue says by itself, from the cards on the table. Checked last
@@ -806,7 +847,9 @@ export function generatePuzzle(input: GenerateInput): GenerateResult {
 
     const board = makeBoard(grid, cast.professions, truth);
     const pool = orderPool(rng, board, candidateHints(board), input.mix, input.correction);
-    const initialReveals = [randInt(rng, 0, grid.size - 1)];
+    // The archive always starts on an innocent: all 103 of its puzzles do.
+    const innocents = truth.flatMap((criminal, i) => (criminal ? [] : [i]));
+    const initialReveals = [innocents[randInt(rng, 0, innocents.length - 1)]];
 
     const targetAbstractShare =
       (band.abstractShare.min + band.abstractShare.max) / 2;
