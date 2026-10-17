@@ -10,8 +10,12 @@ import { render } from './render';
 import { forcedGiven, isUniquelySolvable, parseClues, solveChain } from './solve';
 import { candidateHints } from './candidates';
 import { type ClueMix, archiveClueMix } from './corpus';
+import { readingReplay } from './reading';
 import {
+  COMBO_GAIN_CAP,
+  GAIN_CAP,
   GenerationError,
+  SOLO_CAP,
   castOf,
   generatePuzzle,
   makeRng,
@@ -477,6 +481,36 @@ describe('generatePuzzle', () => {
     expect(solveChain(shape, clues, truth, puzzle.initialReveals).solvedAll).toBe(true);
   });
 
+  // Played in the order its cards come up, no clue may be one the board has
+  // already settled, or open nothing that no later clue needs, or turn over more
+  // than the archive's clues ever do on their own. Several seeds, because one
+  // puzzle has few chances to break it.
+  it('writes every clue to be read in flip order, opening a little or setting up a later one', () => {
+    for (const seed of [1, 2, 3, 4]) {
+      const { puzzle: p } = generatePuzzle({
+        date: '2026-01-01', difficulty: 'Medium', band, seed, mix: boardMix, ...BOARD,
+      });
+      const shape = {
+        grid: makeGrid(p.width, p.height),
+        professions: p.people.map((q) => q.profession),
+      };
+      const reads = readingReplay(
+        shape,
+        parseClues(p.people.map((q) => q.origHint)),
+        p.people.map((q) => q.criminal),
+        p.initialReveals,
+      );
+      expect(reads.length).toBe(p.people.filter((q) => q.origHint).length);
+      const fed = new Set(reads.map((r) => r.feeds));
+      for (const r of reads) {
+        expect(r.dead).toBe(false);
+        if (r.gain.length === 0) expect(r.feeds).not.toBeNull();
+        expect(r.gain.length).toBeLessThanOrEqual(fed.has(r.host) ? COMBO_GAIN_CAP : GAIN_CAP);
+        expect(r.solo.length).toBeLessThanOrEqual(SOLO_CAP);
+      }
+    }
+  }, 60_000);
+
   // The bands are calibrated on the archive's twenty-card board, so the counts
   // in them — how many criminals, how many clue cards — mean "out of twenty".
   // Sampling the criminal count straight out of an unscaled band gives a wider
@@ -517,7 +551,7 @@ describe('generatePuzzle', () => {
   it('round-trips every generated clue exactly', () => {
     for (const person of puzzle.people) {
       if (!person.origHint) continue;
-      expect(render(parseHint(person.origHint))).toBe(person.clue);
+      expect(render(parseHint(person.origHint), { professionTotals: true })).toBe(person.clue);
     }
   });
 

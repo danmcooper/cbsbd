@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { VARIANTS, type Variant, validatePuzzle } from '../shared/puzzle.ts';
 import type { Band, Bands } from '../shared/solver/difficulty.ts';
 import { bandsFor, classify, loadBands } from '../shared/solver/difficulty.ts';
-import { archiveClueMix } from '../shared/solver/corpus.ts';
+import { archiveClueMix, loadMixCorrection } from '../shared/solver/corpus.ts';
 import { GenerationError, generatePuzzle } from '../shared/solver/generate.ts';
 import { regenerateManifest } from './manifest.mts';
 
@@ -154,7 +154,7 @@ export function unionCriminals(bands: Bands): Band {
 /**
  * One puzzle per date per variant, in a deterministic date-sorted traversal,
  * with nothing discarded. Each date aims at its real puzzle's difficulty — that label's
- * band sets the reveal ceiling and the abstraction target `generatePuzzle`
+ * band sets the criminal count and the abstraction target `generatePuzzle`
  * builds toward — but the puzzle that comes out is measured and labelled with
  * whatever it actually is, via `classify`. Nothing is rejected for missing the
  * band it aimed at.
@@ -227,6 +227,7 @@ export async function runGenerate(opts: GenerateRunOptions = {}): Promise<Genera
   // Read once for the whole run: the archive it measures does not change mid-run,
   // and it is the same mix for every date.
   const mix = archiveClueMix(puzzlesDir);
+  const correction = loadMixCorrection();
 
   for (const { date, spec, aimedAt, width, height } of inScope) {
     const variant = spec.variant;
@@ -246,6 +247,7 @@ export async function runGenerate(opts: GenerateRunOptions = {}): Promise<Genera
         band: { ...band, criminals: criminalsUnion },
         seed: seedForDate(date + spec.seedSalt + (spec.contentSalt ?? '')),
         mix,
+        correction,
         width,
         height,
         variant,

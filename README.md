@@ -13,6 +13,9 @@ Personal archive and player for Clues by Sam daily puzzles. See
 - `npm run generate` — one generated sibling per variant for every date that lacks one
   (`2026-07-01` for one date, `dan` for one variant, `--force` to redo existing ones)
 - `npx tsx scripts/audit-dan.mts` — re-derive and re-check every generated puzzle from its file alone
+- `npx tsx scripts/calibrate-mix.mts` — re-measure `config/mix-correction.json` (about fifteen minutes)
+- `npx tsx scripts/reveal-stats.mts` — how much each clue opens when read in flip order, archive
+  against Dan (`--each` per puzzle, `--file <name>` per clue)
 - `npm run build` — production build to `site/dist/`
 - `npm run extract` — scrape today's puzzle into `puzzles/`
 - `npm run extract -- <url-or-puzzleId>` — import a specific/archived puzzle
@@ -120,6 +123,32 @@ name that bucket deals *first* — on every board, at every size. Appending to
 `NAMES` outright would re-roll the cast of every puzzle already generated. Under
 the gates, a board that never needed the extras draws exactly the cast it always
 did, which is what `audit-dan` re-derives and checks.
+
+Clues are written in the order a player reads them. `buildChain` hands the next
+clue to the card that came up earliest, the way `readingReplay` in
+`shared/solver/reading.ts` plays a puzzle: one clue at a time, first flipped
+first read. Writing them to randomly chosen cards made the order clues were
+written in differ from the order they are read, and the replay showed what
+that cost: two Dan puzzles in three had a clue that forced three or more cards
+on its own, against one in ten in the archive, and one Dan clue in fourteen was
+already settled by the board when its card came up, against none in the
+archive. So every clue must force no more than `SOLO_CAP` (2) cards on its own,
+and open at most `GAIN_CAP` (3) at the moment it is read, preferably two or
+fewer.
+
+A clue may also open nothing when read, if a later clue needs it: the archive
+reads one of these setup clues 12% of the time, and every one of its 147 is used
+by a later clue. That later read is the archive's "click" moment and may open
+up to `COMBO_GAIN_CAP` (4). A setup clue that nothing uses within five steps is
+withdrawn, and `audit-dan` checks that every one in a finished puzzle is used.
+
+The candidate pool is laid out in the archive's proportions of clue types and
+of criminal and innocent clues, but the caps discard some types far more often
+than others — the plain "exactly N criminals in row 2" opens a whole row more
+than most. `config/mix-correction.json` holds how much more of each the pool
+has to offer for what survives to match the archive. It is measured, not
+reasoned: rerun `npx tsx scripts/calibrate-mix.mts` after changing what
+`buildChain` accepts.
 
 Generated clues say one thing the source site's never do. On the source's 4x5
 you can count the cooks at a glance; on a 6x6 with a dozen professions,

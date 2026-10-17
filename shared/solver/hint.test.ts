@@ -67,10 +67,10 @@ describe('formatHint', () => {
 });
 
 describe('ARG_KINDS', () => {
-  // 27 the archive uses, plus the two cross-trait comparisons it never does —
+  // 29 the archive uses, plus the two cross-trait comparisons it never does —
   // see CROSS_TRAIT in corpus.ts.
-  it('covers all 29 predicates', () => {
-    expect(Object.keys(ARG_KINDS)).toHaveLength(29);
+  it('covers all 31 predicates', () => {
+    expect(Object.keys(ARG_KINDS)).toHaveLength(31);
   });
 });
 

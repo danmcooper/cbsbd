@@ -120,6 +120,17 @@ export const CLUE_BUILDERS: Record<string, ClueBuilder> = {
     };
   },
 
+  min_number_of_traits_in_neighbors_in_unit: (c, t, u) => {
+    const mem = c.members(u);
+    if (mem.length === 0) return null;
+    const least = Math.min(...mem.map((i) => c.count(neighbors(c.shape.grid, i), t)));
+    if (least === 0) return null;
+    return {
+      pred: 'min_number_of_traits_in_neighbors_in_unit',
+      args: [unit(u), trait(t), num(least)],
+    };
+  },
+
   only_one_person_in_unit_has_exactly_n_trait_neighbors: (c, t, u) => {
     const mem = c.members(u);
     if (mem.length === 0) return null;
@@ -209,6 +220,15 @@ export const CLUE_BUILDERS: Record<string, ClueBuilder> = {
     const n = uniqueValue(c.rng, counts);
     if (n === null) return null;
     return { pred: 'only_one_unit_has_exactly_n_traits', args: [kind(k), trait(t), num(n)] };
+  },
+
+  only_one_unit_has_more_than_n_traits: (c, t) => {
+    const k: UnitKind = c.rng() < 0.5 ? 'row' : 'col';
+    const counts = unitsOfKind(c.board, k)
+      .map((v) => c.count(c.members(v), t))
+      .sort((x, y) => y - x);
+    if (counts.length < 2 || counts[0] === counts[1]) return null;
+    return { pred: 'only_one_unit_has_more_than_n_traits', args: [kind(k), trait(t), num(counts[1])] };
   },
 
   all_units_have_at_least_n_traits: (c, t) => {

@@ -50,5 +50,74 @@ exports[`renderer fidelity > reproduces at least 95% of non-self-referential arc
   "2026-08-31.json [12] unit_shares_n_out_of_n_traits_with_unit(unit(between,pair(0,3)),unit(neighbor,0),criminal,1,2)
   want: 1 of the 2 criminals #BETWEEN:pair(0,3) is #NAMES:0 neighbor
   got:  Only 1 of the 2 criminals #BETWEEN:pair(0,3) is #NAMES:0 neighbor",
+  "2026-09-04.json [13] n_t_in_unit_have_trait_in_dir(unit(col,4),innocent,criminal,-1,0,1)
+  want: Only 1 innocent in column #C:4 has a criminal directly to the left of them
+  got:  Only one innocent in column #C:4 has a criminal directly to the left of them",
+  "2026-09-06.json [5] n_t_in_unit_have_trait_in_dir(unit(edge,void),innocent,criminal,-1,0,1)
+  want: Only 1 innocent on the edges has a criminal directly to the left of them
+  got:  Only one innocent on the edges has a criminal directly to the left of them",
+  "2026-09-08.json [14] n_t_in_unit_have_trait_in_dir(unit(row,1),innocent,innocent,1,0,1)
+  want: Only 1 innocent in row 1 has an innocent directly to the right of them
+  got:  Only one innocent in row 1 has an innocent directly to the right of them",
+  "2026-09-08.json [19] unit_shares_n_out_of_n_traits_with_unit(unit(neighbor,17),unit(between,pair(16,17)),criminal,1,2)
+  want: 1 of the 2 criminals neighboring #NAME:17 is #BETWEEN:pair(16,17)
+  got:  Only 1 of the 2 criminals neighboring #NAME:17 is #BETWEEN:pair(16,17)",
+  "2026-09-09.json [19] n_professions_have_trait_in_dir(singer,criminal,0,1,1)
+  want: Exactly 1 of the 3 #PROFS:singer has a criminal directly below them
+  got:  Exactly 1 #PROF:singer has a criminal directly below them",
+  "2026-09-11.json [18] n_professions_have_trait_in_dir(doctor,criminal,0,1,1)
+  want: 1 of the 2 #PROFS:doctor has a criminal directly below them
+  got:  Exactly 1 #PROF:doctor has a criminal directly below them",
+  "2026-09-11.json [19] unit_shares_n_out_of_n_traits_with_unit(unit(between,pair(0,16)),unit(row,3),criminal,1,2)
+  want: 1 of the 2 criminals #BETWEEN:pair(0,16) is in row 3
+  got:  Only 1 of the 2 criminals #BETWEEN:pair(0,16) is in row 3",
+  "2026-09-13.json [13] n_t_in_unit_have_trait_in_dir(unit(corner,void),innocent,innocent,0,-1,1)
+  want: Only 1 innocent in the corners has an innocent directly above them
+  got:  Only one innocent in the corners has an innocent directly above them",
+  "2026-09-14.json [16] n_t_in_unit_have_trait_in_dir(unit(col,2),criminal,criminal,1,0,4)
+  want: 4 criminals in column #C:2 have a criminal directly to the right of them
+  got:  Exactly 4 criminals in column #C:2 have a criminal directly to the right of them",
+  "2026-09-14.json [8] n_in_unit_have_trait_in_dir(unit(profession,coder),innocent,0,1,1)
+  want: Only 1 #PROF:coder has an innocent directly below them
+  got:  Only one #PROF:coder has an innocent directly below them",
+  "2026-09-15.json [7] n_professions_have_trait_in_dir(doctor,innocent,0,-1,1)
+  want: Only 1 of the 3 #PROFS:doctor has an innocent directly above them
+  got:  Exactly 1 #PROF:doctor has an innocent directly above them",
+  "2026-09-16.json [12] n_professions_have_trait_in_dir(teacher,innocent,1,0,1)
+  want: Only 1 of us 3 #PROFS:teacher have an innocent directly to the right of us
+  got:  Exactly 1 #PROF:teacher has an innocent directly to the right of them",
+  "2026-09-16.json [19] unit_shares_n_out_of_n_traits_with_unit(unit(neighbor,17),unit(neighbor,10),criminal,1,2)
+  want: 1 of the 2 criminals neighboring #NAME:17 is #NAMES:10 neighbor
+  got:  Only 1 of the 2 criminals neighboring #NAME:17 is #NAMES:10 neighbor",
+  "2026-09-18.json [1] unit_shares_n_out_of_n_traits_with_unit(unit(col,1),unit(between,pair(4,6)),criminal,1,3)
+  want: 1 of the 3 criminals in column #C:1 is #BETWEEN:pair(4,6)
+  got:  Only 1 of the 3 criminals in column #C:1 is #BETWEEN:pair(4,6)",
+  "2026-09-20.json [11] min_number_of_traits_in_unit(unit(neighbor,8),innocent,4)
+  want: #NAME:8 has at least 4 innocent neighbors
+  got:  There are at least 4 innocents neighboring #NAME:8",
+  "2026-09-23.json [11] n_in_unit_have_trait_in_dir(unit(profession,clerk),criminal,1,0,1)
+  want: Only 1 of the 2 #PROFS:clerk has a criminal directly to the right of them
+  got:  Only one #PROF:clerk has a criminal directly to the right of them",
+  "2026-09-28.json [8] number_of_traits_in_unit(unit(row,1),criminal,3)
+  want: There are 3 criminals in row 1
+  got:  There are exactly 3 criminals in row 1",
+  "2026-10-01.json [0] unit_shares_n_out_of_n_traits_with_unit(unit(col,3),unit(between,pair(4,6)),criminal,1,3)
+  want: 1 of the 3 criminals in column #C:3 is #BETWEEN:pair(4,6)
+  got:  Only 1 of the 3 criminals in column #C:3 is #BETWEEN:pair(4,6)",
+  "2026-10-05.json [10] n_professions_have_trait_in_dir(doctor,criminal,0,1,0)
+  want: None of the 3 #PROFS:doctor has a criminal directly below them
+  got:  No #PROF:doctor has a criminal directly below them",
+  "2026-10-12.json [0] n_in_unit_have_trait_in_dir(unit(profession,singer),criminal,1,0,1)
+  want: Only one of the 3 #PROFS:singer has a criminal directly to the right of them
+  got:  Only one #PROF:singer has a criminal directly to the right of them",
+  "2026-10-12.json [12] n_professions_have_trait_in_dir(cop,innocent,-1,0,2)
+  want: 2 of the 3 #PROFS:cop have an innocent directly to the left of them
+  got:  2 #PROFS:cop have an innocent directly to the left of them",
+  "2026-10-12.json [5] units_share_n_traits(unit(between,pair(17,19)),unit(neighbor,13),innocent,1)
+  want: One innocent neighboring #NAME:13 is #BETWEEN:pair(17,19)
+  got:  Exactly 1 innocent #BETWEEN:pair(17,19) is neighboring #NAME:13",
+  "2026-10-13.json [17] unit_shares_n_out_of_n_traits_with_unit(unit(neighbor,1),unit(between,pair(0,2)),criminal,1,3)
+  want: 1 of the 3 criminals neighboring #NAME:1 is #BETWEEN:pair(0,2)
+  got:  Only 1 of the 3 criminals neighboring #NAME:1 is #BETWEEN:pair(0,2)",
 ]
 `;

@@ -234,6 +234,13 @@ export const RENDERERS: Record<string, (a: HintArg[], o: RenderOptions) => strin
     return `Only one ${kindWord(k)} has ${tail}`;
   },
 
+  // Numerals throughout, "more than 1 innocent" included: both archive instances.
+  only_one_unit_has_more_than_n_traits: (a) => {
+    const n = argNum(a, 2);
+    const t = argTrait(a, 1);
+    return `Only one ${kindWord(argKind(a, 0))} has more than ${n} ${n === 1 ? t : `${t}s`}`;
+  },
+
   more_traits_in_unit_than_unit: (a) => {
     const u1 = argUnit(a, 0);
     const u2 = argUnit(a, 1);
@@ -445,6 +452,13 @@ export const RENDERERS: Record<string, (a: HintArg[], o: RenderOptions) => strin
     const n = argNum(a, 2);
     const tail = n === 1 ? `one ${t} neighbor` : `${n} ${t} neighbors`;
     return `No one ${where(argUnit(a, 0))} has more than ${tail}`;
+  },
+
+  min_number_of_traits_in_neighbors_in_unit: (a) => {
+    const t = argTrait(a, 1);
+    const n = argNum(a, 2);
+    const tail = n === 1 ? `one ${t} neighbor` : `${n} ${t} neighbors`;
+    return `Everyone ${wherePerson(argUnit(a, 0))} has at least ${tail}`;
   },
 
   both_traits_in_unit_are_in_unit: (a) =>

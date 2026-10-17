@@ -209,6 +209,11 @@ export function candidateHints(b: Board): Hint[] {
         if (maxCount < maxDegree) {
           push('max_number_of_traits_in_neighbors_in_unit', [u(unit), t(trait), n(maxCount)]);
         }
+        // The floor is the mirror image: "at least 0" is true of every board.
+        const minCount = Math.min(...nbrCounts);
+        if (minCount > 0) {
+          push('min_number_of_traits_in_neighbors_in_unit', [u(unit), t(trait), n(minCount)]);
+        }
       }
       for (const value of new Set(nbrCounts)) {
         push('only_one_person_in_unit_has_exactly_n_trait_neighbors', [u(unit), t(trait), n(value)]);
@@ -280,6 +285,14 @@ export function candidateHints(b: Board): Hint[] {
       if (kind === 'row' || kind === 'col') {
         for (const value of new Set(counts)) {
           push('only_one_unit_has_exactly_n_traits', [k(kind), t(trait), n(value)]);
+        }
+        // Exactly one unit above n holds for every n from the runner-up's count
+        // up to one short of the leader's.
+        const sorted = [...counts].sort((x, y) => y - x);
+        if (sorted.length > 1) {
+          for (let value = sorted[1]; value < sorted[0]; value++) {
+            push('only_one_unit_has_more_than_n_traits', [k(kind), t(trait), n(value)]);
+          }
         }
       }
     }

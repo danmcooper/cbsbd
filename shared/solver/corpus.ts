@@ -52,6 +52,12 @@ export interface ClueMix {
    * for the directional families. */
   feature: Record<string, number>;
   /**
+   * Shares of the traits clues talk about, one count per trait argument. The
+   * archive leans innocent, 58 to 42, on a board that is 47% criminal: "there
+   * are 3 innocents in row 2" is how the source likes to say it.
+   */
+  trait: Record<string, number>;
+  /**
    * Each archived puzzle's profession group sizes, descending — one entry per
    * puzzle, each summing to twenty. Generation samples a whole observed shape
    * rather than modelling one, which gets the raggedness (mostly 2s and 3s over
@@ -89,6 +95,40 @@ export const CROSS_TRAIT: Record<string, string> = {
  * present, not a tic. */
 export const CROSS_TRAIT_RATE = 1 / 3;
 
+/**
+ * Multipliers on the clue mix's targets, measured rather than reasoned.
+ *
+ * `orderPool` lays the pool out in the archive's proportions, but `buildChain`
+ * then throws out whatever opens too much or nothing at all, and that does not
+ * fall evenly: the plain count clue — the archive's favourite — turns over a
+ * row's worth of cards far more often than "X is one of 3 innocents in row 2"
+ * does, so it is discarded more and came out at 10% of clues against the
+ * archive's 16%. Each factor here is how much more of its kind the pool has to
+ * offer for what survives to match the archive. `scripts/calibrate-mix.mts`
+ * measures them and writes `config/mix-correction.json`; rerun it after
+ * changing what `buildChain` accepts.
+ */
+export interface MixCorrection {
+  pred: Record<string, number>;
+  trait: Record<string, number>;
+}
+
+export const NO_CORRECTION: MixCorrection = { pred: {}, trait: {} };
+
+const CORRECTION_PATH = path.join(process.cwd(), 'config', 'mix-correction.json');
+
+/** The calibrated `MixCorrection`, or none if it has not been measured. */
+export function loadMixCorrection(file: string = CORRECTION_PATH): MixCorrection {
+  let raw: string;
+  try {
+    raw = readFileSync(file, 'utf8');
+  } catch {
+    return NO_CORRECTION;
+  }
+  const data = JSON.parse(raw) as Partial<MixCorrection>;
+  return { pred: data.pred ?? {}, trait: data.trait ?? {} };
+}
+
 function shares(counts: Map<string, number>): Record<string, number> {
   const total = [...counts.values()].reduce((a, b) => a + b, 0);
   return Object.fromEntries([...counts].map(([k, n]) => [k, n / total]));
@@ -97,6 +137,7 @@ function shares(counts: Map<string, number>): Record<string, number> {
 export function archiveClueMix(dir: string = PUZZLES_DIR): ClueMix {
   const pred = new Map<string, number>();
   const feature = new Map<string, number>();
+  const trait = new Map<string, number>();
   const professionShapes: number[][] = [];
   for (const { puzzle, board } of loadArchive(dir)) {
     const group = new Map<string, number>();
@@ -109,6 +150,7 @@ export function archiveClueMix(dir: string = PUZZLES_DIR): ClueMix {
       const hint = parseHint(person.origHint);
       pred.set(hint.pred, (pred.get(hint.pred) ?? 0) + 1);
       for (const f of hintFeatures(board, hint)) feature.set(f, (feature.get(f) ?? 0) + 1);
+      for (const a of hint.args) if (a.t === 'trait') trait.set(a.trait, (trait.get(a.trait) ?? 0) + 1);
     }
   }
   // Budgeted before normalising, so the invented predicates dilute the attested
@@ -116,7 +158,7 @@ export function archiveClueMix(dir: string = PUZZLES_DIR): ClueMix {
   for (const [invented, parent] of Object.entries(CROSS_TRAIT)) {
     pred.set(invented, (pred.get(parent) ?? 0) * CROSS_TRAIT_RATE);
   }
-  return { pred: shares(pred), feature: shares(feature), professionShapes };
+  return { pred: shares(pred), feature: shares(feature), trait: shares(trait), professionShapes };
 }
 
 /** True when card `index` is a member of a unit its own clue talks about — the

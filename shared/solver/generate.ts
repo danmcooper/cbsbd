@@ -1,7 +1,7 @@
 import { type Person, type Puzzle, type Variant, validatePuzzle } from '../puzzle';
 import { candidateHints, namedCards } from './candidates';
 // Type-only: corpus.ts reads the filesystem, and this import is erased at build time.
-import type { ClueMix } from './corpus';
+import { type ClueMix, type MixCorrection, NO_CORRECTION } from './corpus';
 import {
   ABSTRACT_PREDICATES,
   type LabelBand,
@@ -15,6 +15,7 @@ import { type Grid, edgeMembers, makeGrid } from './grid';
 import { type Hint, formatHint } from './hint';
 import { type Board, hintFeatures, makeBoard } from './predicates';
 import { render } from './render';
+import { entailedByKnown } from './reading';
 import {
   type Clues,
   forcedGiven,
@@ -212,6 +213,7 @@ export function orderPool(
   board: Board,
   pool: readonly Hint[],
   mix: ClueMix,
+  correction: MixCorrection = NO_CORRECTION,
 ): Hint[] {
   const featureSets = pool.map((hint) => hintFeatures(board, hint));
   const byFeature = fitFeatureWeights(featureSets, mix.feature);
@@ -222,11 +224,32 @@ export function orderPool(
     predMass.set(hint.pred, (predMass.get(hint.pred) ?? 0) + byFeature[i]);
     mass += byFeature[i];
   });
+  const byPred = pool.map((hint, i) => {
+    const share = (predMass.get(hint.pred) as number) / mass;
+    const want = (mix.pred[hint.pred] ?? 0) * (correction.pred[hint.pred] ?? 1);
+    return share === 0 ? 0 : byFeature[i] * (want / share);
+  });
+
+  // Then the traits, measured against the mass the predicates left: the pool
+  // offers criminal and innocent forms of nearly everything in equal number,
+  // where the archive talks about innocents 58% of the time.
+  const traitMass = new Map<string, number>();
+  let traitTotal = 0;
+  pool.forEach((hint, i) => {
+    for (const a of hint.args) {
+      if (a.t !== 'trait') continue;
+      traitMass.set(a.trait, (traitMass.get(a.trait) ?? 0) + byPred[i]);
+      traitTotal += byPred[i];
+    }
+  });
+  const traitFactor = (t: string) => {
+    const share = (traitMass.get(t) ?? 0) / traitTotal;
+    return share === 0 ? 1 : ((mix.trait[t] ?? 0) / share) * (correction.trait[t] ?? 1);
+  };
 
   return pool
     .map((hint, i) => {
-      const share = (predMass.get(hint.pred) as number) / mass;
-      const w = share === 0 ? 0 : byFeature[i] * ((mix.pred[hint.pred] ?? 0) / share);
+      const w = hint.args.reduce((acc, a) => (a.t === 'trait' ? acc * traitFactor(a.trait) : acc), byPred[i]);
       // Math.log(0) is -Infinity, so a zero weight sorts last rather than first.
       const u = rng() || Number.MIN_VALUE;
       return { hint, key: w > 0 ? -Math.log(u) / w : Infinity };
@@ -247,6 +270,8 @@ export interface GenerateInput {
    * than any real one. See `orderPool`.
    */
   mix: ClueMix;
+  /** See `MixCorrection`. Defaults to none: the mix's targets as they stand. */
+  correction?: MixCorrection;
   /**
    * Board size, defaulting to the archive's 4x5. The mix is always measured on
    * the archive's own 4x5 boards; its profession shapes are refitted to whatever
@@ -269,7 +294,7 @@ export interface GenerateInput {
    * keeping whatever its metrics turn out to be — throwing one away costs
    * minutes of CPU to rebuild something no better, and the archive is full of
    * labels we can hand out honestly. `band` still shapes the attempt (it sets
-   * the reveal ceiling and the abstraction target), so a date still aims at
+   * the criminal count and the abstraction target), so a date still aims at
    * its real puzzle's difficulty; it just no longer rejects for missing.
    *
    * Without it, the old behaviour stands: attempts that miss `band` are
@@ -529,12 +554,77 @@ export function castOf(
  */
 const REPEAT_CAP = 2;
 
+/**
+ * Most cards one clue may force on its own, from the known cards alone.
+ *
+ * Read in the source's own solving order, the archive's clues force nothing by
+ * themselves 58% of the time, one card 36%, two 4.7%, and three or more 10
+ * times in 1,160 (`scripts/reveal-stats.mts`). A clue that turns over a whole
+ * row the moment it is read — "there are no criminals in column 5" — is what a
+ * real puzzle almost never does, so it is a hard limit here, not a preference.
+ */
+export const SOLO_CAP = 2;
+
+/**
+ * Most cards one clue may open up together with the clues read before it. Two
+ * is preferred and three allowed: combinations are where the archive does open
+ * several cards at once (a tenth of its flips open three or more), but those
+ * are late, earned moments rather than the shape of every step.
+ */
+export const GAIN_PREFERRED = 2;
+export const GAIN_CAP = 3;
+
+/**
+ * Most cards a clue may open when it does so by combining with a setup clue —
+ * one read earlier that opened nothing on its own — and how many it preferably
+ * opens. These are the archive's "click" moments. Every one of its 147 setup
+ * clues is used by a later one, and that later read opens 1 card 21% of the
+ * time, 2 31%, 3 24%, 4 14%, and five or more the last tenth; the cap cuts that
+ * tail off. One sentence alone is still held to `SOLO_CAP`.
+ */
+export const COMBO_GAIN_CAP = 4;
+const COMBO_GAIN_PREFERRED = 3;
+
+/**
+ * How often a step tries to write a setup clue: one that opens nothing when read
+ * but that a later clue needs. The archive reads one of these on 11.6% of its
+ * clues; without them every Dan step opened something, and puzzles read as a
+ * strict one-thing-at-a-time march the source never plays like. The rate is
+ * above the target because not every attempt finds a candidate, and a setup
+ * clue no later clue ends up needing is withdrawn.
+ */
+const SETUP_RATE = 0.3;
+
+/**
+ * Steps a setup clue may wait for a clue that uses it before it is withdrawn.
+ * Half the archive's are used by the very next clue read and 94% within five.
+ */
+const SETUP_PATIENCE = 5;
+
 interface ChainBuild {
   clues: Clues;
   flippedAt: number[][];
 }
 
-/** Grow a forcing chain from the initial reveal. Returns null if it stalls. */
+/**
+ * Grow a forcing chain from the initial reveal. Returns null if it stalls.
+ *
+ * Clues are written in the order the player will read them. A card's clue is
+ * readable the moment it is turned over, so the next card to receive a clue is
+ * always the earliest-flipped card still waiting for one — and if nothing in the
+ * trial budget works there, it keeps its flavour text for good and the next card
+ * in line is tried. This replaces picking any flipped card at random, which
+ * wrote clues in an order no player meets them in: a card turned over at step 2
+ * could receive its clue at step 9, judged against nine steps of progress the
+ * player reading it at step 2 does not have. Played in order, those clues
+ * turned over whole rows at once, or said only what a clue written after them
+ * — but read before them — had already said. Since every step here is judged
+ * against exactly what the player knows when they read it, and must force at
+ * least one new card, no clue can be already settled by the board.
+ *
+ * The order is first-come first-served, the same model `readingReplay` plays a
+ * finished puzzle back in, so the replay sees exactly the steps built here.
+ */
 function buildChain(
   rng: () => number,
   shape: Shape,
@@ -542,7 +632,6 @@ function buildChain(
   pool: Hint[],
   initialReveals: number[],
   trialsPerStep: number,
-  maxReveals: number,
   targetAbstractShare: number,
 ): ChainBuild | null {
   const size = shape.grid.size;
@@ -550,79 +639,147 @@ function buildChain(
   const clues: Clues = Array.from({ length: size }, () => null);
   const flippedAt: number[][] = Array.from({ length: size }, () => []);
   let flipped = [...initialReveals].sort((a, b) => a - b);
+  // Cards turned over and not yet given a clue or passed over, in flip order.
+  // Cards flipped by the same step queue by index, as `readingReplay` reads them.
+  const queue = [...flipped];
   let cursor = 0;
   let abstractChosen = 0;
   let totalChosen = 0;
   const predUsed = new Map<string, number>();
+  // A setup clue read but not yet needed by any later one, and how many steps
+  // have gone by without it being needed.
+  let pending: { host: number; waited: number } | null = null;
+
+  const unknown = (forced: ReturnType<typeof forcedGiven>) => {
+    const out: number[] = [];
+    for (let i = 0; i < size; i++) if (!flipped.includes(i) && forced[i] !== null) out.push(i);
+    return out;
+  };
+  const count = (hint: Hint, by: 1 | -1) => {
+    totalChosen += by;
+    predUsed.set(hint.pred, (predUsed.get(hint.pred) ?? 0) + by);
+    if (ABSTRACT_PREDICATES.has(hint.pred)) abstractChosen += by;
+  };
+  // Every step since the setup clue was read has been checked to open the same
+  // cards without it, so taking it back changes nothing anything else relied on.
+  const withdraw = () => {
+    if (!pending) return;
+    count(clues[pending.host] as Hint, -1);
+    clues[pending.host] = null;
+    pending = null;
+  };
 
   while (flipped.length < size) {
-    const hosts = shuffled(
-      rng,
-      flipped.filter((i) => clues[i] === null),
-    );
-    let progressed = false;
+    const host = queue.shift();
+    if (host === undefined) return null;
 
-    for (const host of hosts) {
-      // Bias toward the target abstractShare: when the running share among
-      // clues chosen so far sits below the target band's midpoint, prefer a
-      // candidate from the abstract predicate family for this step; at or
-      // above it, prefer one outside the family. A candidate is only ever
-      // accepted once it has passed the exact same forcedGiven/maxReveals
-      // check as before, so this never trades away correctness — and if no
-      // candidate of the preferred kind turns up within the trial budget,
-      // the first valid candidate found (the old, unbiased behavior) is used.
-      const currentShare = totalChosen === 0 ? 0 : abstractChosen / totalChosen;
-      const preferAbstract = currentShare < targetAbstractShare;
+    // Bias toward the target abstractShare: when the running share among
+    // clues chosen so far sits below the target band's midpoint, prefer a
+    // candidate from the abstract predicate family for this step; at or
+    // above it, prefer one outside the family.
+    const currentShare = totalChosen === 0 ? 0 : abstractChosen / totalChosen;
+    const preferAbstract = currentShare < targetAbstractShare;
+    const staticRank = (hint: Hint) =>
+      (ABSTRACT_PREDICATES.has(hint.pred) === preferAbstract ? 1 : 0) +
+      ((predUsed.get(hint.pred) ?? 0) < REPEAT_CAP ? 2 : 0);
 
-      // Rank a candidate on the two soft preferences, worth 2 and 1 so that the
-      // abstraction bias — which decides how the puzzle plays — outranks the
-      // repeat cap, which only decides how it reads. Both are preferences, not
-      // filters: a candidate is only ever accepted after passing the same
-      // forcedGiven/maxReveals check as before, and if nothing better turns up
-      // within the trial budget a rank-0 candidate is still taken.
-      const rankOf = (hint: Hint) =>
-        (ABSTRACT_PREDICATES.has(hint.pred) === preferAbstract ? 2 : 0) +
-        ((predUsed.get(hint.pred) ?? 0) < REPEAT_CAP ? 1 : 0);
-
+    // A setup step looks for a clue that opens nothing yet still says something
+    // the board does not. Only with another card waiting behind this one, since
+    // a setup clue flips nothing and the queue would otherwise run dry.
+    if (!pending && queue.length > 0 && rng() < SETUP_RATE) {
       let tried = 0;
-      let best: { hint: Hint; reveals: number[]; rank: number } | null = null;
-
+      let best: { hint: Hint; rank: number } | null = null;
       while (tried < trialsPerStep && cursor < pool.length && best?.rank !== 3) {
         const hint = pool[cursor++];
         tried++;
-        const rank = rankOf(hint);
-        // A candidate that cannot outrank what is already in hand cannot change
-        // the outcome, so skip the expensive forcedGiven/reveal check for it.
-        // Purely a cost optimization — rank is decided by the hint alone.
+        const rank = staticRank(hint);
         if (best && rank <= best.rank) continue;
         if (namedCards(board, hint).has(host)) continue;
+        if (entailedByKnown(shape, hint, truth, flipped)) continue;
         clues[host] = hint;
         const forced = forcedGiven(shape, clues, truth, flipped);
-        const reveals: number[] = [];
-        for (let i = 0; i < size; i++) {
-          if (!flipped.includes(i) && forced[i] !== null) reveals.push(i);
-        }
         clues[host] = null;
-        if (reveals.length === 0 || reveals.length > maxReveals) continue;
-
-        best = { hint, reveals, rank };
+        if (unknown(forced).length > 0) continue;
+        best = { hint, rank };
       }
-
-      const chosen = best;
-      if (!chosen) continue;
-
-      clues[host] = chosen.hint;
-      for (const i of chosen.reveals) flippedAt[i] = [...flipped];
-      flipped = [...flipped, ...chosen.reveals].sort((a, b) => a - b);
-      totalChosen++;
-      predUsed.set(chosen.hint.pred, (predUsed.get(chosen.hint.pred) ?? 0) + 1);
-      if (ABSTRACT_PREDICATES.has(chosen.hint.pred)) abstractChosen++;
-      progressed = true;
-      break;
+      if (best) {
+        clues[host] = best.hint;
+        count(best.hint, 1);
+        pending = { host, waited: 0 };
+        continue;
+      }
     }
 
-    if (!progressed) return null;
+    // Rank a candidate on soft preferences. Using a waiting setup clue is worth
+    // most, since a setup clue nothing uses is withdrawn; then opening no more
+    // than GAIN_PREFERRED cards, because it is what the player feels on every
+    // step; then the repeat cap; then the abstraction bias. The repeat cap used
+    // to come last, but setup clues and the solo cap both narrow what a step can
+    // take, and with it last Dan puzzles fell to 0.67 distinct predicates per
+    // clue against the archive's 0.74. None is a filter: if nothing better turns
+    // up within the trial budget, a rank-0 candidate that passes the hard limits
+    // is still taken.
+    const comboBonus = pending ? 8 : 0;
+    const TOP = 7 + comboBonus;
+
+    let tried = 0;
+    let best: { hint: Hint; reveals: number[]; rank: number; usesSetup: boolean } | null = null;
+
+    while (tried < trialsPerStep && cursor < pool.length && best?.rank !== TOP) {
+      const hint = pool[cursor++];
+      tried++;
+      const base = staticRank(hint);
+      // A candidate that cannot outrank what is already in hand even with every
+      // bonus cannot change the outcome, so skip the expensive check.
+      if (best && base + 4 + comboBonus <= best.rank) continue;
+      if (namedCards(board, hint).has(host)) continue;
+      clues[host] = hint;
+      const reveals = unknown(forcedGiven(shape, clues, truth, flipped));
+      let usesSetup = false;
+      if (pending && reveals.length > 0) {
+        const setup = clues[pending.host];
+        clues[pending.host] = null;
+        const without = unknown(forcedGiven(shape, clues, truth, flipped));
+        clues[pending.host] = setup;
+        usesSetup = without.length !== reveals.length;
+      }
+      clues[host] = null;
+      if (reveals.length === 0) continue;
+      if (reveals.length > (usesSetup ? COMBO_GAIN_CAP : GAIN_CAP)) continue;
+      const rank =
+        base +
+        (reveals.length <= (usesSetup ? COMBO_GAIN_PREFERRED : GAIN_PREFERRED) ? 4 : 0) +
+        (usesSetup ? comboBonus : 0);
+      if (best && rank <= best.rank) continue;
+      // What the clue says by itself, from the cards on the table. Checked last
+      // because it is another solve, and only a candidate that would be taken
+      // needs it.
+      const alone = forcedGiven(
+        shape,
+        clues.map((_, i) => (i === host ? hint : null)),
+        truth,
+        flipped,
+      );
+      if (unknown(alone).length > SOLO_CAP) continue;
+
+      best = { hint, reveals, rank, usesSetup };
+    }
+
+    // Nothing fits this card: it keeps its flavour text, and the next card in
+    // line gets the chance.
+    if (!best) continue;
+
+    clues[host] = best.hint;
+    for (const i of best.reveals) flippedAt[i] = [...flipped];
+    flipped = [...flipped, ...best.reveals].sort((a, b) => a - b);
+    queue.push(...best.reveals);
+    count(best.hint, 1);
+    if (pending) {
+      if (best.usesSetup) pending = null;
+      else if (++pending.waited >= SETUP_PATIENCE) withdraw();
+    }
   }
+  withdraw();
 
   return { clues, flippedAt };
 }
@@ -648,10 +805,9 @@ export function generatePuzzle(input: GenerateInput): GenerateResult {
     const truth = Array.from({ length: grid.size }, (_, i) => criminalSet.has(i));
 
     const board = makeBoard(grid, cast.professions, truth);
-    const pool = orderPool(rng, board, candidateHints(board), input.mix);
+    const pool = orderPool(rng, board, candidateHints(board), input.mix, input.correction);
     const initialReveals = [randInt(rng, 0, grid.size - 1)];
 
-    const maxReveals = Math.max(2, Math.ceil(band.meanRevealsPerStep.max));
     const targetAbstractShare =
       (band.abstractShare.min + band.abstractShare.max) / 2;
     const built = buildChain(
@@ -661,7 +817,6 @@ export function generatePuzzle(input: GenerateInput): GenerateResult {
       pool,
       initialReveals,
       trialsPerStep,
-      maxReveals,
       targetAbstractShare,
     );
     if (!built) {

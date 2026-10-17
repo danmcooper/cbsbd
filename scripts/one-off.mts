@@ -3,7 +3,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ONE_OFFS, type OneOffSlug } from '../shared/puzzle.ts';
 import { bandsFor, classify, loadBands } from '../shared/solver/difficulty.ts';
-import { archiveClueMix } from '../shared/solver/corpus.ts';
+import { archiveClueMix, loadMixCorrection } from '../shared/solver/corpus.ts';
 import { generatePuzzle } from '../shared/solver/generate.ts';
 import { seedForDate, unionCriminals } from './generate.mts';
 
@@ -44,6 +44,7 @@ export async function buildOneOff(slug: OneOffSlug, opts: OneOffRunOptions = {})
     band: { ...band, criminals: unionCriminals(bands) },
     seed: seedForDate(slug),
     mix: archiveClueMix(puzzlesDir),
+    correction: loadMixCorrection(),
     width: spec.width,
     height: spec.height,
     // A one-off is an existing variant built off the schedule, not a third kind

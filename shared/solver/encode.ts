@@ -64,9 +64,11 @@ export const SUPPORTED: ReadonlySet<string> = new Set([
   'equal_traits_in_unit_and_traits_in_unit',
   'all_units_have_at_least_n_traits',
   'only_one_unit_has_exactly_n_traits',
+  'only_one_unit_has_more_than_n_traits',
   'only_unit_has_exactly_n_traits',
   'has_most_traits',
   'max_number_of_traits_in_neighbors_in_unit',
+  'min_number_of_traits_in_neighbors_in_unit',
   'only_one_person_in_unit_has_exactly_n_trait_neighbors',
   'both_traits_in_unit_are_in_unit',
   'only_trait_in_unit_is_in_unit',
@@ -303,6 +305,25 @@ function encodeHint(cnf: Cnf, board: Board, shape: Shape, vars: number[], hint: 
       return;
     }
 
+    case 'only_one_unit_has_more_than_n_traits': {
+      const t = argTrait(a, 1);
+      const n = argNum(a, 2);
+      const flags = unitsOfKind(board, argKind(a, 0)).map((u) => {
+        const flag = cnf.newVar();
+        // "More than n" is "at least n + 1", which the counter reads off directly.
+        const count = counter(cnf, litsOf(members(u), t));
+        if (n < 0) cnf.addUnit(flag);
+        else if (n >= count.length) cnf.addUnit(-flag);
+        else {
+          cnf.add([-flag, count[n]]);
+          cnf.add([flag, -count[n]]);
+        }
+        return flag;
+      });
+      exactly(cnf, flags, 1);
+      return;
+    }
+
     case 'only_unit_has_exactly_n_traits': {
       const u = argUnit(a, 0);
       const t = argTrait(a, 1);
@@ -333,6 +354,13 @@ function encodeHint(cnf: Cnf, board: Board, shape: Shape, vars: number[], hint: 
       const t = argTrait(a, 1);
       const n = argNum(a, 2);
       for (const i of members(argUnit(a, 0))) atMost(cnf, litsOf(neighbors(grid, i), t), n);
+      return;
+    }
+
+    case 'min_number_of_traits_in_neighbors_in_unit': {
+      const t = argTrait(a, 1);
+      const n = argNum(a, 2);
+      for (const i of members(argUnit(a, 0))) atLeast(cnf, litsOf(neighbors(grid, i), t), n);
       return;
     }
 

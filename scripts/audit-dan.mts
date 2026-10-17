@@ -16,13 +16,14 @@ import type { OneOffSlug, Puzzle, Variant } from '../shared/puzzle.ts';
 import { ONE_OFFS, VARIANTS, validatePuzzle } from '../shared/puzzle.ts';
 import { namedCards } from '../shared/solver/candidates.ts';
 import { archiveClueMix } from '../shared/solver/corpus.ts';
-import { professionShapesFor } from '../shared/solver/generate.ts';
+import { COMBO_GAIN_CAP, GAIN_CAP, SOLO_CAP, professionShapesFor } from '../shared/solver/generate.ts';
 import { parseHint } from '../shared/solver/hint.ts';
 import type { Bands } from '../shared/solver/difficulty.ts';
 import { bandsFor, classify, loadBands, measure } from '../shared/solver/difficulty.ts';
 import type { Shape } from '../shared/solver/enumerate.ts';
 import { makeGrid, neighbors } from '../shared/solver/grid.ts';
 import { hintFeatures, makeBoard, unitMembers } from '../shared/solver/predicates.ts';
+import { readingReplay } from '../shared/solver/reading.ts';
 import {
   type Clues,
   forcedGiven,
@@ -186,6 +187,26 @@ function audit(
       if (forcedGiven(shape, clues, truth, flipped)[i] !== truth[i]) {
         bad.push(`card ${i}: stored path [${flipped.join(',')}] does not deduce it`);
       }
+    }
+  }
+
+  // Played in the order its clues come up, every clue has to tell the player
+  // something, and no one clue may tell them too much. The archive never hands
+  // over a clue the board has already settled; a clue of its that opens nothing
+  // when read is always one a later clue needs; and its clues force three or
+  // more cards on their own about once in a hundred, see SOLO_CAP.
+  const reads = readingReplay(shape, clues, truth, puzzle.initialReveals);
+  const fed = new Set(reads.map((r) => r.feeds).filter((h) => typeof h === 'number'));
+  for (const read of reads) {
+    const who = `card ${read.host}'s clue`;
+    if (read.dead) bad.push(`${who} is already settled by the board when it is read`);
+    else if (read.feeds === null) bad.push(`${who} opens nothing, and no later clue needs it`);
+    if (read.solo.length > SOLO_CAP) {
+      bad.push(`${who} forces ${read.solo.length} cards on its own (cap ${SOLO_CAP})`);
+    }
+    const cap = fed.has(read.host) ? COMBO_GAIN_CAP : GAIN_CAP;
+    if (read.gain.length > cap) {
+      bad.push(`${who} opens ${read.gain.length} cards at once (cap ${cap})`);
     }
   }
 

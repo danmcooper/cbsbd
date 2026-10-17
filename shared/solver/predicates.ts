@@ -235,6 +235,13 @@ export const EVALUATORS: Record<string, (b: Board, a: HintArg[]) => boolean> = {
     return units.filter((u) => countTrait(b, unitMembers(b, u), t) === n).length === 1;
   },
 
+  only_one_unit_has_more_than_n_traits: (b, a) => {
+    const t = argTrait(a, 1);
+    const n = argNum(a, 2);
+    const units = unitsOfKind(b, argKind(a, 0));
+    return units.filter((u) => countTrait(b, unitMembers(b, u), t) > n).length === 1;
+  },
+
   more_traits_in_unit_than_unit: (b, a) => {
     const t = argTrait(a, 2);
     return cnt(b, a, 0, t) > cnt(b, a, 1, t);
@@ -300,6 +307,12 @@ export const EVALUATORS: Record<string, (b: Board, a: HintArg[]) => boolean> = {
     const t = argTrait(a, 1);
     const n = argNum(a, 2);
     return unitMembers(b, argUnit(a, 0)).every((i) => traitNeighborCount(b, i, t) <= n);
+  },
+
+  min_number_of_traits_in_neighbors_in_unit: (b, a) => {
+    const t = argTrait(a, 1);
+    const n = argNum(a, 2);
+    return unitMembers(b, argUnit(a, 0)).every((i) => traitNeighborCount(b, i, t) >= n);
   },
 
   both_traits_in_unit_are_in_unit: (b, a) => {

@@ -17,7 +17,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { validatePuzzle } from '../shared/puzzle.ts';
-import { archiveClueMix } from '../shared/solver/corpus.ts';
+import { archiveClueMix, loadMixCorrection } from '../shared/solver/corpus.ts';
 import { bandsFor, classify, loadBands, measure } from '../shared/solver/difficulty.ts';
 import { generatePuzzle, professionShapesFor } from '../shared/solver/generate.ts';
 import { makeGrid } from '../shared/solver/grid.ts';
@@ -53,6 +53,7 @@ const { puzzle, metrics } = generatePuzzle({
   band,
   seed,
   mix,
+  correction: loadMixCorrection(),
   width,
   height,
   labelOf: (m) => classify(boardBands, m),

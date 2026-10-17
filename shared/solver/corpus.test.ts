@@ -22,10 +22,12 @@ describe('archive', () => {
 describe('archiveClueMix', () => {
   const mix = archiveClueMix();
 
-  it('reports predicate and feature shares that each sum to one', () => {
+  it('reports predicate, feature and trait shares that each sum to one', () => {
     const sum = (r: Record<string, number>) => Object.values(r).reduce((a, b) => a + b, 0);
     expect(sum(mix.pred)).toBeCloseTo(1, 10);
     expect(sum(mix.feature)).toBeCloseTo(1, 10);
+    expect(sum(mix.trait)).toBeCloseTo(1, 10);
+    expect(Object.keys(mix.trait).sort()).toEqual(['criminal', 'innocent']);
     for (const v of [...Object.values(mix.pred), ...Object.values(mix.feature)]) {
       expect(v).toBeGreaterThan(0);
     }

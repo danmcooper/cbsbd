@@ -1,0 +1,39 @@
+{
+  "pred": {
+    "all_traits_are_neighbors_in_unit": 3.974,
+    "all_units_have_at_least_n_traits": 6,
+    "both_traits_are_neighbors_in_unit": 1.035,
+    "both_traits_in_unit_are_in_unit": 1.472,
+    "equal_number_of_traits_in_units": 1.302,
+    "equal_traits_and_traits_in_unit": 2.75,
+    "equal_traits_in_unit_and_traits_in_unit": 1.058,
+    "has_most_traits": 6,
+    "has_trait": 0.46,
+    "is_not_only_trait_in_unit": 0.2,
+    "is_one_of_n_traits_in_unit": 0.205,
+    "max_number_of_traits_in_neighbors_in_unit": 5.371,
+    "min_number_of_traits_in_neighbors_in_unit": 2.75,
+    "min_number_of_traits_in_unit": 4.043,
+    "more_traits_in_unit_than_traits_in_unit": 2.966,
+    "more_traits_in_unit_than_unit": 3.316,
+    "more_traits_than_traits_in_unit": 2.604,
+    "n_in_unit_have_trait_in_dir": 1.014,
+    "n_professions_have_trait_in_dir": 0.641,
+    "n_t_in_unit_have_trait_in_dir": 1.188,
+    "number_of_traits": 6,
+    "number_of_traits_in_unit": 2.947,
+    "odd_number_of_traits_in_unit": 2.188,
+    "only_one_person_in_unit_has_exactly_n_trait_neighbors": 0.266,
+    "only_one_unit_has_exactly_n_traits": 1.283,
+    "only_one_unit_has_more_than_n_traits": 4.787,
+    "only_trait_in_unit_is_in_unit": 2.375,
+    "only_unit_has_exactly_n_traits": 0.929,
+    "unit_shares_n_out_of_n_traits_with_unit": 0.289,
+    "units_share_n_traits": 0.978,
+    "units_share_odd_n_traits": 1.036
+  },
+  "trait": {
+    "criminal": 0.972,
+    "innocent": 1.026
+  }
+}
