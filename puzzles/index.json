@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-10-19",
+    "slug": "2026-10-19",
+    "variant": "real",
+    "id": "c2c4ab423c30",
+    "difficulty": "Easy",
+    "title": "The innocents placed a tall order",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-10-19",
+    "slug": "2026-10-19-dan",
+    "variant": "dan",
+    "id": "5e93193932b0",
+    "difficulty": "Medium",
+    "title": "Names Called at Dawn",
+    "width": 3,
+    "height": 4
+  },
+  {
     "date": "2026-10-18",
     "slug": "2026-10-18",
     "variant": "real",
