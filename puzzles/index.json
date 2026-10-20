@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-10-20",
+    "slug": "2026-10-20",
+    "variant": "real",
+    "id": "df6ad6e3a12c",
+    "difficulty": "Medium",
+    "title": "One pumpkin is scarier than a criminal",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-10-20",
+    "slug": "2026-10-20-dan",
+    "variant": "dan",
+    "id": "1043fcd6d379",
+    "difficulty": "Tricky",
+    "title": "Nine Alibis and a Gap",
+    "width": 4,
+    "height": 4
+  },
+  {
     "date": "2026-10-19",
     "slug": "2026-10-19",
     "variant": "real",
