@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-10-21",
+    "slug": "2026-10-21",
+    "variant": "real",
+    "id": "f8e17eee9d87",
+    "difficulty": "Tricky",
+    "title": "One criminal has chosen the wrong profession",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-10-21",
+    "slug": "2026-10-21-dan",
+    "variant": "dan",
+    "id": "092caaae654a",
+    "difficulty": "Tricky",
+    "title": "Someone Signed the Ledger Twice",
+    "width": 4,
+    "height": 5
+  },
+  {
     "date": "2026-10-20",
     "slug": "2026-10-20",
     "variant": "real",
