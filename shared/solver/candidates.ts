@@ -293,6 +293,14 @@ export function candidateHints(b: Board): Hint[] {
           for (let value = sorted[1]; value < sorted[0]; value++) {
             push('only_one_unit_has_more_than_n_traits', [k(kind), t(trait), n(value)]);
           }
+          // Its mirror: the one unit below n holds for every n above the lowest
+          // count up to the runner-up's.
+          const low = sorted[sorted.length - 1];
+          const next = sorted[sorted.length - 2];
+          const lowest = group[counts.indexOf(low)];
+          for (let value = low + 1; value <= next; value++) {
+            push('only_unit_has_less_than_n_traits', [u(lowest), t(trait), n(value)]);
+          }
         }
       }
     }

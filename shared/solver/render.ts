@@ -381,6 +381,18 @@ export const RENDERERS: Record<string, (a: HintArg[], o: RenderOptions) => strin
     throw new UnsupportedShapeError(`only_unit_has_exactly_n_traits over ${u.kind}`);
   },
 
+  // One archive instance (2026-10-22): "Row 3 is the only row with fewer than 2
+  // innocents". The column form is ours, mirroring only_unit_has_exactly_n_traits.
+  only_unit_has_less_than_n_traits: (a) => {
+    const u = argUnit(a, 0);
+    const t = argTrait(a, 1);
+    const n = argNum(a, 2);
+    const tail = `fewer than ${n} ${plural(t, n)}`;
+    if (u.kind === 'row') return `Row${NBSP}${u.n} is the only row with ${tail}`;
+    if (u.kind === 'col') return `Column${NBSP}${col(u.n)} is the only column with ${tail}`;
+    throw new UnsupportedShapeError(`only_unit_has_less_than_n_traits over ${u.kind}`);
+  },
+
   units_share_n_traits: (a) => {
     const u1 = argUnit(a, 0);
     const u2 = argUnit(a, 1);

@@ -9,7 +9,12 @@ import { type Clues, forcedGiven } from './solve';
 const MAX_ENTAILMENT_FREE = 16;
 
 /** Predicates whose truth reads every unit of a kind, or the whole board. */
-const WHOLE_BOARD = new Set(['number_of_traits', 'has_most_traits', 'only_unit_has_exactly_n_traits']);
+const WHOLE_BOARD = new Set([
+  'number_of_traits',
+  'has_most_traits',
+  'only_unit_has_exactly_n_traits',
+  'only_unit_has_less_than_n_traits',
+]);
 
 /**
  * Every card whose value can change whether `hint` holds — over-approximated,

@@ -218,6 +218,14 @@ describe('comparison clue templates', () => {
       '#NAME:4 is the only one with exactly 2 criminal neighbor',
     );
   });
+  it('only_unit_has_less_than_n_traits', () => {
+    expect(r('only_unit_has_less_than_n_traits(unit(row,3),innocent,2)')).toBe(
+      'Row 3 is the only row with fewer than 2 innocents',
+    );
+    expect(r('only_unit_has_less_than_n_traits(unit(col,2),criminal,1)')).toBe(
+      'Column #C:2 is the only column with fewer than 1 criminal',
+    );
+  });
   it('units_share_n_traits', () => {
     expect(r('units_share_n_traits(unit(neighbor,3),unit(neighbor,9),innocent,1)')).toBe(
       '#NAME:3 and #NAME:9 have only one innocent neighbor in common',

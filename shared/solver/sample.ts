@@ -214,6 +214,20 @@ export const CLUE_BUILDERS: Record<string, ClueBuilder> = {
     };
   },
 
+  only_unit_has_less_than_n_traits: (c, t) => {
+    const k: UnitKind = c.rng() < 0.5 ? 'row' : 'col';
+    const units = unitsOfKind(c.board, k);
+    const counts = units.map((v) => c.count(c.members(v), t));
+    const sorted = [...counts].sort((x, y) => x - y);
+    if (sorted.length < 2 || sorted[0] === sorted[1]) return null;
+    // Holds for every n above the lowest count up to the runner-up's.
+    const n = sorted[0] + 1 + Math.floor(c.rng() * (sorted[1] - sorted[0]));
+    return {
+      pred: 'only_unit_has_less_than_n_traits',
+      args: [unit(units[counts.indexOf(sorted[0])]), trait(t), num(n)],
+    };
+  },
+
   only_one_unit_has_exactly_n_traits: (c, t) => {
     const k: UnitKind = c.rng() < 0.5 ? 'row' : 'col';
     const counts = unitsOfKind(c.board, k).map((v) => c.count(c.members(v), t));
