@@ -26,7 +26,8 @@ jobs:
           ref: main # workflow_call: build the commit the caller just pushed
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 26
+          check-latest: true # always resolve the newest 26.x, not the runner's cached one
           cache: npm
       - run: npm ci
       - run: npm run build
