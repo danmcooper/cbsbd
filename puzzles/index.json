@@ -10,6 +10,16 @@
     "height": 5
   },
   {
+    "date": "2026-10-26",
+    "slug": "2026-10-26-dan",
+    "variant": "dan",
+    "id": "d19f9f757895",
+    "difficulty": "Tricky",
+    "title": "The Ferry Was Late",
+    "width": 3,
+    "height": 4
+  },
+  {
     "date": "2026-10-25",
     "slug": "2026-10-25",
     "variant": "real",
@@ -18,6 +28,16 @@
     "title": "One innocent isn't much for idioms",
     "width": 4,
     "height": 5
+  },
+  {
+    "date": "2026-10-25",
+    "slug": "2026-10-25-dan",
+    "variant": "dan",
+    "id": "42b09379bba1",
+    "difficulty": "Hard",
+    "title": "The Ferry Was Late",
+    "width": 6,
+    "height": 6
   },
   {
     "date": "2026-10-24",
