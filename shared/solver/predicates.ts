@@ -304,6 +304,16 @@ export const EVALUATORS: Record<string, (b: Board, a: HintArg[]) => boolean> = {
     );
   },
 
+  only_unit_has_more_than_n_traits: (b, a) => {
+    const u = argUnit(a, 0);
+    const t = argTrait(a, 1);
+    const n = argNum(a, 2);
+    if (countTrait(b, unitMembers(b, u), t) <= n) return false;
+    return unitsOfKind(b, u.kind).every(
+      (other) => sameUnit(other, u) || countTrait(b, unitMembers(b, other), t) <= n,
+    );
+  },
+
   units_share_n_traits: (b, a) => shared(b, a, argTrait(a, 2)) === argNum(a, 3),
 
   units_share_odd_n_traits: (b, a) => shared(b, a, argTrait(a, 2)) % 2 === 1,

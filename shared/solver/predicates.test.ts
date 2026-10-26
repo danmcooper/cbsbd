@@ -143,6 +143,12 @@ describe('comparison predicates', () => {
     expect(ok('only_unit_has_less_than_n_traits(unit(row,3),criminal,2)')).toBe(false);
     expect(ok('only_unit_has_less_than_n_traits(unit(row,2),criminal,1)')).toBe(false);
   });
+  it('only_unit_has_more_than_n_traits', () => {
+    // Criminals per row: 2, 1, 0, 1, 1.
+    expect(ok('only_unit_has_more_than_n_traits(unit(row,1),criminal,1)')).toBe(true);
+    expect(ok('only_unit_has_more_than_n_traits(unit(row,1),criminal,0)')).toBe(false);
+    expect(ok('only_unit_has_more_than_n_traits(unit(row,2),criminal,0)')).toBe(false);
+  });
   it('units_share_n_traits counts the intersection', () => {
     expect(ok('units_share_n_traits(unit(row,1),unit(col,1),criminal,1)')).toBe(true);
     expect(ok('units_share_n_traits(unit(row,1),unit(row,2),criminal,0)')).toBe(true);

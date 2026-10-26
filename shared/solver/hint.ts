@@ -51,6 +51,7 @@ export const ARG_KINDS: Record<string, ArgKind[]> = {
   has_most_traits: [U, T],
   only_unit_has_exactly_n_traits: [U, T, N],
   only_unit_has_less_than_n_traits: [U, T, N],
+  only_unit_has_more_than_n_traits: [U, T, N],
   only_one_unit_has_exactly_n_traits: [K, T, N],
   only_one_unit_has_more_than_n_traits: [K, T, N],
   all_units_have_at_least_n_traits: [K, T, N],

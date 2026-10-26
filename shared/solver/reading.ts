@@ -14,6 +14,7 @@ const WHOLE_BOARD = new Set([
   'has_most_traits',
   'only_unit_has_exactly_n_traits',
   'only_unit_has_less_than_n_traits',
+  'only_unit_has_more_than_n_traits',
 ]);
 
 /**

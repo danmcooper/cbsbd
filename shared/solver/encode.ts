@@ -67,6 +67,7 @@ export const SUPPORTED: ReadonlySet<string> = new Set([
   'only_one_unit_has_more_than_n_traits',
   'only_unit_has_exactly_n_traits',
   'only_unit_has_less_than_n_traits',
+  'only_unit_has_more_than_n_traits',
   'has_most_traits',
   'max_number_of_traits_in_neighbors_in_unit',
   'min_number_of_traits_in_neighbors_in_unit',
@@ -347,6 +348,18 @@ function encodeHint(cnf: Cnf, board: Board, shape: Shape, vars: number[], hint: 
       atMost(cnf, litsOf(members(u), t), n - 1);
       for (const other of unitsOfKind(board, u.kind)) {
         if (!sameUnit(other, u)) atLeast(cnf, litsOf(members(other), t), n);
+      }
+      return;
+    }
+
+    case 'only_unit_has_more_than_n_traits': {
+      const u = argUnit(a, 0);
+      const t = argTrait(a, 1);
+      const n = argNum(a, 2);
+      // "More than n" is "at least n + 1"; every other unit of the kind has at most n.
+      atLeast(cnf, litsOf(members(u), t), n + 1);
+      for (const other of unitsOfKind(board, u.kind)) {
+        if (!sameUnit(other, u)) atMost(cnf, litsOf(members(other), t), n);
       }
       return;
     }

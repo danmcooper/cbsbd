@@ -226,6 +226,14 @@ describe('comparison clue templates', () => {
       'Column #C:2 is the only column with fewer than 1 criminal',
     );
   });
+  it('only_unit_has_more_than_n_traits', () => {
+    expect(r('only_unit_has_more_than_n_traits(unit(row,2),criminal,1)')).toBe(
+      'Row 2 is the only row with more than 1 criminal',
+    );
+    expect(r('only_unit_has_more_than_n_traits(unit(col,3),innocent,2)')).toBe(
+      'Column #C:3 is the only column with more than 2 innocents',
+    );
+  });
   it('units_share_n_traits', () => {
     expect(r('units_share_n_traits(unit(neighbor,3),unit(neighbor,9),innocent,1)')).toBe(
       '#NAME:3 and #NAME:9 have only one innocent neighbor in common',
