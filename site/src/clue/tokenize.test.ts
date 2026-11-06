@@ -31,6 +31,10 @@ describe('tokenizeClue', () => {
       { kind: 'text', text: 'one innocent ' },
       { kind: 'between', a: 7, b: 11 },
     ]);
+    expect(tokenizeClue('in row #R:3')).toEqual([
+      { kind: 'text', text: 'in row ' },
+      { kind: 'row', row: 3 },
+    ]);
   });
 
   // #PROFN is ours rather than the source's: the renderer emits it when a clue

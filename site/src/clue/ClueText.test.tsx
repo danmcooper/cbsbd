@@ -86,6 +86,13 @@ describe('ClueText', () => {
     expect(renderClue('two cops in column #C:4')).toBe('Two cops in column D');
   });
 
+  it('renders 1-based #R row tokens as numbers', () => {
+    // Real data: Gemma (2026-11-06), origHint unit(row,3).
+    expect(renderClue('Only 1 innocent in row\u00a0#R:3 has an innocent directly to the right of them')).toBe(
+      'Only 1 innocent in row\u00a03 has an innocent directly to the right of them',
+    );
+  });
+
   describe('#BETWEEN positional paraphrasing (ported from the real renderer)', () => {
     it('column segment touching the top edge: above <card below it>', () => {
       // pair(0,4) = A1..A2; card below is Kay (A3, index 8)

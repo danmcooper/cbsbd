@@ -117,6 +117,8 @@ function rawToken(seg: ClueSegment): string {
       return `#BETWEEN:pair(${seg.a},${seg.b})`;
     case 'column':
       return `#C:${seg.column}`;
+    case 'row':
+      return `#R:${seg.row}`;
     default:
       return '';
   }
@@ -143,6 +145,9 @@ function segmentText(seg: ClueSegment, props: ClueTextProps): string {
     case 'column':
       // #C:n is 1-based ("column #C:1" is column A); the word "column" is in the source text.
       return seg.column >= 1 ? columnLetter(seg.column - 1) : rawToken(seg);
+    case 'row':
+      // #R:n is 1-based like the board's row labels ("row #R:3" is row 3).
+      return seg.row >= 1 ? String(seg.row) : rawToken(seg);
     case 'between':
       return betweenParts(seg, props)?.text ?? rawToken(seg);
     case 'text':

@@ -4,6 +4,7 @@ export type ClueSegment =
   /** `counted` prefixes the profession's whole cast: "3 cooks" rather than "cooks". */
   | { kind: 'prof'; word: string; plural: boolean; counted: boolean }
   | { kind: 'column'; column: number }
+  | { kind: 'row'; row: number }
   | { kind: 'between'; a: number; b: number };
 
 const TOKEN = /#([A-Z]+)(?::(pair\(\d+,\d+\)|\w+))?/g;
@@ -27,6 +28,10 @@ function parseToken(tag: string, arg: string | undefined): ClueSegment | null {
     case 'C': {
       if (arg === undefined || !/^\d+$/.test(arg)) return null;
       return { kind: 'column', column: Number(arg) };
+    }
+    case 'R': {
+      if (arg === undefined || !/^\d+$/.test(arg)) return null;
+      return { kind: 'row', row: Number(arg) };
     }
     case 'BETWEEN': {
       const m = arg?.match(/^pair\((\d+),(\d+)\)$/);
