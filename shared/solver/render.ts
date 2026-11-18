@@ -241,6 +241,15 @@ export const RENDERERS: Record<string, (a: HintArg[], o: RenderOptions) => strin
     return `Only one ${kindWord(argKind(a, 0))} has more than ${n} ${n === 1 ? t : `${t}s`}`;
   },
 
+  // Archive instances: "Only one column has fewer than one criminal" (2026-10-27) and
+  // "Only one row has fewer than 2 innocents" (2026-10-29, 2026-11-18) — 1 is spelled out.
+  only_one_unit_has_less_than_n_traits: (a) => {
+    const n = argNum(a, 2);
+    const t = argTrait(a, 1);
+    const count = n === 1 ? 'one' : String(n);
+    return `Only one ${kindWord(argKind(a, 0))} has fewer than ${count} ${n === 1 ? t : `${t}s`}`;
+  },
+
   more_traits_in_unit_than_unit: (a) => {
     const u1 = argUnit(a, 0);
     const u2 = argUnit(a, 1);

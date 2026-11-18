@@ -23,6 +23,10 @@ export type HintArg =
 export interface Hint {
   pred: string;
   args: HintArg[];
+  /** The source's `amb_` prefix, used since 2026-11-07 on clues worded without
+   * "exactly"/"only" ("There are 2 criminals…"). The meaning is unchanged, so
+   * evaluation ignores it; it only survives a round trip. */
+  amb?: boolean;
 }
 
 export class HintParseError extends Error {}
@@ -54,6 +58,7 @@ export const ARG_KINDS: Record<string, ArgKind[]> = {
   only_unit_has_more_than_n_traits: [U, T, N],
   only_one_unit_has_exactly_n_traits: [K, T, N],
   only_one_unit_has_more_than_n_traits: [K, T, N],
+  only_one_unit_has_less_than_n_traits: [K, T, N],
   all_units_have_at_least_n_traits: [K, T, N],
   is_one_of_n_traits_in_unit: [U, I, T, N],
   is_not_only_trait_in_unit: [U, I, T],
@@ -146,14 +151,16 @@ function parseArg(raw: string, want: ArgKind): HintArg {
 export function parseHint(s: string): Hint {
   const m = /^([a-z_]+)\((.*)\)$/s.exec(s.trim());
   if (!m) throw new HintParseError(`not a hint: ${s}`);
-  const pred = m[1];
+  const amb = m[1].startsWith('amb_');
+  const pred = amb ? m[1].slice(4) : m[1];
   const want = ARG_KINDS[pred];
   if (!want) throw new HintParseError(`unknown predicate: ${pred}`);
   const raw = splitArgs(m[2]);
   if (raw.length !== want.length) {
     throw new HintParseError(`${pred}: expected ${want.length} args, got ${raw.length}`);
   }
-  return { pred, args: raw.map((r, i) => parseArg(r, want[i])) };
+  const args = raw.map((r, i) => parseArg(r, want[i]));
+  return amb ? { pred, args, amb } : { pred, args };
 }
 
 function formatUnit(u: Unit): string {
@@ -190,5 +197,5 @@ function formatArg(a: HintArg): string {
 }
 
 export function formatHint(h: Hint): string {
-  return `${h.pred}(${h.args.map(formatArg).join(',')})`;
+  return `${h.amb ? 'amb_' : ''}${h.pred}(${h.args.map(formatArg).join(',')})`;
 }

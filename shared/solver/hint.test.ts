@@ -37,6 +37,14 @@ describe('parseHint', () => {
     ]);
   });
 
+  it('reads the amb_ prefix as a flag on the base predicate', () => {
+    const h = parseHint('amb_number_of_traits_in_unit(unit(row,2),innocent,3)');
+    expect(h.pred).toBe('number_of_traits_in_unit');
+    expect(h.amb).toBe(true);
+    expect(formatHint(h)).toBe('amb_number_of_traits_in_unit(unit(row,2),innocent,3)');
+    expect(() => parseHint('amb_no_such_predicate(criminal)')).toThrow(HintParseError);
+  });
+
   it('rejects unknown predicates and wrong arity', () => {
     expect(() => parseHint('no_such_predicate(criminal)')).toThrow(HintParseError);
     expect(() => parseHint('number_of_traits(criminal)')).toThrow(HintParseError);
@@ -67,10 +75,10 @@ describe('formatHint', () => {
 });
 
 describe('ARG_KINDS', () => {
-  // 31 the archive uses, plus the two cross-trait comparisons it never does —
+  // 32 the archive uses, plus the two cross-trait comparisons it never does —
   // see CROSS_TRAIT in corpus.ts.
-  it('covers all 33 predicates', () => {
-    expect(Object.keys(ARG_KINDS)).toHaveLength(33);
+  it('covers all 34 predicates', () => {
+    expect(Object.keys(ARG_KINDS)).toHaveLength(34);
   });
 });
 

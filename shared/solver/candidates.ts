@@ -305,6 +305,7 @@ export function candidateHints(b: Board): Hint[] {
           const lowest = group[counts.indexOf(low)];
           for (let value = low + 1; value <= next; value++) {
             push('only_unit_has_less_than_n_traits', [u(lowest), t(trait), n(value)]);
+            push('only_one_unit_has_less_than_n_traits', [k(kind), t(trait), n(value)]);
           }
         }
       }

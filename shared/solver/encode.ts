@@ -65,6 +65,7 @@ export const SUPPORTED: ReadonlySet<string> = new Set([
   'all_units_have_at_least_n_traits',
   'only_one_unit_has_exactly_n_traits',
   'only_one_unit_has_more_than_n_traits',
+  'only_one_unit_has_less_than_n_traits',
   'only_unit_has_exactly_n_traits',
   'only_unit_has_less_than_n_traits',
   'only_unit_has_more_than_n_traits',
@@ -319,6 +320,25 @@ function encodeHint(cnf: Cnf, board: Board, shape: Shape, vars: number[], hint: 
         else {
           cnf.add([-flag, count[n]]);
           cnf.add([flag, -count[n]]);
+        }
+        return flag;
+      });
+      exactly(cnf, flags, 1);
+      return;
+    }
+
+    case 'only_one_unit_has_less_than_n_traits': {
+      const t = argTrait(a, 1);
+      const n = argNum(a, 2);
+      const flags = unitsOfKind(board, argKind(a, 0)).map((u) => {
+        const flag = cnf.newVar();
+        // "Fewer than n" is "not at least n", the negation of the counter's n - 1 output.
+        const count = counter(cnf, litsOf(members(u), t));
+        if (n <= 0) cnf.addUnit(-flag);
+        else if (n > count.length) cnf.addUnit(flag);
+        else {
+          cnf.add([-flag, -count[n - 1]]);
+          cnf.add([flag, count[n - 1]]);
         }
         return flag;
       });
