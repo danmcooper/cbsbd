@@ -10,6 +10,16 @@
     "height": 5
   },
   {
+    "date": "2026-11-18",
+    "slug": "2026-11-18-dan",
+    "variant": "dan",
+    "id": "4e97256d6264",
+    "difficulty": "Medium",
+    "title": "A Draft in the Archive Room",
+    "width": 4,
+    "height": 5
+  },
+  {
     "date": "2026-11-17",
     "slug": "2026-11-17",
     "variant": "real",
@@ -18,6 +28,16 @@
     "title": "One criminal has invented wireless power transfer",
     "width": 4,
     "height": 5
+  },
+  {
+    "date": "2026-11-17",
+    "slug": "2026-11-17-dan",
+    "variant": "dan",
+    "id": "aab8772eea76",
+    "difficulty": "Tricky",
+    "title": "Everyone Says They Were Reading",
+    "width": 4,
+    "height": 4
   },
   {
     "date": "2026-11-16",
@@ -30,6 +50,16 @@
     "height": 5
   },
   {
+    "date": "2026-11-16",
+    "slug": "2026-11-16-dan",
+    "variant": "dan",
+    "id": "c392a94e21cd",
+    "difficulty": "Tricky",
+    "title": "Sunday Inventory",
+    "width": 3,
+    "height": 4
+  },
+  {
     "date": "2026-11-15",
     "slug": "2026-11-15",
     "variant": "real",
@@ -38,6 +68,16 @@
     "title": "The criminals are like fish out of water",
     "width": 4,
     "height": 5
+  },
+  {
+    "date": "2026-11-15",
+    "slug": "2026-11-15-dan",
+    "variant": "dan",
+    "id": "73ee0ab44c07",
+    "difficulty": "Hard",
+    "title": "The Bell Rang Anyway",
+    "width": 6,
+    "height": 6
   },
   {
     "date": "2026-11-14",
@@ -50,6 +90,16 @@
     "height": 5
   },
   {
+    "date": "2026-11-14",
+    "slug": "2026-11-14-dan",
+    "variant": "dan",
+    "id": "6d74887e8068",
+    "difficulty": "Hard",
+    "title": "The Greenhouse Roster",
+    "width": 5,
+    "height": 6
+  },
+  {
     "date": "2026-11-13",
     "slug": "2026-11-13",
     "variant": "real",
@@ -57,6 +107,16 @@
     "difficulty": "Hard",
     "title": "The criminals are just lazy",
     "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-11-13",
+    "slug": "2026-11-13-dan",
+    "variant": "dan",
+    "id": "45b000f0e164",
+    "difficulty": "Tricky",
+    "title": "Whose Coat Is on the Hook",
+    "width": 5,
     "height": 5
   },
   {
@@ -70,12 +130,32 @@
     "height": 5
   },
   {
+    "date": "2026-11-12",
+    "slug": "2026-11-12-dan",
+    "variant": "dan",
+    "id": "4668ec495317",
+    "difficulty": "Tricky",
+    "title": "A Quiet Morning at the Depot",
+    "width": 5,
+    "height": 5
+  },
+  {
     "date": "2026-11-11",
     "slug": "2026-11-11",
     "variant": "real",
     "id": "88e5f60587bd",
     "difficulty": "Tricky",
     "title": "One criminal is always prepared",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-11-11",
+    "slug": "2026-11-11-dan",
+    "variant": "dan",
+    "id": "9dfd1c837f23",
+    "difficulty": "Tricky",
+    "title": "A Draft in the Archive Room",
     "width": 4,
     "height": 5
   },
@@ -90,6 +170,16 @@
     "height": 5
   },
   {
+    "date": "2026-11-10",
+    "slug": "2026-11-10-dan",
+    "variant": "dan",
+    "id": "1931b461eb35",
+    "difficulty": "Tricky",
+    "title": "Chalk Marks on the Platform",
+    "width": 4,
+    "height": 4
+  },
+  {
     "date": "2026-11-09",
     "slug": "2026-11-09",
     "variant": "real",
@@ -98,6 +188,16 @@
     "title": "One criminal is great at pub quizzes",
     "width": 4,
     "height": 5
+  },
+  {
+    "date": "2026-11-09",
+    "slug": "2026-11-09-dan",
+    "variant": "dan",
+    "id": "8bac40bdf423",
+    "difficulty": "Tricky",
+    "title": "Whose Coat Is on the Hook",
+    "width": 3,
+    "height": 4
   },
   {
     "date": "2026-11-08",
@@ -110,6 +210,16 @@
     "height": 5
   },
   {
+    "date": "2026-11-08",
+    "slug": "2026-11-08-dan",
+    "variant": "dan",
+    "id": "41a03bbb547e",
+    "difficulty": "Hard",
+    "title": "Line Up by the Fence",
+    "width": 6,
+    "height": 6
+  },
+  {
     "date": "2026-11-07",
     "slug": "2026-11-07",
     "variant": "real",
@@ -120,6 +230,16 @@
     "height": 5
   },
   {
+    "date": "2026-11-07",
+    "slug": "2026-11-07-dan",
+    "variant": "dan",
+    "id": "bc92a8f3b5ca",
+    "difficulty": "Medium",
+    "title": "The Lantern Street Lineup",
+    "width": 5,
+    "height": 6
+  },
+  {
     "date": "2026-11-06",
     "slug": "2026-11-06",
     "variant": "real",
@@ -127,6 +247,16 @@
     "difficulty": "Tricky",
     "title": "Some innocents are far from home",
     "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-11-06",
+    "slug": "2026-11-06-dan",
+    "variant": "dan",
+    "id": "bb68b4d8e63c",
+    "difficulty": "Tricky",
+    "title": "Line Up by the Fence",
+    "width": 5,
     "height": 5
   },
   {
@@ -140,12 +270,32 @@
     "height": 5
   },
   {
+    "date": "2026-11-05",
+    "slug": "2026-11-05-dan",
+    "variant": "dan",
+    "id": "4cc5fe210aa7",
+    "difficulty": "Medium",
+    "title": "Sunday Inventory",
+    "width": 5,
+    "height": 5
+  },
+  {
     "date": "2026-11-04",
     "slug": "2026-11-04",
     "variant": "real",
     "id": "846dbcd66c5b",
     "difficulty": "Tricky",
     "title": "The innocents nearly had a close encounter of the first kind",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-11-04",
+    "slug": "2026-11-04-dan",
+    "variant": "dan",
+    "id": "a673f1239d0a",
+    "difficulty": "Medium",
+    "title": "Sunday Inventory",
     "width": 4,
     "height": 5
   },
@@ -160,6 +310,16 @@
     "height": 5
   },
   {
+    "date": "2026-11-03",
+    "slug": "2026-11-03-dan",
+    "variant": "dan",
+    "id": "2d4533dc2b5b",
+    "difficulty": "Medium",
+    "title": "Nobody Left the Courtyard",
+    "width": 4,
+    "height": 4
+  },
+  {
     "date": "2026-11-02",
     "slug": "2026-11-02",
     "variant": "real",
@@ -168,6 +328,16 @@
     "title": "One criminal is specialized in unicellular organisms",
     "width": 4,
     "height": 5
+  },
+  {
+    "date": "2026-11-02",
+    "slug": "2026-11-02-dan",
+    "variant": "dan",
+    "id": "4953fa131688",
+    "difficulty": "Tricky",
+    "title": "The Ferry Was Late",
+    "width": 3,
+    "height": 4
   },
   {
     "date": "2026-11-01",
@@ -180,6 +350,16 @@
     "height": 5
   },
   {
+    "date": "2026-11-01",
+    "slug": "2026-11-01-dan",
+    "variant": "dan",
+    "id": "3dc74f5c0df5",
+    "difficulty": "Easy",
+    "title": "Whose Coat Is on the Hook",
+    "width": 6,
+    "height": 6
+  },
+  {
     "date": "2026-10-31",
     "slug": "2026-10-31",
     "variant": "real",
@@ -190,6 +370,16 @@
     "height": 5
   },
   {
+    "date": "2026-10-31",
+    "slug": "2026-10-31-dan",
+    "variant": "dan",
+    "id": "2f8713c8175e",
+    "difficulty": "Tricky",
+    "title": "A Draft in the Archive Room",
+    "width": 5,
+    "height": 6
+  },
+  {
     "date": "2026-10-30",
     "slug": "2026-10-30",
     "variant": "real",
@@ -197,6 +387,16 @@
     "difficulty": "Tricky",
     "title": "One criminal had a brain freeze",
     "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-10-30",
+    "slug": "2026-10-30-dan",
+    "variant": "dan",
+    "id": "5c033bbd43b0",
+    "difficulty": "Tricky",
+    "title": "The Bell Rang Anyway",
+    "width": 5,
     "height": 5
   },
   {
@@ -210,12 +410,32 @@
     "height": 5
   },
   {
+    "date": "2026-10-29",
+    "slug": "2026-10-29-dan",
+    "variant": "dan",
+    "id": "dfb7c4c10055",
+    "difficulty": "Tricky",
+    "title": "The Second Shift",
+    "width": 5,
+    "height": 5
+  },
+  {
     "date": "2026-10-28",
     "slug": "2026-10-28",
     "variant": "real",
     "id": "b05ea763c38b",
     "difficulty": "Tricky",
     "title": "One innocent is not a popular night guest",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-10-28",
+    "slug": "2026-10-28-dan",
+    "variant": "dan",
+    "id": "c8597f2bf137",
+    "difficulty": "Tricky",
+    "title": "Four Rows, One Confession",
     "width": 4,
     "height": 5
   },
@@ -228,6 +448,16 @@
     "title": "One criminal has an odd conception of earning",
     "width": 4,
     "height": 5
+  },
+  {
+    "date": "2026-10-27",
+    "slug": "2026-10-27-dan",
+    "variant": "dan",
+    "id": "c1fdfc9904e5",
+    "difficulty": "Hard",
+    "title": "The Greenhouse Roster",
+    "width": 4,
+    "height": 4
   },
   {
     "date": "2026-10-26",
