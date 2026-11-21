@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-11-21",
+    "slug": "2026-11-21",
+    "variant": "real",
+    "id": "18e5cda1f706",
+    "difficulty": "Hard",
+    "title": "The innocents got back in the saddle",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-11-21",
+    "slug": "2026-11-21-dan",
+    "variant": "dan",
+    "id": "2d935bdeb264",
+    "difficulty": "Medium",
+    "title": "The Kettle Was Still Warm",
+    "width": 5,
+    "height": 6
+  },
+  {
     "date": "2026-11-20",
     "slug": "2026-11-20",
     "variant": "real",
