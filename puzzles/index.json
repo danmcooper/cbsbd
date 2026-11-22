@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-11-22",
+    "slug": "2026-11-22",
+    "variant": "real",
+    "id": "e04fc168ccb5",
+    "difficulty": "Hard",
+    "title": "One criminal knows her operating systems",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-11-22",
+    "slug": "2026-11-22-dan",
+    "variant": "dan",
+    "id": "4d9d7ba7bf05",
+    "difficulty": "Medium",
+    "title": "The Lantern Street Lineup",
+    "width": 6,
+    "height": 6
+  },
+  {
     "date": "2026-11-21",
     "slug": "2026-11-21",
     "variant": "real",
