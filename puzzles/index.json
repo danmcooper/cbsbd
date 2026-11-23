@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-11-23",
+    "slug": "2026-11-23",
+    "variant": "real",
+    "id": "ebb3d73a7a68",
+    "difficulty": "Easy",
+    "title": "The innocents are running out of time",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-11-23",
+    "slug": "2026-11-23-dan",
+    "variant": "dan",
+    "id": "7b3e4b21291f",
+    "difficulty": "Tricky",
+    "title": "Nobody Left the Courtyard",
+    "width": 3,
+    "height": 4
+  },
+  {
     "date": "2026-11-22",
     "slug": "2026-11-22",
     "variant": "real",
