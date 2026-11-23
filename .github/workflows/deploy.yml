@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   workflow_call: {}
+  workflow_dispatch: {} # manual redeploy; re-running a failed run collides with its old artifact
 
 permissions:
   contents: read
@@ -14,12 +15,12 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+# Upload and deploy are separate jobs on purpose. In one job, deploy-pages lists
+# the run's artifacts a fraction of a second after the upload finalizes and can
+# find none (actions/deploy-pages#451); a second job looks seconds later.
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,5 +40,13 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: artifact
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4
