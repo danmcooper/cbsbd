@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-11-24",
+    "slug": "2026-11-24",
+    "variant": "real",
+    "id": "ec3b1d093f9a",
+    "difficulty": "Medium",
+    "title": "One criminal still hasn't returned a quill she borrowed",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-11-24",
+    "slug": "2026-11-24-dan",
+    "variant": "dan",
+    "id": "a9d0c1c39314",
+    "difficulty": "Tricky",
+    "title": "One Story Does Not Fit",
+    "width": 4,
+    "height": 4
+  },
+  {
     "date": "2026-11-23",
     "slug": "2026-11-23",
     "variant": "real",
