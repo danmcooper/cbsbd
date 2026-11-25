@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-11-25",
+    "slug": "2026-11-25",
+    "variant": "real",
+    "id": "6cf454b03093",
+    "difficulty": "Tricky",
+    "title": "One innocent is odd, yet not a criminal",
+    "width": 4,
+    "height": 5
+  },
+  {
+    "date": "2026-11-25",
+    "slug": "2026-11-25-dan",
+    "variant": "dan",
+    "id": "af8caf68d5ed",
+    "difficulty": "Tricky",
+    "title": "The Stairwell Census",
+    "width": 4,
+    "height": 5
+  },
+  {
     "date": "2026-11-24",
     "slug": "2026-11-24",
     "variant": "real",
